@@ -1,0 +1,15 @@
+gnverify/gnverify
+debug.test
+t
+t.json
+.env
+*.pprof
+*.trace
+*.test
+*test
+.idea
+.vscode
+*.tar.gz
+bench*.txt
+binding/*.so
+binding/*.h
