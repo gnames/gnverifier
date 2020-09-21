@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 package main
 
-import "gitlab.com/gogna/gnverify/cmd"
+import "gitlab.com/gogna/gnverify/gnverify/cmd"
 
 func main() {
 	cmd.Execute()
