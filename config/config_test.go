@@ -4,7 +4,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	. "gitlab.com/gogna/gnverify/config"
+	. "github.com/gnames/gnverify/config"
 )
 
 var url = "https://gnames.globalnames.org"
@@ -28,7 +28,7 @@ var _ = Describe("Config", func() {
 			Format:           PrettyJSON,
 			PreferredOnly:    true,
 			NameField:        3,
-			PreferredSources: []uint{1, 2, 3},
+			PreferredSources: []int{1, 2, 3},
 			VerifierURL:      url,
 		}
 		Expect(cnf).To(Equal(updt))
@@ -59,7 +59,7 @@ func opts() []Option {
 		OptFormat(PrettyJSON),
 		OptPreferredOnly(true),
 		OptNameField(3),
-		OptPreferredSources([]uint{1, 2, 3}),
+		OptPreferredSources([]int{1, 2, 3}),
 		OptVerifierURL(url),
 	}
 }

@@ -22,19 +22,25 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 
+	gne "github.com/gnames/gnames/domain/entity"
+	"github.com/gnames/gnames/lib/sys"
+	"github.com/gnames/gnverify"
+	"github.com/gnames/gnverify/config"
+	"github.com/gnames/gnverify/output"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"gitlab.com/gogna/gnverify"
-	gncnf "gitlab.com/gogna/gnverify/config"
 )
 
 var (
-	opts []gncnf.Option
+	opts []config.Option
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -48,15 +54,15 @@ more than 100 biodiverisity data-sources.`,
 			os.Exit(0)
 		}
 		pref, _ := cmd.Flags().GetBool("preferred_only")
-		opts = append(opts, gncnf.OptPreferredOnly(pref))
+		opts = append(opts, config.OptPreferredOnly(pref))
 
 		formatString, _ := cmd.Flags().GetString("format")
-		format := gncnf.NewFormat(formatString)
-		if format == gncnf.InvalidFormat {
+		format := output.NewFormat(formatString)
+		if format == output.InvalidFormat {
 			log.Warnf("Cannot set format from '%s', setting format to csv")
-			format = gncnf.CSV
+			format = output.CSV
 		}
-		opts = append(opts, gncnf.OptFormat(format))
+		opts = append(opts, config.OptFormat(format))
 
 		name_field, err := cmd.Flags().GetInt("name_field")
 		if err != nil {
@@ -67,20 +73,26 @@ more than 100 biodiverisity data-sources.`,
 			log.Warnf("Cannot set name_field index because %d is less than 1", name_field)
 			name_field = 1
 		}
-		opts = append(opts, gncnf.OptNameField(uint(name_field-1)))
+		opts = append(opts, config.OptNameField(uint(name_field-1)))
 
 		sources, _ := cmd.Flags().GetString("sources")
 		data_sources := parseDataSources(sources)
-		opts = append(opts, gncnf.OptPreferredSources(data_sources))
+		opts = append(opts, config.OptPreferredSources(data_sources))
 
 		url, _ := cmd.Flags().GetString("verifier_url")
 		if len(url) > 0 {
-			opts = append(opts, gncnf.OptVerifierURL(url))
+			opts = append(opts, config.OptVerifierURL(url))
 		}
 
-		cnf := gncnf.NewConfig(opts...)
+		cnf := config.NewConfig(opts...)
 
-		_ = gnverify.NewGNVerify(cnf)
+		if len(args) == 0 {
+			processStdin(cmd, cnf)
+			os.Exit(0)
+		}
+		data := getInput(cmd, args)
+		gnv := gnverify.NewGNVerify(cnf)
+		verify(gnv, data)
 	},
 }
 
@@ -140,20 +152,114 @@ func showVersionFlag(cmd *cobra.Command) bool {
 	return hasVersionFlag
 }
 
-func parseDataSources(s string) []uint {
+func processStdin(cmd *cobra.Command, cnf config.Config) {
+	if !checkStdin() {
+		_ = cmd.Help()
+		return
+	}
+	gnv := gnverify.NewGNVerify(cnf)
+	verifyFile(gnv, os.Stdin)
+}
+
+func checkStdin() bool {
+	stdInFile := os.Stdin
+	stat, err := stdInFile.Stat()
+	if err != nil {
+		log.Panic(err)
+	}
+	return (stat.Mode() & os.ModeCharDevice) == 0
+}
+
+func getInput(cmd *cobra.Command, args []string) string {
+	var data string
+	switch len(args) {
+	case 1:
+		data = args[0]
+	default:
+		_ = cmd.Help()
+		os.Exit(0)
+	}
+	return data
+}
+
+func verify(gnv gnverify.GNVerify, data string) {
+	path := string(data)
+	if sys.FileExists(path) {
+		f, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(1)
+		}
+		verifyFile(gnv, f)
+		f.Close()
+	} else {
+		verifyString(gnv, data)
+	}
+}
+
+func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
+	in := make(chan []string)
+	out := make(chan []*gne.Verification)
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go gnv.VerifyStream(in, out)
+	go processResults(gnv, out, &wg)
+	sc := bufio.NewScanner(f)
+	count := 0
+	for sc.Scan() {
+		count++
+		if count%50000 == 0 {
+			log.Printf("Parsing %d-th line\n", count)
+		}
+		name := sc.Text()
+		in <- []string{name}
+	}
+	close(in)
+	wg.Wait()
+}
+
+func processResults(gnv gnverify.GNVerify, out <-chan []*gne.Verification,
+	wg *sync.WaitGroup) {
+	defer wg.Done()
+	if gnv.Format == output.CSV {
+		fmt.Println(output.CSVHeader())
+	}
+	for o := range out {
+		for _, r := range o {
+			if r.Error != "" {
+				log.Println(r.Error)
+			}
+			fmt.Println(output.Output(r, gnv.Format, gnv.PreferredOnly))
+		}
+	}
+}
+
+func verifyString(gnv gnverify.GNVerify, name string) {
+	res := gnv.Verify(name)
+	if gnv.Format == output.CSV {
+		fmt.Println(output.CSVHeader())
+	}
+	fmt.Println(res)
+}
+
+func parseDataSources(s string) []int {
+	if s == "" {
+		return nil
+	}
 	dss := strings.Split(s, ",")
-	res := make([]uint, 0, len(dss))
+	res := make([]int, 0, len(dss))
 	for _, v := range dss {
 		v = strings.Trim(v, " ")
 		ds, err := strconv.Atoi(v)
 		if err != nil {
-			log.Warnf("Cannot convert data-source '%s' to list, skipping")
+			log.Warnf("Cannot convert data-source '%s' to list, skipping", v)
 			return nil
 		}
 		if ds < 1 {
 			log.Warnf("Data source ID %d is less than one, skipping", ds)
 		} else {
-			res = append(res, uint(ds))
+			res = append(res, int(ds))
 		}
 	}
 	if len(res) > 0 {

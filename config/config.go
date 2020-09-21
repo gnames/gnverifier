@@ -1,33 +1,13 @@
 package config
 
-type Format int
-
-const (
-	InvalidFormat Format = iota
-	CSV
-	CompactJSON
-	PrettyJSON
-)
-
-func NewFormat(s string) Format {
-	switch s {
-	case "csv":
-		return CSV
-	case "compact":
-		return CompactJSON
-	case "pretty":
-		return PrettyJSON
-	default:
-		return InvalidFormat
-	}
-}
+import "github.com/gnames/gnverify/output"
 
 // Config collects and stores external configuration data.
 type Config struct {
-	Format
+	output.Format
 	PreferredOnly    bool
 	NameField        uint
-	PreferredSources []uint
+	PreferredSources []int
 	VerifierURL      string
 }
 
@@ -35,9 +15,9 @@ type Config struct {
 // update default values to external ones.
 func NewConfig(opts ...Option) Config {
 	cnf := Config{
-		Format:      CSV,
+		Format:      output.CSV,
 		NameField:   0,
-		VerifierURL: "https://:8888",
+		VerifierURL: "http://:8888",
 	}
 	for _, opt := range opts {
 		opt(&cnf)
@@ -49,7 +29,7 @@ func NewConfig(opts ...Option) Config {
 type Option func(cnf *Config)
 
 // OptFormat sets output format
-func OptFormat(f Format) Option {
+func OptFormat(f output.Format) Option {
 	return func(cnf *Config) {
 		cnf.Format = f
 	}
@@ -71,7 +51,7 @@ func OptNameField(i uint) Option {
 }
 
 // OptPreferredSources set list of preferred sources.
-func OptPreferredSources(srs []uint) Option {
+func OptPreferredSources(srs []int) Option {
 	return func(cnf *Config) {
 		cnf.PreferredSources = srs
 	}
