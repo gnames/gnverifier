@@ -198,6 +198,7 @@ func verify(gnv gnverify.GNVerify, data string) {
 }
 
 func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
+	batch := 5000
 	in := make(chan []string)
 	out := make(chan []*gne.Verification)
 	var wg sync.WaitGroup
@@ -207,14 +208,22 @@ func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
 	go processResults(gnv, out, &wg)
 	sc := bufio.NewScanner(f)
 	count := 0
+	names := make([]string, 0, batch)
 	for sc.Scan() {
 		count++
 		if count%50000 == 0 {
-			log.Printf("Parsing %d-th line\n", count)
+			log.Printf("Verifying %d-th line\n", count)
 		}
+
 		name := sc.Text()
-		in <- []string{name}
+		names = append(names, strings.Trim(name, " "))
+		if len(names) == batch {
+			in <- names
+			names = make([]string, 0, batch)
+		}
 	}
+	log.Printf("names %+v", names)
+	in <- names
 	close(in)
 	wg.Wait()
 }
