@@ -2,11 +2,8 @@
 
 ## [v0.1.0]
 
-- Add [#6]: work with stdin as input if no other input is given.
-- Add [#5]: flag for ignoring best match result, leaving preferred matches only.
-- Add [#4]: output formats as CSV, JSON pretty, JSON compact.
-- Add [#3]: output verification results as JSON.
-- Add [#2]: remote verification of names from input or a file.
+- Add [#3]: verify names from a file or STDIN
+- Add [#2]: remote verification with output in JSON and CSV formats
 - Add [#1]: command line interface.
 
 ## Footnotes
