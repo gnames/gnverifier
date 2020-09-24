@@ -42,6 +42,10 @@ func csvOutput(ver *gne.Verification, pref_only bool) string {
 func csvRow(ver *gne.Verification, prefIndex int) string {
 	kind := "BestMatch"
 	res := ver.BestResult
+	if res == nil {
+		res = &gne.ResultData{}
+	}
+
 	if prefIndex > -1 {
 		kind = "PreferredMatch"
 		res = ver.PreferredResults[prefIndex]

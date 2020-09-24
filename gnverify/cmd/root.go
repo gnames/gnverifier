@@ -222,7 +222,6 @@ func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
 			names = make([]string, 0, batch)
 		}
 	}
-	log.Printf("names %+v", names)
 	in <- names
 	close(in)
 	wg.Wait()
