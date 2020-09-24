@@ -152,6 +152,31 @@ func showVersionFlag(cmd *cobra.Command) bool {
 	return hasVersionFlag
 }
 
+func parseDataSources(s string) []int {
+	if s == "" {
+		return nil
+	}
+	dss := strings.Split(s, ",")
+	res := make([]int, 0, len(dss))
+	for _, v := range dss {
+		v = strings.Trim(v, " ")
+		ds, err := strconv.Atoi(v)
+		if err != nil {
+			log.Warnf("Cannot convert data-source '%s' to list, skipping", v)
+			return nil
+		}
+		if ds < 1 {
+			log.Warnf("Data source ID %d is less than one, skipping", ds)
+		} else {
+			res = append(res, int(ds))
+		}
+	}
+	if len(res) > 0 {
+		return res
+	}
+	return nil
+}
+
 func processStdin(cmd *cobra.Command, cnf config.Config) {
 	if !checkStdin() {
 		_ = cmd.Help()
@@ -249,29 +274,4 @@ func verifyString(gnv gnverify.GNVerify, name string) {
 		fmt.Println(output.CSVHeader())
 	}
 	fmt.Println(res)
-}
-
-func parseDataSources(s string) []int {
-	if s == "" {
-		return nil
-	}
-	dss := strings.Split(s, ",")
-	res := make([]int, 0, len(dss))
-	for _, v := range dss {
-		v = strings.Trim(v, " ")
-		ds, err := strconv.Atoi(v)
-		if err != nil {
-			log.Warnf("Cannot convert data-source '%s' to list, skipping", v)
-			return nil
-		}
-		if ds < 1 {
-			log.Warnf("Data source ID %d is less than one, skipping", ds)
-		} else {
-			res = append(res, int(ds))
-		}
-	}
-	if len(res) > 0 {
-		return res
-	}
-	return nil
 }

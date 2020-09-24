@@ -64,6 +64,9 @@ func (gnv GNVerify) VerifyWorker(in <-chan gne.VerifyParams, out chan<- []*gne.V
 	defer wg.Done()
 	gnv = NewGNVerify(gnv.Config)
 	for params := range in {
+		if len(params.NameStrings) == 0 {
+			continue
+		}
 		verif := gnv.Verifier.Verify(params)
 		if len(verif) < 1 {
 			log.Fatalf("Did not get results from verifier")
