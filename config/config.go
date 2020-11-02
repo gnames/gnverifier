@@ -1,10 +1,12 @@
 package config
 
-import "github.com/gnames/gnverify/output"
+import (
+	"github.com/gnames/gnlib/format"
+)
 
 // Config collects and stores external configuration data.
 type Config struct {
-	output.Format
+	format.Format
 	PreferredOnly    bool
 	NameField        uint
 	PreferredSources []int
@@ -15,7 +17,7 @@ type Config struct {
 // update default values to external ones.
 func NewConfig(opts ...Option) Config {
 	cnf := Config{
-		Format:      output.CSV,
+		Format:      format.CSV,
 		NameField:   0,
 		VerifierURL: "http://:8888",
 	}
@@ -29,7 +31,7 @@ func NewConfig(opts ...Option) Config {
 type Option func(cnf *Config)
 
 // OptFormat sets output format
-func OptFormat(f output.Format) Option {
+func OptFormat(f format.Format) Option {
 	return func(cnf *Config) {
 		cnf.Format = f
 	}

@@ -31,7 +31,8 @@ import (
 	"sync"
 
 	gne "github.com/gnames/gnames/domain/entity"
-	"github.com/gnames/gnames/lib/sys"
+	"github.com/gnames/gnlib/format"
+	"github.com/gnames/gnlib/sys"
 	"github.com/gnames/gnverify"
 	"github.com/gnames/gnverify/config"
 	"github.com/gnames/gnverify/output"
@@ -57,12 +58,12 @@ more than 100 biodiverisity data-sources.`,
 		opts = append(opts, config.OptPreferredOnly(pref))
 
 		formatString, _ := cmd.Flags().GetString("format")
-		format := output.NewFormat(formatString)
-		if format == output.InvalidFormat {
-			log.Warnf("Cannot set format from '%s', setting format to csv")
-			format = output.CSV
+		frmt, _ := format.NewFormat(formatString)
+		if frmt == format.FormatNone {
+			log.Warnf("Cannot set format from '%s', setting format to csv", formatString)
+			frmt = format.CSV
 		}
-		opts = append(opts, config.OptFormat(format))
+		opts = append(opts, config.OptFormat(frmt))
 
 		name_field, err := cmd.Flags().GetInt("name_field")
 		if err != nil {
@@ -255,7 +256,7 @@ func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
 func processResults(gnv gnverify.GNVerify, out <-chan []*gne.Verification,
 	wg *sync.WaitGroup) {
 	defer wg.Done()
-	if gnv.Format == output.CSV {
+	if gnv.Format == format.CSV {
 		fmt.Println(output.CSVHeader())
 	}
 	for o := range out {
@@ -264,13 +265,14 @@ func processResults(gnv gnverify.GNVerify, out <-chan []*gne.Verification,
 				log.Println(r.Error)
 			}
 			fmt.Println(output.Output(r, gnv.Format, gnv.PreferredOnly))
+
 		}
 	}
 }
 
 func verifyString(gnv gnverify.GNVerify, name string) {
 	res := gnv.Verify(name)
-	if gnv.Format == output.CSV {
+	if gnv.Format == format.CSV {
 		fmt.Println(output.CSVHeader())
 	}
 	fmt.Println(res)

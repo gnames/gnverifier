@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gnames/gnames/domain/entity"
-	"github.com/gnames/gnames/lib/encode"
+	"github.com/gnames/gnlib/encode"
 )
 
 type VerifierRest struct {

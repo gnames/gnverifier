@@ -5,7 +5,8 @@ import (
 	"strings"
 
 	gne "github.com/gnames/gnames/domain/entity"
-	gncsv "github.com/gnames/gnames/lib/csv"
+	gncsv "github.com/gnames/gnlib/csv"
+	"github.com/gnames/gnlib/format"
 	jsoniter "github.com/json-iterator/go"
 )
 
@@ -13,13 +14,13 @@ func CSVHeader() string {
 	return "Kind,MatchType,EditDistance,ScientificName,MatchedName,MatchedCanonical,TaxonId,CurrentName,Synonym,DataSourceId,DataSourceTitle,ClassificationPath"
 }
 
-func Output(ver *gne.Verification, f Format, pref_only bool) string {
+func Output(ver *gne.Verification, f format.Format, pref_only bool) string {
 	switch f {
-	case CSV:
+	case format.CSV:
 		return csvOutput(ver, pref_only)
-	case CompactJSON:
+	case format.CompactJSON:
 		return jsonOutput(ver, pref_only, false)
-	case PrettyJSON:
+	case format.PrettyJSON:
 		return jsonOutput(ver, pref_only, true)
 	}
 	return "N/A"
