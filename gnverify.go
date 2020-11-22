@@ -4,8 +4,7 @@ import (
 	"log"
 	"sync"
 
-	gne "github.com/gnames/gnames/domain/entity"
-	gnusecase "github.com/gnames/gnames/domain/usecase"
+	gne "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnverify/config"
 	"github.com/gnames/gnverify/output"
 	"github.com/gnames/gnverify/verifier"
@@ -13,7 +12,7 @@ import (
 
 type GNVerify struct {
 	config.Config
-	gnusecase.Verifier
+	gne.Verifier
 	Jobs int
 }
 
@@ -34,7 +33,7 @@ func (gnv GNVerify) Verify(name string) string {
 	if len(verif) < 1 {
 		log.Fatalf("Did not get results from verifier")
 	}
-	return output.Output(verif[0], gnv.Format, gnv.PreferredOnly)
+	return output.Output(verif[0], gnv.Config.Format, gnv.Config.PreferredOnly)
 }
 
 func (gnv GNVerify) VerifyStream(in <-chan []string, out chan []*gne.Verification) {
@@ -46,7 +45,7 @@ func (gnv GNVerify) VerifyStream(in <-chan []string, out chan []*gne.Verificatio
 		for names := range in {
 			vwChan <- gne.VerifyParams{
 				NameStrings:      names,
-				PreferredSources: gnv.PreferredSources,
+				PreferredSources: gnv.Config.PreferredSources,
 			}
 		}
 		close(vwChan)

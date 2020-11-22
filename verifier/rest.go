@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gnames/gnames/domain/entity"
+	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnlib/encode"
 )
 
@@ -23,7 +23,7 @@ func NewVerifierRest(url string) VerifierRest {
 }
 
 // Verify takes names-strings and options and returns verification result.
-func (vr VerifierRest) Verify(params entity.VerifyParams) []*entity.Verification {
+func (vr VerifierRest) Verify(params vlib.VerifyParams) []*vlib.Verification {
 	req, err := encode.GNjson{}.Encode(params)
 	if err != nil {
 		log.Printf("Cannot encode names for verification: %s.", err)
@@ -37,7 +37,7 @@ func (vr VerifierRest) Verify(params entity.VerifyParams) []*entity.Verification
 	if err != nil {
 		log.Printf("Cannot read body of response: %s.", err)
 	}
-	var response []*entity.Verification
+	var response []*vlib.Verification
 	err = encode.GNjson{}.Decode(respBytes, &response)
 	if err != nil {
 		log.Printf("Cannot decode verification results: %s.", err)
@@ -47,7 +47,7 @@ func (vr VerifierRest) Verify(params entity.VerifyParams) []*entity.Verification
 
 // DataSources takes data-source id and opts and returns the data-source
 // metadata.  If no id is provided, it returns metadata for all data-sources.
-func (vr VerifierRest) DataSources(entity.DataSourcesOpts) []*entity.DataSource {
-	var res []*entity.DataSource
+func (vr VerifierRest) DataSources(vlib.DataSourcesOpts) []*vlib.DataSource {
+	var res []*vlib.DataSource
 	return res
 }

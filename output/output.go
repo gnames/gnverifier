@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"strings"
 
-	gne "github.com/gnames/gnames/domain/entity"
 	gncsv "github.com/gnames/gnlib/csv"
+	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnlib/format"
 	jsoniter "github.com/json-iterator/go"
 )
@@ -14,7 +14,7 @@ func CSVHeader() string {
 	return "Kind,MatchType,EditDistance,ScientificName,MatchedName,MatchedCanonical,TaxonId,CurrentName,Synonym,DataSourceId,DataSourceTitle,ClassificationPath"
 }
 
-func Output(ver *gne.Verification, f format.Format, pref_only bool) string {
+func Output(ver *vlib.Verification, f format.Format, pref_only bool) string {
 	switch f {
 	case format.CSV:
 		return csvOutput(ver, pref_only)
@@ -26,7 +26,7 @@ func Output(ver *gne.Verification, f format.Format, pref_only bool) string {
 	return "N/A"
 }
 
-func csvOutput(ver *gne.Verification, pref_only bool) string {
+func csvOutput(ver *vlib.Verification, pref_only bool) string {
 	var res []string
 	if !pref_only {
 		best := csvRow(ver, -1)
@@ -40,11 +40,11 @@ func csvOutput(ver *gne.Verification, pref_only bool) string {
 	return strings.Join(res, "\n")
 }
 
-func csvRow(ver *gne.Verification, prefIndex int) string {
+func csvRow(ver *vlib.Verification, prefIndex int) string {
 	kind := "BestMatch"
 	res := ver.BestResult
 	if res == nil {
-		res = &gne.ResultData{}
+		res = &vlib.ResultData{}
 	}
 
 	if prefIndex > -1 {
@@ -52,15 +52,25 @@ func csvRow(ver *gne.Verification, prefIndex int) string {
 		res = ver.PreferredResults[prefIndex]
 	}
 
-	s := []string{kind, ver.MatchType.String(), strconv.Itoa(res.EditDistance),
+	dsID := ""
+	if res.DataSourceID != nil {
+		dsID = strconv.Itoa(*res.DataSourceID)
+	}
+
+	ed := ""
+	if res.EditDistance != nil {
+		ed = strconv.Itoa(*res.EditDistance)
+	}
+
+	s := []string{kind, ver.MatchType.String(), ed,
 		ver.Input, res.MatchedName, res.MatchedCanonicalFull, res.ID,
 		res.CurrentName, strconv.FormatBool(res.IsSynonym),
-		strconv.Itoa(res.DataSourceID), res.DataSrouceTitleShort,
+		dsID, res.DataSrouceTitleShort,
 		res.ClassificationPath}
 	return gncsv.ToCSV(s)
 }
 
-func jsonOutput(ver *gne.Verification, pref_only bool, pretty bool) string {
+func jsonOutput(ver *vlib.Verification, pref_only bool, pretty bool) string {
 	res := []byte("bad JSON")
 	if pref_only {
 		ver.BestResult = nil

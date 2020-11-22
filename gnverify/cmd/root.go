@@ -30,7 +30,7 @@ import (
 	"strings"
 	"sync"
 
-	gne "github.com/gnames/gnames/domain/entity"
+	gne "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnlib/format"
 	"github.com/gnames/gnlib/sys"
 	"github.com/gnames/gnverify"
