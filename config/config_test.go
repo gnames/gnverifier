@@ -1,72 +1,53 @@
 package config_test
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"testing"
 
 	"github.com/gnames/gnlib/format"
-	. "github.com/gnames/gnverify/config"
+	"github.com/gnames/gnverify/config"
+	"github.com/stretchr/testify/assert"
 )
 
 var url = "https://gnames.globalnames.org"
 
-var _ = Describe("Config", func() {
-	Describe("NewConfig", func() {
-		It("Creates a default GNparser", func() {
-			cnf := NewConfig()
-			deflt := Config{
-				Format:      format.CSV,
-				VerifierURL: "http://:8888",
-			}
-			Expect(cnf.Format).To(Equal(deflt.Format))
-			Expect(cnf.VerifierURL).To(Equal(deflt.VerifierURL))
-		})
-	})
+func TestConfigDefault(t *testing.T) {
+	cnf := config.NewConfig()
+	deflt := config.Config{
+		Format:      format.CSV,
+		VerifierURL: "https://verifier.globalnames.org/api/v1/",
+	}
+	assert.Equal(t, cnf.Format, deflt.Format)
+	assert.Equal(t, cnf.VerifierURL, deflt.VerifierURL)
+}
 
-	It("Takes options to update default settings", func() {
-		opts := opts()
-		cnf := NewConfig(opts...)
-		updt := Config{
-			Format:           format.PrettyJSON,
-			PreferredOnly:    true,
-			NameField:        3,
-			PreferredSources: []int{1, 2, 3},
-			VerifierURL:      url,
-		}
-		Expect(cnf.Format).To(Equal(updt.Format))
-		Expect(cnf.PreferredOnly).To(Equal(updt.PreferredOnly))
-		Expect(cnf.NameField).To(Equal(updt.NameField))
-		Expect(cnf.PreferredSources).To(Equal(updt.PreferredSources))
-		Expect(cnf.VerifierURL).To(Equal(updt.VerifierURL))
-	})
-
-	Describe("NewFormat", func() {
-		It("Creates format out of string", func() {
-			inputs := []formatTest{
-				{String: "csv", Format: format.CSV},
-				{String: "compact", Format: format.CompactJSON},
-				{String: "pretty", Format: format.PrettyJSON},
-				// {String: "badstring", Format: format.FormatNone},
-			}
-			for _, v := range inputs {
-				f, _ := format.NewFormat(v.String)
-				Expect(f).To(Equal(v.Format))
-			}
-		})
-	})
-})
+func TestConfigOpts(t *testing.T) {
+	opts := opts()
+	cnf := config.NewConfig(opts...)
+	updt := config.Config{
+		Format:           format.PrettyJSON,
+		PreferredOnly:    true,
+		NameField:        3,
+		PreferredSources: []int{1, 2, 3},
+		VerifierURL:      url,
+	}
+	assert.Equal(t, cnf.Format, updt.Format)
+	assert.Equal(t, cnf.PreferredOnly, updt.PreferredOnly)
+	assert.Equal(t, cnf.NameField, updt.NameField)
+	assert.Equal(t, cnf.PreferredSources, updt.PreferredSources)
+	assert.Equal(t, cnf.VerifierURL, updt.VerifierURL)
+}
 
 type formatTest struct {
 	String string
 	format.Format
 }
 
-func opts() []Option {
-	return []Option{
-		OptFormat(format.PrettyJSON),
-		OptPreferredOnly(true),
-		OptNameField(3),
-		OptPreferredSources([]int{1, 2, 3}),
-		OptVerifierURL(url),
+func opts() []config.Option {
+	return []config.Option{
+		config.OptFormat(format.PrettyJSON),
+		config.OptPreferredOnly(true),
+		config.OptNameField(3),
+		config.OptPreferredSources([]int{1, 2, 3}),
+		config.OptVerifierURL(url),
 	}
 }

@@ -4,53 +4,65 @@ import (
 	"log"
 	"sync"
 
-	gne "github.com/gnames/gnlib/domain/entity/verifier"
+	vlib "github.com/gnames/gnlib/domain/entity/verifier"
+	"github.com/gnames/gnlib/format"
 	"github.com/gnames/gnverify/config"
-	"github.com/gnames/gnverify/output"
-	"github.com/gnames/gnverify/verifier"
+	"github.com/gnames/gnverify/entity/output"
+	"github.com/gnames/gnverify/entity/verifier"
+	"github.com/gnames/gnverify/io/verifrest"
 )
 
-type GNVerify struct {
-	config.Config
-	gne.Verifier
-	Jobs int
+type gnverify struct {
+	config   config.Config
+	verifier verifier.Verifier
+	jobs     int
 }
 
+// NewGNVerify creates a struct that implements GNVerify interface.
 func NewGNVerify(cnf config.Config) GNVerify {
-	return GNVerify{
-		Config:   cnf,
-		Verifier: verifier.NewVerifierRest(cnf.VerifierURL),
-		Jobs:     4,
+	return &gnverify{
+		config:   cnf,
+		verifier: verifrest.NewVerifier(cnf.VerifierURL),
+		jobs:     8,
 	}
 }
 
-func (gnv GNVerify) Verify(name string) string {
-	params := gne.VerifyParams{
+func (gnv *gnverify) Format() format.Format {
+	return gnv.config.Format
+}
+
+func (gnv *gnverify) PreferredOnly() bool {
+	return gnv.config.PreferredOnly
+}
+
+func (gnv *gnverify) VerifyOne(name string) string {
+	params := vlib.VerifyParams{
 		NameStrings:      []string{name},
-		PreferredSources: gnv.Config.PreferredSources,
+		PreferredSources: gnv.config.PreferredSources,
 	}
-	verif := gnv.Verifier.Verify(params)
+	verif := gnv.verifier.Verify(params)
 	if len(verif) < 1 {
 		log.Fatalf("Did not get results from verifier")
 	}
-	return output.Output(verif[0], gnv.Config.Format, gnv.Config.PreferredOnly)
+	return output.Output(verif[0], gnv.config.Format, gnv.config.PreferredOnly)
 }
 
-func (gnv GNVerify) VerifyStream(in <-chan []string, out chan []*gne.Verification) {
-	vwChan := make(chan gne.VerifyParams)
+func (gnv *gnverify) VerifyStream(in <-chan []string,
+	out chan []vlib.Verification) {
+	vwChan := make(chan vlib.VerifyParams)
 	var wg sync.WaitGroup
-	wg.Add(gnv.Jobs)
+	wg.Add(gnv.jobs)
 
 	go func() {
 		for names := range in {
-			vwChan <- gne.VerifyParams{
+			vwChan <- vlib.VerifyParams{
 				NameStrings:      names,
-				PreferredSources: gnv.Config.PreferredSources,
+				PreferredSources: gnv.config.PreferredSources,
 			}
 		}
 		close(vwChan)
 	}()
-	for i := 0; i < gnv.Jobs; i++ {
+	for i := 0; i < gnv.jobs; i++ {
 		go gnv.VerifyWorker(vwChan, out, &wg)
 	}
 
@@ -58,15 +70,14 @@ func (gnv GNVerify) VerifyStream(in <-chan []string, out chan []*gne.Verificatio
 	close(out)
 }
 
-func (gnv GNVerify) VerifyWorker(in <-chan gne.VerifyParams, out chan<- []*gne.Verification,
-	wg *sync.WaitGroup) {
+func (gnv *gnverify) VerifyWorker(in <-chan vlib.VerifyParams,
+	out chan<- []vlib.Verification, wg *sync.WaitGroup) {
 	defer wg.Done()
-	gnv = NewGNVerify(gnv.Config)
 	for params := range in {
 		if len(params.NameStrings) == 0 {
 			continue
 		}
-		verif := gnv.Verifier.Verify(params)
+		verif := gnv.verifier.Verify(params)
 		if len(verif) < 1 {
 			log.Fatalf("Did not get results from verifier")
 		}

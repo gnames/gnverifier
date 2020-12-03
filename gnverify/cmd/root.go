@@ -35,7 +35,7 @@ import (
 	"github.com/gnames/gnlib/sys"
 	"github.com/gnames/gnverify"
 	"github.com/gnames/gnverify/config"
-	"github.com/gnames/gnverify/output"
+	"github.com/gnames/gnverify/entity/output"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -226,7 +226,7 @@ func verify(gnv gnverify.GNVerify, data string) {
 func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
 	batch := 5000
 	in := make(chan []string)
-	out := make(chan []*gne.Verification)
+	out := make(chan []gne.Verification)
 	var wg sync.WaitGroup
 	wg.Add(1)
 
@@ -253,10 +253,10 @@ func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
 	wg.Wait()
 }
 
-func processResults(gnv gnverify.GNVerify, out <-chan []*gne.Verification,
+func processResults(gnv gnverify.GNVerify, out <-chan []gne.Verification,
 	wg *sync.WaitGroup) {
 	defer wg.Done()
-	if gnv.Format == format.CSV {
+	if gnv.Format() == format.CSV {
 		fmt.Println(output.CSVHeader())
 	}
 	for o := range out {
@@ -264,15 +264,14 @@ func processResults(gnv gnverify.GNVerify, out <-chan []*gne.Verification,
 			if r.Error != "" {
 				log.Println(r.Error)
 			}
-			fmt.Println(output.Output(r, gnv.Format, gnv.PreferredOnly))
-
+			fmt.Println(output.Output(r, gnv.Format(), gnv.PreferredOnly()))
 		}
 	}
 }
 
 func verifyString(gnv gnverify.GNVerify, name string) {
-	res := gnv.Verify(name)
-	if gnv.Format == format.CSV {
+	res := gnv.VerifyOne(name)
+	if gnv.Format() == format.CSV {
 		fmt.Println(output.CSVHeader())
 	}
 	fmt.Println(res)

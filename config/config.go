@@ -19,7 +19,7 @@ func NewConfig(opts ...Option) Config {
 	cnf := Config{
 		Format:      format.CSV,
 		NameField:   0,
-		VerifierURL: "http://:8888",
+		VerifierURL: "https://verifier.globalnames.org/api/v1/",
 	}
 	for _, opt := range opts {
 		opt(&cnf)
