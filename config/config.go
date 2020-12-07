@@ -11,6 +11,8 @@ type Config struct {
 	NameField        uint
 	PreferredSources []int
 	VerifierURL      string
+	Jobs             int
+	Batch            int
 }
 
 // NewConfig is a Config constructor that takes external options to
@@ -20,6 +22,8 @@ func NewConfig(opts ...Option) Config {
 		Format:      format.CSV,
 		NameField:   0,
 		VerifierURL: "https://verifier.globalnames.org/api/v1/",
+		Batch:       5000,
+		Jobs:        4,
 	}
 	for _, opt := range opts {
 		opt(&cnf)
@@ -49,6 +53,13 @@ func OptPreferredOnly(b bool) Option {
 func OptNameField(i uint) Option {
 	return func(cnf *Config) {
 		cnf.NameField = i
+	}
+}
+
+//OptJobs sets number of jobs to run in parallel.
+func OptJobs(i int) Option {
+	return func(cnf *Config) {
+		cnf.Jobs = i
 	}
 }
 

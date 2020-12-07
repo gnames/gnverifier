@@ -29,7 +29,9 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
+	"github.com/dustin/go-humanize"
 	gne "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnlib/format"
 	"github.com/gnames/gnlib/sys"
@@ -64,6 +66,9 @@ more than 100 biodiverisity data-sources.`,
 			frmt = format.CSV
 		}
 		opts = append(opts, config.OptFormat(frmt))
+
+		jobs, _ := cmd.Flags().GetInt("jobs")
+		opts = append(opts, config.OptJobs(jobs))
 
 		name_field, err := cmd.Flags().GetInt("name_field")
 		if err != nil {
@@ -122,6 +127,7 @@ func init() {
   pretty: pretty JSON,
   csv: CSV (DEFAULT)`)
 	rootCmd.Flags().IntP("name_field", "n", 1, "Set position of ScientificName field, the first field is 1.")
+	rootCmd.Flags().IntP("jobs", "j", 4, "Number of jobs running in parallel.")
 	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
   If sources are set and there are matches to their data,
   such matches are returned in "preferred_result" results.
@@ -224,23 +230,16 @@ func verify(gnv gnverify.GNVerify, data string) {
 }
 
 func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
-	batch := 5000
+	batch := gnv.Config().Batch
 	in := make(chan []string)
 	out := make(chan []gne.Verification)
 	var wg sync.WaitGroup
 	wg.Add(1)
-
 	go gnv.VerifyStream(in, out)
 	go processResults(gnv, out, &wg)
 	sc := bufio.NewScanner(f)
-	count := 0
 	names := make([]string, 0, batch)
 	for sc.Scan() {
-		count++
-		if count%50000 == 0 {
-			log.Printf("Verifying %d-th line\n", count)
-		}
-
 		name := sc.Text()
 		names = append(names, strings.Trim(name, " "))
 		if len(names) == batch {
@@ -256,22 +255,32 @@ func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
 func processResults(gnv gnverify.GNVerify, out <-chan []gne.Verification,
 	wg *sync.WaitGroup) {
 	defer wg.Done()
-	if gnv.Format() == format.CSV {
+	timeStart := time.Now().UnixNano()
+	if gnv.Config().Format == format.CSV {
 		fmt.Println(output.CSVHeader())
 	}
+	var count int
 	for o := range out {
+		count++
+		total := int64(count * len(o))
+		timeSpent := float64(time.Now().UnixNano()-timeStart) / 1_000_000_000
+		speed := int64(float64(total) / timeSpent)
+
+		log.Printf("Verified %s records, %s names/sec\n", humanize.Comma(total),
+			humanize.Comma(speed))
 		for _, r := range o {
 			if r.Error != "" {
 				log.Println(r.Error)
 			}
-			fmt.Println(output.Output(r, gnv.Format(), gnv.PreferredOnly()))
+			fmt.Println(output.Output(r, gnv.Config().Format,
+				gnv.Config().PreferredOnly))
 		}
 	}
 }
 
 func verifyString(gnv gnverify.GNVerify, name string) {
 	res := gnv.VerifyOne(name)
-	if gnv.Format() == format.CSV {
+	if gnv.Config().Format == format.CSV {
 		fmt.Println(output.CSVHeader())
 	}
 	fmt.Println(res)

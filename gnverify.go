@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
-	"github.com/gnames/gnlib/format"
 	"github.com/gnames/gnverify/config"
 	"github.com/gnames/gnverify/entity/output"
 	"github.com/gnames/gnverify/entity/verifier"
@@ -15,7 +14,6 @@ import (
 type gnverify struct {
 	config   config.Config
 	verifier verifier.Verifier
-	jobs     int
 }
 
 // NewGNVerify creates a struct that implements GNVerify interface.
@@ -23,16 +21,11 @@ func NewGNVerify(cnf config.Config) GNVerify {
 	return &gnverify{
 		config:   cnf,
 		verifier: verifrest.NewVerifier(cnf.VerifierURL),
-		jobs:     8,
 	}
 }
 
-func (gnv *gnverify) Format() format.Format {
-	return gnv.config.Format
-}
-
-func (gnv *gnverify) PreferredOnly() bool {
-	return gnv.config.PreferredOnly
+func (gnv *gnverify) Config() config.Config {
+	return gnv.config
 }
 
 func (gnv *gnverify) VerifyOne(name string) string {
@@ -51,7 +44,7 @@ func (gnv *gnverify) VerifyStream(in <-chan []string,
 	out chan []vlib.Verification) {
 	vwChan := make(chan vlib.VerifyParams)
 	var wg sync.WaitGroup
-	wg.Add(gnv.jobs)
+	wg.Add(gnv.Config().Jobs)
 
 	go func() {
 		for names := range in {
@@ -62,7 +55,7 @@ func (gnv *gnverify) VerifyStream(in <-chan []string,
 		}
 		close(vwChan)
 	}()
-	for i := 0; i < gnv.jobs; i++ {
+	for i := 0; i < gnv.Config().Jobs; i++ {
 		go gnv.VerifyWorker(vwChan, out, &wg)
 	}
 
