@@ -6,9 +6,8 @@ import (
 
 // Config collects and stores external configuration data.
 type Config struct {
-	format.Format
+	Format           format.Format
 	PreferredOnly    bool
-	NameField        uint
 	PreferredSources []int
 	VerifierURL      string
 	Jobs             int
@@ -20,7 +19,6 @@ type Config struct {
 func NewConfig(opts ...Option) Config {
 	cnf := Config{
 		Format:      format.CSV,
-		NameField:   0,
 		VerifierURL: "https://verifier.globalnames.org/api/v1/",
 		Batch:       5000,
 		Jobs:        4,
@@ -46,13 +44,6 @@ func OptFormat(f format.Format) Option {
 func OptPreferredOnly(b bool) Option {
 	return func(cnf *Config) {
 		cnf.PreferredOnly = b
-	}
-}
-
-// OptNameField sets index of name in CSV file.
-func OptNameField(i uint) Option {
-	return func(cnf *Config) {
-		cnf.NameField = i
 	}
 }
 

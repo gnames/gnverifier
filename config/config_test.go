@@ -26,13 +26,11 @@ func TestConfigOpts(t *testing.T) {
 	updt := config.Config{
 		Format:           format.PrettyJSON,
 		PreferredOnly:    true,
-		NameField:        3,
 		PreferredSources: []int{1, 2, 3},
 		VerifierURL:      url,
 	}
 	assert.Equal(t, cnf.Format, updt.Format)
 	assert.Equal(t, cnf.PreferredOnly, updt.PreferredOnly)
-	assert.Equal(t, cnf.NameField, updt.NameField)
 	assert.Equal(t, cnf.PreferredSources, updt.PreferredSources)
 	assert.Equal(t, cnf.VerifierURL, updt.VerifierURL)
 }
@@ -46,7 +44,6 @@ func opts() []config.Option {
 	return []config.Option{
 		config.OptFormat(format.PrettyJSON),
 		config.OptPreferredOnly(true),
-		config.OptNameField(3),
 		config.OptPreferredSources([]int{1, 2, 3}),
 		config.OptVerifierURL(url),
 	}

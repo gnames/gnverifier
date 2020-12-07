@@ -25,7 +25,9 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -38,13 +40,47 @@ import (
 	"github.com/gnames/gnverify"
 	"github.com/gnames/gnverify/config"
 	"github.com/gnames/gnverify/entity/output"
+	"github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
+
+const configText = `# Format of the output. Can be 'csv', 'compact', 'pretty'.
+# Format: csv
+
+# PreferredOnly if true, do not show BestResult, only Preferred Results.
+# Its valid values are 'true' and 'false'.
+# PreferredOnly: false
+
+# PreferredSources is a list of data-source IDs that should always return
+# matched records if they are found.
+# You can find list of all data-sources at
+# https://verifier.globalnames.org/api/v1/data_sources
+# PreferredSources:
+#  - 1
+#  - 11
+
+# VerifierURL is a URL to gnames REST API
+# VerifierURL: "https://verifier.globalnames.org/api/v1/"
+
+# Jobs is number of jobs to run in parallel.
+# Jobs: 4
+`
 
 var (
 	opts []config.Option
 )
+
+// cfgData purpose is to achieve automatic import of data from the
+// configuration file, if it exists.
+type cfgData struct {
+	Format           string
+	PreferredOnly    bool
+	PreferredSources []int
+	VerifierURL      string
+	Jobs             int
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -57,36 +93,33 @@ more than 100 biodiverisity data-sources.`,
 			os.Exit(0)
 		}
 		pref, _ := cmd.Flags().GetBool("preferred_only")
-		opts = append(opts, config.OptPreferredOnly(pref))
+		if pref {
+			opts = append(opts, config.OptPreferredOnly(pref))
+		}
 
 		formatString, _ := cmd.Flags().GetString("format")
-		frmt, _ := format.NewFormat(formatString)
-		if frmt == format.FormatNone {
-			log.Warnf("Cannot set format from '%s', setting format to csv", formatString)
-			frmt = format.CSV
+		if formatString != "csv" {
+			frmt, _ := format.NewFormat(formatString)
+			if frmt == format.FormatNone {
+				log.Warnf("Cannot set format from '%s', setting format to csv", formatString)
+				frmt = format.CSV
+			}
+			opts = append(opts, config.OptFormat(frmt))
 		}
-		opts = append(opts, config.OptFormat(frmt))
 
 		jobs, _ := cmd.Flags().GetInt("jobs")
-		opts = append(opts, config.OptJobs(jobs))
-
-		name_field, err := cmd.Flags().GetInt("name_field")
-		if err != nil {
-			log.Warnf("Cannot set position of the name_field: %s", err)
-			name_field = 1
+		if jobs != 4 {
+			opts = append(opts, config.OptJobs(jobs))
 		}
-		if name_field < 1 {
-			log.Warnf("Cannot set name_field index because %d is less than 1", name_field)
-			name_field = 1
-		}
-		opts = append(opts, config.OptNameField(uint(name_field-1)))
 
 		sources, _ := cmd.Flags().GetString("sources")
-		data_sources := parseDataSources(sources)
-		opts = append(opts, config.OptPreferredSources(data_sources))
+		if sources != "" {
+			data_sources := parseDataSources(sources)
+			opts = append(opts, config.OptPreferredSources(data_sources))
+		}
 
 		url, _ := cmd.Flags().GetString("verifier_url")
-		if len(url) > 0 {
+		if url != "" {
 			opts = append(opts, config.OptVerifierURL(url))
 		}
 
@@ -112,7 +145,7 @@ func Execute() {
 }
 
 func init() {
-	// cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
@@ -143,6 +176,63 @@ func init() {
   172 - PaleoBioDB
   181 - IRMNG`)
 	rootCmd.Flags().StringP("verifier_url", "v", "", "URL for verification service")
+}
+
+// initConfig reads in config file and ENV variables if set.
+func initConfig() {
+	var home string
+	var err error
+	configFile := "gnverify"
+
+	// Find home directory.
+	home, err = homedir.Dir()
+	if err != nil {
+		log.Fatalf("Cannot find home directory: %s.", err)
+	}
+	home = filepath.Join(home, ".config")
+
+	// Search config in home directory with name ".gnmatcher" (without extension).
+	viper.AddConfigPath(home)
+	viper.SetConfigName(configFile)
+
+	configPath := filepath.Join(home, fmt.Sprintf("%s.yaml", configFile))
+	touchConfigFile(configPath, configFile)
+
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err == nil {
+		log.Printf("Using config file: %s.", viper.ConfigFileUsed())
+	}
+	getOpts()
+}
+
+// getOpts imports data from the configuration file. Some of the settings can
+// be overriden by command line flags.
+func getOpts() {
+	cfg := &cfgData{}
+	err := viper.Unmarshal(cfg)
+	if err != nil {
+		log.Fatalf("Cannot deserialize config data: %s.", err)
+	}
+
+	if cfg.Format != "" {
+		cfgFormat, err := format.NewFormat(cfg.Format)
+		if err != nil {
+			cfgFormat = format.CSV
+		}
+		opts = append(opts, config.OptFormat(cfgFormat))
+	}
+	if cfg.PreferredOnly {
+		opts = append(opts, config.OptPreferredOnly(cfg.PreferredOnly))
+	}
+	if len(cfg.PreferredSources) > 0 {
+		opts = append(opts, config.OptPreferredSources(cfg.PreferredSources))
+	}
+	if cfg.VerifierURL != "" {
+		opts = append(opts, config.OptVerifierURL(cfg.VerifierURL))
+	}
+	if cfg.Jobs > 0 {
+		opts = append(opts, config.OptJobs(cfg.Jobs))
+	}
 }
 
 // showVersionFlag provides version and the build timestamp. If it returns
@@ -284,4 +374,27 @@ func verifyString(gnv gnverify.GNVerify, name string) {
 		fmt.Println(output.CSVHeader())
 	}
 	fmt.Println(res)
+}
+
+// touchConfigFile checks if config file exists, and if not, it gets created.
+func touchConfigFile(configPath string, configFile string) {
+	if sys.FileExists(configPath) {
+		return
+	}
+
+	log.Printf("Creating config file: %s.", configPath)
+	createConfig(configPath, configFile)
+}
+
+// createConfig creates config file.
+func createConfig(path string, file string) {
+	err := sys.MakeDir(filepath.Dir(path))
+	if err != nil {
+		log.Fatalf("Cannot create dir %s: %s.", path, err)
+	}
+
+	err = ioutil.WriteFile(path, []byte(configText), 0644)
+	if err != nil {
+		log.Fatalf("Cannot write to file %s: %s", path, err)
+	}
 }
