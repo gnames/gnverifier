@@ -16,7 +16,8 @@ type gnverify struct {
 	verifier verifier.Verifier
 }
 
-// NewGNVerify creates a struct that implements GNVerify interface.
+// NewGNVerify constructs an object that implements GNVerify interface
+// and can be used for matching strings to scientfic names.
 func NewGNVerify(cnf config.Config) GNVerify {
 	return &gnverify{
 		config:   cnf,
@@ -24,10 +25,13 @@ func NewGNVerify(cnf config.Config) GNVerify {
 	}
 }
 
+// Config returns configuration data.
 func (gnv *gnverify) Config() config.Config {
 	return gnv.config
 }
 
+// VerifyOne verifies one input string and returns results
+// as a string in JSON or CSV format.
 func (gnv *gnverify) VerifyOne(name string) string {
 	params := vlib.VerifyParams{
 		NameStrings:      []string{name},
@@ -40,6 +44,9 @@ func (gnv *gnverify) VerifyOne(name string) string {
 	return output.Output(verif[0], gnv.config.Format, gnv.config.PreferredOnly)
 }
 
+// VerifyStream receives batches of strings through the input
+// channel and sends results of verification via output
+// channel.
 func (gnv *gnverify) VerifyStream(in <-chan []string,
 	out chan []vlib.Verification) {
 	vwChan := make(chan vlib.VerifyParams)

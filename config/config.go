@@ -6,12 +6,29 @@ import (
 
 // Config collects and stores external configuration data.
 type Config struct {
-	Format           format.Format
-	PreferredOnly    bool
+	// Format determins the output. It can be either JSON or CSV.
+	Format format.Format
+
+	// PreferredOnly hides BestResult if the user wants to see only
+	// preferred results.
+	PreferredOnly bool
+
+	// PreferredSources are IDs of DataSources that are important for
+	// user. Normally only one "the best" reusult returns. If user gives
+	// preferred sources, then matches from these sources are also
+	// returned.
 	PreferredSources []int
-	VerifierURL      string
-	Jobs             int
-	Batch            int
+
+	// VerifierURL URL for gnames verification service. It only needs to
+	// be changed if user sets local version of gnames.
+	VerifierURL string
+
+	// Jobs is the number of verification jobs to run in parallel.
+	Jobs int
+
+	// Batch is the size of the string slices fed into input channel for
+	// verification.
+	Batch int
 }
 
 // NewConfig is a Config constructor that takes external options to

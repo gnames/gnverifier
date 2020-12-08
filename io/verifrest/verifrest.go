@@ -17,6 +17,7 @@ type verifrest struct {
 	client      *http.Client
 }
 
+// NewVerifier returns object that implements Verifier interface.
 func NewVerifier(url string) verifier.Verifier {
 	if url[len(url)-1] != '/' {
 		url = url + "/"

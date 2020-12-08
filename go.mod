@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/dustin/go-humanize v1.0.0
-	github.com/gnames/gnlib v0.1.3
+	github.com/gnames/gnlib v0.1.5
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/nxadm/tail v1.4.5 // indirect
 	github.com/sirupsen/logrus v1.7.0

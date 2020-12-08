@@ -27,25 +27,28 @@ const (
 	classificationPath
 )
 
-func Output(ver vlib.Verification, f format.Format, pref_only bool) string {
+// Output takes result of verification for one string and converts it into
+// required format (CSV or JSON).
+func Output(ver vlib.Verification, f format.Format, prefOnly bool) string {
 	switch f {
 	case format.CSV:
-		return csvOutput(ver, pref_only)
+		return csvOutput(ver, prefOnly)
 	case format.CompactJSON:
-		return jsonOutput(ver, pref_only, false)
+		return jsonOutput(ver, prefOnly, false)
 	case format.PrettyJSON:
-		return jsonOutput(ver, pref_only, true)
+		return jsonOutput(ver, prefOnly, true)
 	}
 	return "N/A"
 }
 
+// CSVHeader returns the header string for CSV output format.
 func CSVHeader() string {
 	return "Kind,MatchType,EditDistance,ScientificName,MatchedName,MatchedCanonical,TaxonId,CurrentName,Synonym,DataSourceId,DataSourceTitle,ClassificationPath"
 }
 
-func csvOutput(ver vlib.Verification, pref_only bool) string {
+func csvOutput(ver vlib.Verification, prefOnly bool) string {
 	var res []string
-	if !pref_only {
+	if !prefOnly {
 		best := csvRow(ver, -1)
 		res = append(res, best)
 	}
@@ -75,7 +78,7 @@ func csvRow(ver vlib.Verification, prefIndex int) string {
 		s[editDistance] = strconv.Itoa(res.EditDistance)
 		s[matchedName] = res.MatchedName
 		s[matchedCanonical] = res.MatchedCanonicalFull
-		s[taxonID] = res.ID
+		s[taxonID] = res.RecordID
 		s[currentName] = res.CurrentName
 		s[synonym] = strconv.FormatBool(res.IsSynonym)
 		s[dataSourceID] = strconv.Itoa(res.DataSourceID)
@@ -86,9 +89,9 @@ func csvRow(ver vlib.Verification, prefIndex int) string {
 	return gncsv.ToCSV(s)
 }
 
-func jsonOutput(ver vlib.Verification, pref_only bool, pretty bool) string {
+func jsonOutput(ver vlib.Verification, prefOnly bool, pretty bool) string {
 	enc := encode.GNjson{Pretty: pretty}
-	if pref_only {
+	if prefOnly {
 		ver.BestResult = nil
 	}
 	res, _ := enc.Encode(ver)
