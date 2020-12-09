@@ -33,6 +33,12 @@ release:
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD); \
 	tar zcvf /tmp/gnverify-${VER}-linux.tar.gz gnverify; \
 	$(GOCLEAN);
+	$(FLAGS_SHARED) GOOS=darwin $(GOBUILD); \
+	tar zcvf /tmp/gnverify-${VER}-mac.tar.gz gnverify; \
+	$(GOCLEAN); \
+	$(FLAGS_SHARED) GOOS=windows $(GOBUILD); \
+	zip -9 /tmp/gnverify-${VER}-win-64.zip gnverify.exe; \
+	$(GOCLEAN);
 
 install:
 	$(GOGENERATE)
