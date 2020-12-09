@@ -32,7 +32,7 @@ release:
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD); \
 	tar zcvf /tmp/gnverify-${VER}-linux.tar.gz gnverify; \
-	$(GOCLEAN);
+	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=darwin $(GOBUILD); \
 	tar zcvf /tmp/gnverify-${VER}-mac.tar.gz gnverify; \
 	$(GOCLEAN); \
