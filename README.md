@@ -18,7 +18,9 @@ biodiversity [Data Sources][data_source_ids]
     * [version](#version)
     * [format](#format)
     * [sources](#sources)
-    * [`preferred_only`](#preferred_only)
+    * [preferred_only](#preferred_only)
+    * [jobs](#jobs)
+  * [Configuration file](#configuration-file)
 * [Copyright](#copyright)
 
 <!-- vim-markdown-toc -->
@@ -186,7 +188,7 @@ gnverify file.tsv --sources="12"
 cat file.txt | gnverify -s '1,12'
 ```
 
-#### `preferred_only`
+#### preferred_only
 
 Sometimes a users wants to map a list of names to a DataSource. They
 are not interested if name matched anywhere else. In such case you can use
@@ -198,7 +200,34 @@ gnverify -p -s '12' file.txt
 gnverify --preferred_only --sources='1,12' file.tsv
 ```
 
+#### jobs
+
+If the list of names if very large, it is possible to tell gnverify to
+run requests in parallel. In this example gnverify will run 8 processes
+simultaneously. The order of returned names will be somewhat randomized.
+
+```bash
+gnverify -j 8 file.txt
+# or
+gnverify --jobs=8 file.tsv
+```
+
+Sometimes it is important to return names in exactly same order. For such
+cases set `jobs` flag to 1.
+
+```bash
+gnverify -j 1 file.txt
+```
+
+### Configuration file
+
+If you find yourself using the same flags over and over again, it makes sense
+to edit configuration file instead. It is located at
+`$HOME/.config/gnverify.yaml` directory. After that you do not need to
+use command line options and flags.
+
 ## Copyright
+
 
 Authors: [Dmitry Mozzherin][dimus]
 
