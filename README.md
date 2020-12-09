@@ -223,11 +223,14 @@ gnverify -j 1 file.txt
 
 If you find yourself using the same flags over and over again, it makes sense
 to edit configuration file instead. It is located at
-`$HOME/.config/gnverify.yaml` directory. After that you do not need to
-use command line options and flags.
+`$HOME/.config/gnverify.yaml`. After that you do not need to use command line
+options and flags.
+
+```bash
+gnverify file.txt
+```
 
 ## Copyright
-
 
 Authors: [Dmitry Mozzherin][dimus]
 
