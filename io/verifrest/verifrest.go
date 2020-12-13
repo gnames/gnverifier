@@ -40,14 +40,18 @@ func (vr *verifrest) Verify(params vlib.VerifyParams) []vlib.Verification {
 	if err != nil {
 		log.Printf("Cannot encode names for verification: %s.", err)
 	}
+
 	attempts, err = try(func(int) (bool, error) {
 		r := bytes.NewReader(req)
 		namesRange := fmt.Sprintf("%s-%s", params.NameStrings[0], params.NameStrings[len(params.NameStrings)-1])
+
 		resp, err := vr.client.Post(vr.verifierURL+"verifications", "application/json", r)
 		if err != nil {
 			log.Warnf("Request is failing for %s.", namesRange)
 			return true, err
 		}
+		defer resp.Body.Close()
+
 		respBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			log.Warnf("Body reading is failing for %s.", namesRange)
@@ -61,6 +65,7 @@ func (vr *verifrest) Verify(params vlib.VerifyParams) []vlib.Verification {
 		}
 		return false, nil
 	})
+
 	if err != nil {
 		log.Printf("Verification failed for %s-%s after %d attempts.", params.NameStrings[0],
 			params.NameStrings[len(params.NameStrings)-1], attempts)
