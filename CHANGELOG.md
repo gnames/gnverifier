@@ -2,6 +2,7 @@
 
 ## [v0.1.0]
 
+- Add [#19]: Add Homebrew package.
 - Add [#15]: add jobs option.
 - Add [#14]: add config file.
 - Add [#8]: substitute zeroes to empty fields in CSV where it makes sense.

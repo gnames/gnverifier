@@ -7,6 +7,7 @@ biodiversity [Data Sources][data_source_ids]
 
 * [Features](#features)
 * [Installation](#installation)
+  * [Using Homebrew on Mac OS, Linux, and Linux on Windows X (WSL2)](#using-homebrew-on-mac-os-linux-and-linux-on-windows-x-wsl2)
   * [MS Windows](#ms-windows)
   * [Linux and Mac](#linux-and-mac)
   * [Compile from source](#compile-from-source)
@@ -53,6 +54,24 @@ biodiversity [Data Sources][data_source_ids]
   to chain the program together with other tools.
 
 ## Installation
+
+### Using Homebrew on Mac OS, Linux, and Linux on Windows X (WSL2)
+
+Homebrew is a popular package manager for Open Source software originally
+developed for Mac OS X. Now it is also available on Linux, and can easily
+be used on Windows 10, if Windows Subsystem for Linux (WSL) is
+[installed][WSL install].
+
+To use `gnverify` with Homebrew:
+
+1. Install [Homebrew]
+
+2. Open terminal and run the following commands:
+
+```bash
+brew tap gnames/gn
+brew install gnverify
+```
 
 ### MS Windows
 
@@ -249,3 +268,5 @@ Copyright © 2020 Dmitry Mozzherin. See [LICENSE][license] for further details.
 [winpath]: https://www.computerhope.com/issues/ch000549.htm
 [win-pdf]: https://github.com/gnames/gnverify/blob/master/use-gnverify-windows.pdf
 [go-install]: https://golang.org/doc/install
+[WSL install]: https://docs.microsoft.com/en-us/windows/wsl/install-win10
+[Homebrew]: https://brew.sh/
