@@ -144,7 +144,7 @@ func init() {
 	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
   If sources are set and there are matches to their data,
   such matches are returned in "preferred_result" results.
-  To find IDs refer to "https://resolver.globalnames.org/resources".
+  To find IDs refer to "https://resolver.globalnames.org/data_sources".
   1 - Catalogue of Life
   3 - ITIS
   4 - NCBI
