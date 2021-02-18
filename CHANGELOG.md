@@ -1,5 +1,7 @@
 # Changelog
 
+- Add[#25]: 'Error' fields in the csv output.
+
 ## [v0.1.0]
 
 - Add [#19]: Add Homebrew package.
