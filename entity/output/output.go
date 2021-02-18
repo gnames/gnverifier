@@ -25,6 +25,7 @@ const (
 	dataSourceID
 	dataSourceTitle
 	classificationPath
+	error
 )
 
 // Output takes result of verification for one string and converts it into
@@ -43,7 +44,7 @@ func Output(ver vlib.Verification, f format.Format, prefOnly bool) string {
 
 // CSVHeader returns the header string for CSV output format.
 func CSVHeader() string {
-	return "Kind,MatchType,EditDistance,ScientificName,MatchedName,MatchedCanonical,TaxonId,CurrentName,Synonym,DataSourceId,DataSourceTitle,ClassificationPath"
+	return "Kind,MatchType,EditDistance,ScientificName,MatchedName,MatchedCanonical,TaxonId,CurrentName,Synonym,DataSourceId,DataSourceTitle,ClassificationPath,Error"
 }
 
 func csvOutput(ver vlib.Verification, prefOnly bool) string {
@@ -71,7 +72,7 @@ func csvRow(ver vlib.Verification, prefIndex int) string {
 
 	s := []string{
 		kind, ver.MatchType.String(), "", ver.Input,
-		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "", ver.Error,
 	}
 
 	if res != nil {
