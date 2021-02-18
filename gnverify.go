@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"sync"
-	"time"
 
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnverify/config"
@@ -76,7 +75,7 @@ func (gnv *gnverify) VerifyWorker(
 	wg *sync.WaitGroup,
 ) {
 	defer wg.Done()
-	ctx, cancel := context.WithTimeout(ctx, 4*time.Minute)
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	for params := range in {
