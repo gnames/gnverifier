@@ -2,6 +2,7 @@ package verifrest
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnlib/encode"
+	"github.com/gnames/gnuuid"
 	"github.com/gnames/gnverify/entity/verifier"
 	log "github.com/sirupsen/logrus"
 )
@@ -27,25 +29,45 @@ func NewVerifier(url string) verifier.Verifier {
 		MaxIdleConns:    10,
 		IdleConnTimeout: 30 * time.Second,
 	}
-	client := &http.Client{Transport: tr}
+	client := &http.Client{Timeout: 4 * time.Minute, Transport: tr}
 	return &verifrest{verifierURL: url, client: client}
 }
 
 // Verify takes names-strings and options and returns verification result.
-func (vr *verifrest) Verify(params vlib.VerifyParams) []vlib.Verification {
+func (vr *verifrest) Verify(
+	ctx context.Context,
+	params vlib.VerifyParams,
+) []vlib.Verification {
 	var attempts int
 	var response []vlib.Verification
 	enc := encode.GNjson{}
-	req, err := enc.Encode(params)
+	paramsData, err := enc.Encode(params)
 	if err != nil {
 		log.Printf("Cannot encode names for verification: %s.", err)
 	}
 
 	attempts, err = try(func(int) (bool, error) {
-		r := bytes.NewReader(req)
-		namesRange := fmt.Sprintf("%s-%s", params.NameStrings[0], params.NameStrings[len(params.NameStrings)-1])
+		var cancel func()
+		ctx, cancel = context.WithCancel(ctx)
+		// client has Timeout, meaning cancel will propagate to the server after
+		// the set time.
+		defer cancel()
 
-		resp, err := vr.client.Post(vr.verifierURL+"verifications", "application/json", r)
+		d := bytes.NewReader(paramsData)
+		namesRange := fmt.Sprintf(
+			"%s-%s",
+			params.NameStrings[0],
+			params.NameStrings[len(params.NameStrings)-1],
+		)
+
+		url := vr.verifierURL + "verifications"
+		request, err := http.NewRequestWithContext(ctx, http.MethodPost, url, d)
+		if err != nil {
+			log.Fatalf("Cannot create request: %v", err)
+		}
+		request.Header.Set("Content-Type", "application/json")
+
+		resp, err := vr.client.Do(request)
 		if err != nil {
 			log.Warnf("Request is failing for %s.", namesRange)
 			return true, err
@@ -69,7 +91,16 @@ func (vr *verifrest) Verify(params vlib.VerifyParams) []vlib.Verification {
 	if err != nil {
 		log.Printf("Verification failed for %s-%s after %d attempts.", params.NameStrings[0],
 			params.NameStrings[len(params.NameStrings)-1], attempts)
-		log.Fatal(err)
+		res := make([]vlib.Verification, len(params.NameStrings))
+		for i := range params.NameStrings {
+			name := params.NameStrings[i]
+			res[i] = vlib.Verification{
+				InputID: gnuuid.New(name).String(),
+				Input:   name,
+				Error:   err.Error(),
+			}
+		}
+		return res
 	}
 	return response
 }

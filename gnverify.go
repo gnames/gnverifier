@@ -1,8 +1,10 @@
 package gnverify
 
 import (
+	"context"
 	"log"
 	"sync"
+	"time"
 
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnverify/config"
@@ -37,7 +39,7 @@ func (gnv *gnverify) VerifyOne(name string) string {
 		NameStrings:      []string{name},
 		PreferredSources: gnv.config.PreferredSources,
 	}
-	verif := gnv.verifier.Verify(params)
+	verif := gnv.verifier.Verify(context.Background(), params)
 	if len(verif) < 1 {
 		log.Fatalf("Did not get results from verifier")
 	}
@@ -47,40 +49,67 @@ func (gnv *gnverify) VerifyOne(name string) string {
 // VerifyStream receives batches of strings through the input
 // channel and sends results of verification via output
 // channel.
-func (gnv *gnverify) VerifyStream(in <-chan []string,
-	out chan []vlib.Verification) {
-	vwChan := make(chan vlib.VerifyParams)
+func (gnv *gnverify) VerifyStream(
+	in <-chan []string,
+	out chan []vlib.Verification,
+) {
 	var wg sync.WaitGroup
 	wg.Add(gnv.Config().Jobs)
 
-	go func() {
-		for names := range in {
-			vwChan <- vlib.VerifyParams{
-				NameStrings:      names,
-				PreferredSources: gnv.config.PreferredSources,
-			}
-		}
-		close(vwChan)
-	}()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	vwChan := gnv.loadNames(ctx, in)
+
 	for i := 0; i < gnv.Config().Jobs; i++ {
-		go gnv.VerifyWorker(vwChan, out, &wg)
+		go gnv.VerifyWorker(ctx, vwChan, out, &wg)
 	}
 
 	wg.Wait()
 	close(out)
 }
 
-func (gnv *gnverify) VerifyWorker(in <-chan vlib.VerifyParams,
-	out chan<- []vlib.Verification, wg *sync.WaitGroup) {
+func (gnv *gnverify) VerifyWorker(
+	ctx context.Context,
+	in <-chan vlib.VerifyParams,
+	out chan<- []vlib.Verification,
+	wg *sync.WaitGroup,
+) {
 	defer wg.Done()
+	ctx, cancel := context.WithTimeout(ctx, 4*time.Minute)
+	defer cancel()
+
 	for params := range in {
 		if len(params.NameStrings) == 0 {
 			continue
 		}
-		verif := gnv.verifier.Verify(params)
+		verif := gnv.verifier.Verify(ctx, params)
 		if len(verif) < 1 {
 			log.Fatalf("Did not get results from verifier")
 		}
 		out <- verif
 	}
+}
+
+func (gnv *gnverify) loadNames(
+	ctx context.Context,
+	inChan <-chan []string,
+) <-chan vlib.VerifyParams {
+	vwChan := make(chan vlib.VerifyParams)
+	go func() {
+		defer close(vwChan)
+		for names := range inChan {
+
+			params := vlib.VerifyParams{
+				NameStrings:      names,
+				PreferredSources: gnv.config.PreferredSources,
+			}
+			select {
+			case <-ctx.Done():
+				return
+			case vwChan <- params:
+			}
+		}
+	}()
+	return vwChan
 }
