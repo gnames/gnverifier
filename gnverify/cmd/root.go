@@ -20,6 +20,7 @@ import (
 	"github.com/gnames/gnverify"
 	"github.com/gnames/gnverify/config"
 	"github.com/gnames/gnverify/entity/output"
+	"github.com/gnames/gnverify/io/web"
 	"github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -69,9 +70,12 @@ var rootCmd = &cobra.Command{
 	Long: `gnverify uses a remote service to verify scientific names against
 more than 100 biodiverisity data-sources.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		webOpts := make([]config.Option, 0)
+
 		if showVersionFlag(cmd) {
 			os.Exit(0)
 		}
+
 		pref, _ := cmd.Flags().GetBool("preferred_only")
 		if pref {
 			opts = append(opts, config.OptPreferredOnly(pref))
@@ -101,6 +105,15 @@ more than 100 biodiverisity data-sources.`,
 		url, _ := cmd.Flags().GetString("verifier_url")
 		if url != "" {
 			opts = append(opts, config.OptVerifierURL(url))
+			webOpts = append(webOpts, config.OptVerifierURL(url))
+		}
+
+		port, _ := cmd.Flags().GetInt("web_port")
+		if port > 0 {
+			cnf := config.NewConfig(webOpts...)
+			gnv := gnverify.NewGNVerify(cnf)
+			web.Run(&gnv, port)
+			os.Exit(0)
 		}
 
 		cnf := config.NewConfig(opts...)
@@ -141,6 +154,7 @@ func init() {
   csv: CSV (DEFAULT)`)
 	rootCmd.Flags().IntP("name_field", "n", 1, "Set position of ScientificName field, the first field is 1.")
 	rootCmd.Flags().IntP("jobs", "j", 4, "Number of jobs running in parallel.")
+	rootCmd.Flags().IntP("web_port", "w", 0, "Port to run web GUI.")
 	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
   If sources are set and there are matches to their data,
   such matches are returned in "preferred_result" results.
