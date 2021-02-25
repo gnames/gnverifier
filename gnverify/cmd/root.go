@@ -112,7 +112,7 @@ more than 100 biodiverisity data-sources.`,
 		if port > 0 {
 			cnf := config.NewConfig(webOpts...)
 			gnv := gnverify.NewGNVerify(cnf)
-			web.Run(&gnv, port)
+			web.Run(gnv, port)
 			os.Exit(0)
 		}
 

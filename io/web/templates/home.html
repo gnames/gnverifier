@@ -1,0 +1,83 @@
+{{ define "home" }}
+  {{ if .Verified }}
+<h2>Results</h2>
+    {{ range .Verified }}
+<div id="content-body">
+
+  <div class='section'>
+    <div class='searched-name'>
+      <h4>{{ .Input }}</h4>
+      <span class='number-matches'>Number of matches: {{ .DataSourcesNum }}</span>
+    </div>
+  </div>
+
+  <div class='results'>
+    {{ $best := .BestResult }}
+    {{ if $best }}
+    <div class='source-match'>
+
+      <div class='source-names-score'>
+        <span class='source-name-string'>{{ $best.MatchedName }}</span>
+        <span class='score'>[{{ .MatchType }} match]</span>
+      </div>
+
+      {{ if $best.CurrentName }}
+      {{ if ne $best.MatchedName $best.CurrentName }}
+      <div class='source-names-score'>
+        Current name:
+        <span class='source-current-name-string'>{{ $best.CurrentName }}</span>
+      </div>
+      {{ end }}
+      {{ end }}
+
+      <div class='source-title'>
+        <a href='/data_sources/{{ $best.DataSourceID }}'>
+          {{ $best.DataSourceTitleShort }}
+        </a>
+      </div>
+
+      {{ if $best.ClassificationPath }}
+      <div class='source-classification-path'>{{ $best.ClassificationPath }}</div>
+      {{ end }}
+
+    </div>
+    {{ end }}
+  </div>
+
+</div>
+    {{ end }}
+  {{ else }}
+<p>Resolve lists of scientific names against known sources. This service parses incoming names, executes exact or fuzzy matching as required, and displays a confidence score for each match along with its identifier.</p>
+<div id='resolver-form'>
+  <form action='/' method='get'>
+    <label for='names'>Paste Scientific Names, one on each line</label>
+    <textarea cols='24' name='names' rows='12'></textarea>
+    <div id='advanced_options'>
+      <a href='#'>Advanced Options &gt;&gt;</a>
+    </div>
+    <div id='advanced_selections'>
+      <fieldset>
+        <legend>Sample Data Sources</legend>
+        <input id='data_source_ids_1' name='data_source_ids[1]' type='checkbox'>
+        <label for='data_source_ids_1'>Catalogue of Life</label>
+        <input id='data_source_ids_3' name='data_source_ids[3]' type='checkbox'>
+        <label for='data_source_ids_3'>ITIS</label>
+        <input id='data_source_ids_5' name='data_source_ids[5]' type='checkbox'>
+        <label for='data_source_ids_5'>Index Fungorum</label>
+        <input id='data_source_ids_11' name='data_source_ids[11]' type='checkbox'>
+        <label for='data_source_ids_11'>GBIF</label>
+        <input id='data_source_ids_167' name='data_source_ids[167]' type='checkbox'>
+        <label for='data_source_ids_167'>IPNI</label>
+        <input id='data_source_ids_12' name='data_source_ids[12]' type='checkbox'>
+        <label for='data_source_ids_12'>EOL</label>
+        <input id='data_source_ids_7' name='data_source_ids[7]' type='checkbox'>
+        <label for='data_source_ids_7'>Union</label>
+      </fieldset>
+    </div>
+    <div>
+      <input class='form-button submit-button' name='commit' type='submit' value='Resolve Names'>
+    </div>
+  </form>
+</div>
+  {{ end }}
+{{ end }}

@@ -1,3 +1,4 @@
+{{ define "layout" }}
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,45 +29,11 @@
    <div id="BodyContent" class="structural fixedWidth clear">
      <div class="inner">
        <div id="content-wrapper">
-           <div id="content-splash">
-             <p class='tagline'>Global Names resolution tools and services</p>
-
-           </div>
          <div id="content-body">
-           <p>Resolve lists of scientific names against known sources. This service parses incoming names, executes exact or fuzzy matching as required, and displays a confidence score for each match along with its identifier.</p>
-<div id='resolver-form'>
-<form action='/name_resolvers' method='POST'>
-<label for='data'>Paste Scientific Names, one on each line</label>
-<textarea cols='24' name='data' rows='12'></textarea>
-<div id='advanced_options'>
-<a href='#'>Advanced Options &gt;&gt;</a>
-</div>
-<div id='advanced_selections'>
-<fieldset>
-<legend>Sample Data Sources</legend>
-<input id='data_source_ids_1' name='data_source_ids[1]' type='checkbox'>
-<label for='data_source_ids_1'>Catalogue of Life</label>
-<input id='data_source_ids_3' name='data_source_ids[3]' type='checkbox'>
-<label for='data_source_ids_3'>ITIS</label>
-<input id='data_source_ids_5' name='data_source_ids[5]' type='checkbox'>
-<label for='data_source_ids_5'>Index Fungorum</label>
-<input id='data_source_ids_11' name='data_source_ids[11]' type='checkbox'>
-<label for='data_source_ids_11'>GBIF</label>
-<input id='data_source_ids_167' name='data_source_ids[167]' type='checkbox'>
-<label for='data_source_ids_167'>IPNI</label>
-<input id='data_source_ids_12' name='data_source_ids[12]' type='checkbox'>
-<label for='data_source_ids_12'>EOL</label>
-<input id='data_source_ids_7' name='data_source_ids[7]' type='checkbox'>
-<label for='data_source_ids_7'>Union</label>
-</fieldset>
-</div>
-<div>
-<input class='form-button submit-button' name='commit' type='submit' value='Resolve Names'>
-</div>
-</form>
-</div>
+           {{ if eq .Page "home" }}{{ template "home" . }}{{ end }}
+
 <p>
-<a href='https://github.com/GlobalNamesArchitecture/gni'>Code</a>
+<a href='https://github.com/gnames/gnverify'>Code</a>
 on GitHub
 </p>
 
@@ -87,5 +54,5 @@ on GitHub
   </div>
 </body>
 </html>
-
+{{ end }}
 

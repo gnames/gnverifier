@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"sync"
+	"time"
 
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnverify/config"
@@ -26,6 +27,13 @@ func NewGNVerify(cnf config.Config) GNVerify {
 	}
 }
 
+// ChangeConfig modifies configuration.
+func (gnv *gnverify) ChangeConfig(opts ...config.Option) {
+	for i := range opts {
+		opts[i](&gnv.config)
+	}
+}
+
 // Config returns configuration data.
 func (gnv *gnverify) Config() config.Config {
 	return gnv.config
@@ -45,6 +53,19 @@ func (gnv *gnverify) VerifyOne(name string) string {
 	return output.Output(verif[0], gnv.config.Format, gnv.config.PreferredOnly)
 }
 
+// VerifyBatch takes a list of name-strings, verifies them and returns
+// a batch of results back.
+func (gnv *gnverify) VerifyBatch(nameStrings []string) []vlib.Verification {
+	params := vlib.VerifyParams{
+		NameStrings:      nameStrings,
+		PreferredSources: gnv.config.PreferredSources,
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	return gnv.verifier.Verify(ctx, params)
+}
+
 // VerifyStream receives batches of strings through the input
 // channel and sends results of verification via output
 // channel.
@@ -53,14 +74,14 @@ func (gnv *gnverify) VerifyStream(
 	out chan []vlib.Verification,
 ) {
 	var wg sync.WaitGroup
-	wg.Add(gnv.Config().Jobs)
+	wg.Add(gnv.config.Jobs)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	vwChan := gnv.loadNames(ctx, in)
 
-	for i := 0; i < gnv.Config().Jobs; i++ {
+	for i := 0; i < gnv.config.Jobs; i++ {
 		go gnv.VerifyWorker(ctx, vwChan, out, &wg)
 	}
 

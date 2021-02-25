@@ -12,9 +12,13 @@ type GNVerify interface {
 	// VerifyOne takes a name-string and returns result of verification as a
 	// JSON of CSV string.
 	VerifyOne(name string) string
+	// VerifyBatch takes a slice of names and verifies them all at once
+	VerifyBatch(names []string) []vlib.Verification
 	// VerifyStream receves batches of strings via one channel, verifies
 	// the strings and sends results to another channel.
 	VerifyStream(in <-chan []string, out chan []vlib.Verification)
-	// Config returns the content of the configuration data.
+	// ChangeConfig modifies configuration of GNVerify.
+	ChangeConfig(opts ...config.Option)
+	// Config returns  configuration data.
 	Config() config.Config
 }

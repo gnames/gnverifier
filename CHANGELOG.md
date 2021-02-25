@@ -1,7 +1,8 @@
 # Changelog
 
-- Add[#22]: cancel timed-out requests locally and on the server.
-- Add[#25]: 'Error' fields in the csv output.
+- Add [#27]: verify names via web GUI.
+- Add [#22]: cancel timed-out requests locally and on the server.
+- Add [#25]: 'Error' fields in the csv output.
 
 ## [v0.1.0]
 
