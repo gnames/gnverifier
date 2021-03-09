@@ -1,0 +1,29 @@
+{{ define "results" }}
+    <div class='source-match'>
+
+      <div class='source-names-score'>
+        <span class='source-name-string'>{{ .MatchedName }}</span>
+        [ {{ matchType .MatchType .EditDistance }} ]
+      </div>
+
+      {{ if .CurrentName }}
+      {{ if ne .MatchedName .CurrentName }}
+      <div class='source-names-score'>
+        Current name:
+        <span class='source-current-name-string'>{{ .CurrentName }}</span>
+      </div>
+      {{ end }}
+      {{ end }}
+
+      <div class='source-title'>
+        <a href='/data_sources/{{ .DataSourceID }}'>
+          {{ .DataSourceTitleShort }}
+        </a>
+      </div>
+
+      {{ if .ClassificationPath }}
+      <div class='source-classification-path'>{{ classification .ClassificationPath .ClassificationRanks }}</div>
+      {{ end }}
+
+    </div>
+{{ end }}

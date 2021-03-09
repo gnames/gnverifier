@@ -386,6 +386,18 @@ table td {
 	padding-left: 5px
 }
 
+table.nobg {
+  border: 0px;
+  border-style: none;
+  background: #fafafa
+}
+
+table.nobg tr, td {
+  border: 0px;
+  border-style: none;
+  background: #fafafa
+}
+
 .data-source-id span {
 	font-weight: bold
 }

@@ -7,40 +7,24 @@
   <div class='section'>
     <div class='searched-name'>
       <h4>{{ .Input }}</h4>
-      <span class='number-matches'>Number of matches: {{ .DataSourcesNum }}</span>
+      <span class='number-matches'>Matched in {{ .DataSourcesNum }} data-sources</span>
     </div>
   </div>
 
   <div class='results'>
     {{ $best := .BestResult }}
     {{ if $best }}
-    <div class='source-match'>
+      {{ template "results" $best}}
+    {{ end }}
 
-      <div class='source-names-score'>
-        <span class='source-name-string'>{{ $best.MatchedName }}</span>
-        <span class='score'>[{{ .MatchType }} match]</span>
-      </div>
+    {{ $pref := .PreferredResults }}
 
-      {{ if $best.CurrentName }}
-      {{ if ne $best.MatchedName $best.CurrentName }}
-      <div class='source-names-score'>
-        Current name:
-        <span class='source-current-name-string'>{{ $best.CurrentName }}</span>
-      </div>
-      {{ end }}
-      {{ end }}
+    {{ if $pref }}
+    <h5>From preferred Data Sources:</h5>
+    {{ end }}
 
-      <div class='source-title'>
-        <a href='/data_sources/{{ $best.DataSourceID }}'>
-          {{ $best.DataSourceTitleShort }}
-        </a>
-      </div>
-
-      {{ if $best.ClassificationPath }}
-      <div class='source-classification-path'>{{ $best.ClassificationPath }}</div>
-      {{ end }}
-
-    </div>
+    {{ range $pref }} 
+      {{ template "results" . }}
     {{ end }}
   </div>
 
@@ -58,24 +42,64 @@
     <div id='advanced_selections'>
       <fieldset>
         <legend>Sample Data Sources</legend>
-        <input id='data_source_ids_1' name='data_source_ids[1]' type='checkbox'>
-        <label for='data_source_ids_1'>Catalogue of Life</label>
-        <input id='data_source_ids_3' name='data_source_ids[3]' type='checkbox'>
-        <label for='data_source_ids_3'>ITIS</label>
-        <input id='data_source_ids_5' name='data_source_ids[5]' type='checkbox'>
-        <label for='data_source_ids_5'>Index Fungorum</label>
-        <input id='data_source_ids_11' name='data_source_ids[11]' type='checkbox'>
-        <label for='data_source_ids_11'>GBIF</label>
-        <input id='data_source_ids_167' name='data_source_ids[167]' type='checkbox'>
-        <label for='data_source_ids_167'>IPNI</label>
-        <input id='data_source_ids_12' name='data_source_ids[12]' type='checkbox'>
-        <label for='data_source_ids_12'>EOL</label>
-        <input id='data_source_ids_7' name='data_source_ids[7]' type='checkbox'>
-        <label for='data_source_ids_7'>Union</label>
+        <table class="nobg">
+          <tr>
+            <td>
+              <input id='data_source_ids_1' name='ds' value='1' type='checkbox'>
+              <label for='data_source_ids_1'>Catalogue of Life</label>
+            </td>
+            <td>
+              <input id='data_source_ids_3' name='ds' value='3' type='checkbox'>
+              <label for='data_source_ids_3'>ITIS</label>
+            </td>
+            <td>
+              <input id='data_source_ids_4' name='ds' value='4' type='checkbox'>
+              <label for='data_source_ids_4'>NCBI</label>
+            </td>
+            <td>
+              <input id='data_source_ids_5' name='ds' value='5' type='checkbox'>
+              <label for='data_source_ids_5'>Index Fungorum</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input id='data_source_ids_9' name='ds' value='9' type='checkbox'>
+              <label for='data_source_ids_9'>WoRMS</label>
+            </td>
+            <td>
+              <input id='data_source_ids_11' name='ds' value='11' type='checkbox'>
+              <label for='data_source_ids_11'>GBIF</label>
+            </td>
+            <td>
+              <input id='data_source_ids_167' name='ds' value='167' type='checkbox'>
+              <label for='data_source_ids_167'>IPNI</label>
+            </td>
+            <td>
+              <input id='data_source_ids_12' name='ds' value='12' type='checkbox'>
+              <label for='data_source_ids_12'>EOL</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input id='data_source_ids_170' name='ds' value='170' type='checkbox'>
+              <label for='data_source_ids_170'>Arctos</label>
+            </td>
+            <td>
+              <input id='data_source_ids_179' name='ds' value='179' type='checkbox'>
+              <label for='data_source_ids_179'>Open Tree Of Life</label>
+            </td>
+            <td>
+              <input id='data_source_ids_183' name='ds' value='183' type='checkbox'>
+              <label for='data_source_ids_183'>ASM Mammal DB</label>
+            </td>
+            <td>
+            </td>
+          </tr>
+        </table>
       </fieldset>
     </div>
     <div>
-      <input class='form-button submit-button' name='commit' type='submit' value='Resolve Names'>
+      <input class='form-button submit-button' type='submit' value='Resolve Names'>
     </div>
   </form>
 </div>

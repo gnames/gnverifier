@@ -1,5 +1,6 @@
 # Changelog
 
+- Add [#28]: verify names using preferred data sources in web UI.
 - Add [#27]: verify names via web GUI.
 - Add [#22]: cancel timed-out requests locally and on the server.
 - Add [#25]: 'Error' fields in the csv output.

@@ -3,12 +3,14 @@ package web
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
 	rice "github.com/GeertJohan/go.rice"
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnverify"
+	"github.com/gnames/gnverify/config"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -48,9 +50,10 @@ func Run(gnv gnverify.GNVerify, port int) {
 }
 
 type Data struct {
-	Page     string
-	Input    string
-	Verified []vlib.Verification
+	Page      string
+	Input     string
+	Preferred []int
+	Verified  []vlib.Verification
 }
 
 func home(gnv gnverify.GNVerify) func(echo.Context) error {
@@ -59,12 +62,37 @@ func home(gnv gnverify.GNVerify) func(echo.Context) error {
 		var names []string
 
 		fmt.Printf("data: %#v\n", data)
-		data.Input = c.QueryParam("names")
+		params := c.QueryParams()
+		data.Input = params.Get("names")
+		data.Preferred = getPreferredSources(params["ds"])
+		fmt.Printf("ds: %#v\n", data.Preferred)
+
 		if data.Input != "" {
 			names = strings.Split(data.Input, "\n")
 			fmt.Printf("names: %#v", names)
+			if len(data.Preferred) > 0 {
+				opts := []config.Option{config.OptPreferredSources(data.Preferred)}
+				gnv.ChangeConfig(opts...)
+			}
 			data.Verified = gnv.VerifyBatch(names)
 		}
+
 		return c.Render(http.StatusOK, "layout", data)
 	}
+}
+
+func getPreferredSources(ds []string) []int {
+	var res []int
+	if len(ds) == 0 {
+		return res
+	}
+
+	for _, v := range ds {
+		id, err := strconv.Atoi(v)
+		if err != nil {
+			continue
+		}
+		res = append(res, id)
+	}
+	return res
 }
