@@ -33,6 +33,75 @@ func NewVerifier(url string) verifier.Verifier {
 	return &verifrest{verifierURL: url, client: client}
 }
 
+// DataSources returns meta-data about aggregated data-sources.
+func (vr *verifrest) DataSources(
+	ctx context.Context,
+) ([]vlib.DataSource, error) {
+	enc := gnfmt.GNjson{}
+	url := vr.verifierURL + "data_sources"
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		log.Warnf("Cannot create request: %v", err)
+		return nil, err
+	}
+	request.Header.Set("Content-Type", "application/json")
+
+	resp, err := vr.client.Do(request)
+	if err != nil {
+		log.Warn("Cannot get data-sources information.")
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Warn("Body reading is failing for data-sources.")
+		return nil, err
+	}
+	response := make([]vlib.DataSource, 0)
+	err = enc.Decode(respBytes, &response)
+	if err != nil {
+		log.Warnf("Cannot decode data-sources")
+		return nil, err
+	}
+	return response, nil
+}
+
+// DataSource returns meta-data about a data-source found by ID.
+func (vr *verifrest) DataSource(
+	ctx context.Context,
+	id int,
+) (vlib.DataSource, error) {
+	response := vlib.DataSource{}
+	enc := gnfmt.GNjson{}
+	url := fmt.Sprintf("%sdata_sources/%d", vr.verifierURL, id)
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		log.Warnf("Cannot create request: %v", err)
+		return response, err
+	}
+	request.Header.Set("Content-Type", "application/json")
+
+	resp, err := vr.client.Do(request)
+	if err != nil {
+		log.Warn("Cannot get data-sources information.")
+		return response, err
+	}
+	defer resp.Body.Close()
+
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Warn("Body reading is failing for data-sources.")
+		return response, err
+	}
+	err = enc.Decode(respBytes, &response)
+	if err != nil {
+		log.Warnf("Cannot decode data-sources")
+		return response, err
+	}
+	return response, nil
+}
+
 // Verify takes names-strings and options and returns verification result.
 func (vr *verifrest) Verify(
 	ctx context.Context,

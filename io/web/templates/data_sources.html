@@ -1,0 +1,23 @@
+{{ define "data_sources" }}
+<h2>Data Sources</h2>
+
+<div id="content-body">
+
+  <table id='data-sources'>
+    <tr>
+      <th class='identifier'>ID</th>
+      <th>Source</th>
+    </tr>
+    {{ range $index, $ds := .DataSources }}
+      {{ if isEven $index }}
+    <tr class='even'>
+      {{ else }}
+    <tr class='odd'>
+      {{ end }}
+      <td class='identifier'>{{$ds.ID}}</td>
+      <td><a href="/data_sources/{{ $ds.ID }}">{{ $ds.Title }}</a></td>
+    </tr>
+    {{ end }}
+  </table>
+</div>
+{{ end }}

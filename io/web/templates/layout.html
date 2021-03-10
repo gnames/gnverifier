@@ -34,7 +34,13 @@
      <div class="inner">
        <div id="content-wrapper">
          <div id="content-body">
-           {{ if eq .Page "home" }}{{ template "home" . }}{{ end }}
+           {{ if eq .Page "home" }}
+             {{ template "home" . }}
+           {{ else if eq .Page "data_sources" }}
+             {{ template "data_sources" . }}
+           {{ else if eq .Page "data_source" }}
+             {{ template "data_source" . }}
+           {{ end }}
 
 <p>
 <a href='https://github.com/gnames/gnverify'>Code</a>

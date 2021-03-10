@@ -17,7 +17,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-const withLogs = false
+const withLogs = true
 
 // Run starts the GNparser web service and servies both RESTful API and
 // a website.
@@ -38,6 +38,8 @@ func Run(gnv gnverify.GNVerify, port int) {
 	}
 
 	e.GET("/", home(gnv))
+	e.GET("/data_sources", dataSources(gnv))
+	e.GET("/data_sources/:id", dataSource(gnv))
 
 	assetHandler := http.FileServer(rice.MustFindBox("assets").HTTPBox())
 	e.GET("/static/*", echo.WrapHandler(http.StripPrefix("/static/", assetHandler)))
@@ -52,11 +54,42 @@ func Run(gnv gnverify.GNVerify, port int) {
 }
 
 type Data struct {
-	Page      string
-	Input     string
-	Format    string
-	Preferred []int
-	Verified  []vlib.Verification
+	Page        string
+	Input       string
+	Format      string
+	Preferred   []int
+	Verified    []vlib.Verification
+	DataSources []vlib.DataSource
+	DataSource  vlib.DataSource
+}
+
+func dataSources(gnv gnverify.GNVerify) func(echo.Context) error {
+	return func(c echo.Context) error {
+		var err error
+		data := Data{Page: "data_sources"}
+		data.DataSources, err = gnv.DataSources()
+		if err != nil {
+			return err
+		}
+		return c.Render(http.StatusOK, "layout", data)
+	}
+}
+
+func dataSource(gnv gnverify.GNVerify) func(echo.Context) error {
+	return func(c echo.Context) error {
+		var err error
+		data := Data{Page: "data_source"}
+		idStr := c.Param("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			return err
+		}
+		data.DataSource, err = gnv.DataSource(id)
+		if err != nil {
+			return fmt.Errorf("Cannot find DataSource for id '%s'", idStr)
+		}
+		return c.Render(http.StatusOK, "layout", data)
+	}
 }
 
 func home(gnv gnverify.GNVerify) func(echo.Context) error {

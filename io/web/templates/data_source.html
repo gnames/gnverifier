@@ -1,0 +1,59 @@
+{{ define "data_source" }}
+{{ $ds := .DataSource }}
+<h2>{{ $ds.Title }}</h2>
+
+<div id="content-body">
+  <div class="keyValue">
+
+    <div class="kv_table">
+      <div class="kv_row">
+        <div class="kv_key">
+            ID: 
+        </div>
+        <div class="kv_value">
+            {{ $ds.ID }}
+        </div>
+      </div>
+
+      {{ if $ds.WebsiteURL }}
+      <div class="kv_row">
+        <div class="kv_key">
+          Home:
+        </div>
+        <div class="kv_value">
+          {{ $ds.WebsiteURL }}
+        </div>
+      </div>
+      {{ end }}
+
+      <div class="kv_row">
+        <div class="kv_key">
+          Updated On:
+        </div>
+        <div class="kv_value">
+          {{ $ds.UpdatedAt }}
+        </div>
+      </div>
+
+      <div class="kv_row">
+        <div class="kv_key">
+          Records #:
+        </div>
+        <div class="kv_value">
+          {{ $ds.RecordCount }}
+        </div>
+      </div>
+
+      <div class="kv_row">
+        <div class="kv_key">
+          Description:
+        </div>
+        <div class="kv_value">
+          {{ $ds.Description }}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{{ end }}

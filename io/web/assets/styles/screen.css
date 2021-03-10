@@ -347,6 +347,7 @@ table {
 	background: none repeat scroll 0 0 #e6e6e6;
 	border: 1px solid gray;
 	border-collapse: collapse;
+	border-spacing: 100px;
 	width: 95%;
 	color: #555
 }
@@ -375,7 +376,7 @@ table thead th {
 
 table tr {
 	border: 1px solid #aaa;
-	height: 1.5em
+	height: 1.5em;
 }
 
 table tr.even {
@@ -392,10 +393,10 @@ table.nobg {
   background: #fafafa
 }
 
-table.nobg tr, td {
+table.nobg tr.nobg, td.nobg {
   border: 0px;
   border-style: none;
-  background: #fafafa
+  background: none
 }
 
 .data-source-id span {
@@ -585,4 +586,51 @@ form span {
 
 .score {
 	font-size: 0.8em
+}
+
+.keyValue {
+	/* position: relative; */
+	background-color: #eee;
+	/* border-top: 1px solid #ccc; */
+	margin-top: 10px;
+	padding: 30px;
+	-webkit-border-top-right-radius: 8px;
+	-webkit-border-top-left-radius: 8px;
+	-moz-border-radius-topright: 8px;
+	-moz-border-radius-topleft: 8px;
+	border-top-right-radius: 8px;
+	border-top-left-radius: 8px;
+	-webkit-border-bottom-right-radius: 8px;
+	-webkit-border-bottom-left-radius: 8px;
+	-moz-border-radius-bottomright: 8px;
+	-moz-border-radius-bottomleft: 8px;
+	border-bottom-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+}
+
+.kv_table {
+  display:  table;
+  width:100%;
+	border-spacing: 10px;
+}
+
+.kv_row {
+  display: table-row;
+  width: auto;
+}
+
+.kv_key {
+  float: left;/*fix for  buggy browsers*/
+  display: table-column;
+  line-height: 1.2em;
+  width: 25%;
+  /* background-color:#ccc; */
+}
+
+.kv_value {
+  float: left;/*fix for  buggy browsers*/
+  display: table-column;
+  line-height: 1.2em;
+  width: 75%;
+  /* background-color:#ccc; */
 }

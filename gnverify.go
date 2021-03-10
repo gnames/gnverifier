@@ -27,6 +27,16 @@ func NewGNVerify(cnf config.Config) GNVerify {
 	}
 }
 
+// DataSources returns meta-information about aggregated data-sources.
+func (gnv *gnverify) DataSources() ([]vlib.DataSource, error) {
+	return gnv.verifier.DataSources(context.Background())
+}
+
+// DataSource returns meta-information about a data-source found by its ID.
+func (gnv *gnverify) DataSource(id int) (vlib.DataSource, error) {
+	return gnv.verifier.DataSource(context.Background(), id)
+}
+
 // ChangeConfig modifies configuration.
 func (gnv *gnverify) ChangeConfig(opts ...config.Option) {
 	for i := range opts {

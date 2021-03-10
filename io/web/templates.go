@@ -82,6 +82,9 @@ func parseFiles(box *rice.Box, t *template.Template) (*template.Template, error)
 
 func addFuncs(tmpl *template.Template) {
 	tmpl.Funcs(template.FuncMap{
+		"isEven": func(i int) bool {
+			return i%2 == 0
+		},
 		"classification": func(pathStr, rankStr string) string {
 			if pathStr == "" {
 				return ""
