@@ -1,5 +1,6 @@
 # Changelog
 
+- Add [#29]: CSV, JSON, HTML formats for web UI.
 - Add [#28]: verify names using preferred data sources in web UI.
 - Add [#27]: verify names via web GUI.
 - Add [#22]: cancel timed-out requests locally and on the server.
@@ -25,6 +26,34 @@ This document follows [changelog guidelines]
 [v0.1.1]: https://github.com/gnames/gnverify/compare/v0.1.0...v0.1.1
 [v0.1.0]: https://github.com/gnames/gnverify/tree/v0.1.0
 
+[#40]: https://github.com/gnames/gnverify/issues/40
+[#39]: https://github.com/gnames/gnverify/issues/39
+[#38]: https://github.com/gnames/gnverify/issues/38
+[#37]: https://github.com/gnames/gnverify/issues/37
+[#36]: https://github.com/gnames/gnverify/issues/36
+[#35]: https://github.com/gnames/gnverify/issues/35
+[#34]: https://github.com/gnames/gnverify/issues/34
+[#33]: https://github.com/gnames/gnverify/issues/33
+[#32]: https://github.com/gnames/gnverify/issues/32
+[#31]: https://github.com/gnames/gnverify/issues/31
+[#30]: https://github.com/gnames/gnverify/issues/30
+[#29]: https://github.com/gnames/gnverify/issues/29
+[#28]: https://github.com/gnames/gnverify/issues/28
+[#27]: https://github.com/gnames/gnverify/issues/27
+[#26]: https://github.com/gnames/gnverify/issues/26
+[#25]: https://github.com/gnames/gnverify/issues/25
+[#24]: https://github.com/gnames/gnverify/issues/24
+[#23]: https://github.com/gnames/gnverify/issues/23
+[#22]: https://github.com/gnames/gnverify/issues/22
+[#21]: https://github.com/gnames/gnverify/issues/21
+[#20]: https://github.com/gnames/gnverify/issues/20
+[#19]: https://github.com/gnames/gnverify/issues/19
+[#18]: https://github.com/gnames/gnverify/issues/18
+[#17]: https://github.com/gnames/gnverify/issues/17
+[#16]: https://github.com/gnames/gnverify/issues/16
+[#15]: https://github.com/gnames/gnverify/issues/15
+[#14]: https://github.com/gnames/gnverify/issues/14
+[#13]: https://github.com/gnames/gnverify/issues/13
 [#12]: https://github.com/gnames/gnverify/issues/12
 [#11]: https://github.com/gnames/gnverify/issues/11
 [#10]: https://github.com/gnames/gnverify/issues/10

@@ -8,14 +8,16 @@ import (
 	"time"
 
 	rice "github.com/GeertJohan/go.rice"
-	vlib "github.com/gnames/gnlib/domain/entity/verifier"
+	"github.com/gnames/gnfmt"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnverify"
 	"github.com/gnames/gnverify/config"
+	"github.com/gnames/gnverify/entity/output"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
-const withLogs = true
+const withLogs = false
 
 // Run starts the GNparser web service and servies both RESTful API and
 // a website.
@@ -52,32 +54,57 @@ func Run(gnv gnverify.GNVerify, port int) {
 type Data struct {
 	Page      string
 	Input     string
+	Format    string
 	Preferred []int
 	Verified  []vlib.Verification
 }
 
 func home(gnv gnverify.GNVerify) func(echo.Context) error {
 	return func(c echo.Context) error {
-		data := Data{Page: "home"}
+		data := Data{Page: "home", Format: "html"}
 		var names []string
 
-		fmt.Printf("data: %#v\n", data)
 		params := c.QueryParams()
 		data.Input = params.Get("names")
 		data.Preferred = getPreferredSources(params["ds"])
-		fmt.Printf("ds: %#v\n", data.Preferred)
+		prefOnly := params.Get("preferred_only") == "on"
 
-		if data.Input != "" {
-			names = strings.Split(data.Input, "\n")
-			fmt.Printf("names: %#v", names)
-			if len(data.Preferred) > 0 {
-				opts := []config.Option{config.OptPreferredSources(data.Preferred)}
-				gnv.ChangeConfig(opts...)
-			}
-			data.Verified = gnv.VerifyBatch(names)
+		format := params.Get("format")
+		if format == "csv" || format == "json" {
+			data.Format = format
 		}
 
-		return c.Render(http.StatusOK, "layout", data)
+		if data.Input != "" {
+			split := strings.Split(data.Input, "\n")
+			names = make([]string, len(split))
+			for i := range split {
+				names[i] = strings.TrimSpace(split[i])
+			}
+
+			opts := []config.Option{config.OptPreferredSources(data.Preferred)}
+			gnv.ChangeConfig(opts...)
+
+			data.Verified = gnv.VerifyBatch(names)
+			if prefOnly {
+				for i := range data.Verified {
+					data.Verified[i].BestResult = nil
+				}
+			}
+		}
+
+		switch data.Format {
+		case "json":
+			return c.JSON(http.StatusOK, data.Verified)
+		case "csv":
+			res := make([]string, len(data.Verified)+1)
+			res[0] = output.CSVHeader()
+			for i, v := range data.Verified {
+				res[i+1] = output.Output(v, gnfmt.CSV, prefOnly)
+			}
+			return c.String(http.StatusOK, strings.Join(res, "\n"))
+		default:
+			return c.Render(http.StatusOK, "layout", data)
+		}
 	}
 }
 

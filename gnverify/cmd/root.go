@@ -14,9 +14,9 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
-	gne "github.com/gnames/gnlib/domain/entity/verifier"
-	"github.com/gnames/gnlib/format"
-	"github.com/gnames/gnlib/sys"
+	"github.com/gnames/gnfmt"
+	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnsys"
 	"github.com/gnames/gnverify"
 	"github.com/gnames/gnverify/config"
 	"github.com/gnames/gnverify/entity/output"
@@ -70,7 +70,10 @@ var rootCmd = &cobra.Command{
 	Long: `gnverify uses a remote service to verify scientific names against
 more than 100 biodiverisity data-sources.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		webOpts := make([]config.Option, 0)
+		webOpts := make([]config.Option, len(opts))
+		for i, v := range opts {
+			webOpts[i] = v
+		}
 
 		if showVersionFlag(cmd) {
 			os.Exit(0)
@@ -83,10 +86,10 @@ more than 100 biodiverisity data-sources.`,
 
 		formatString, _ := cmd.Flags().GetString("format")
 		if formatString != "csv" {
-			frmt, _ := format.NewFormat(formatString)
-			if frmt == format.FormatNone {
+			frmt, _ := gnfmt.NewFormat(formatString)
+			if frmt == gnfmt.FormatNone {
 				log.Warnf("Cannot set format from '%s', setting format to csv", formatString)
-				frmt = format.CSV
+				frmt = gnfmt.CSV
 			}
 			opts = append(opts, config.OptFormat(frmt))
 		}
@@ -209,9 +212,9 @@ func getOpts() {
 	}
 
 	if cfg.Format != "" {
-		cfgFormat, err := format.NewFormat(cfg.Format)
+		cfgFormat, err := gnfmt.NewFormat(cfg.Format)
 		if err != nil {
-			cfgFormat = format.CSV
+			cfgFormat = gnfmt.CSV
 		}
 		opts = append(opts, config.OptFormat(cfgFormat))
 	}
@@ -300,7 +303,8 @@ func getInput(cmd *cobra.Command, args []string) string {
 
 func verify(gnv gnverify.GNVerify, data string) {
 	path := string(data)
-	if sys.FileExists(path) {
+	fileExists, _ := gnsys.FileExists(path)
+	if fileExists {
 		f, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)
 		if err != nil {
 			log.Fatal(err)
@@ -316,7 +320,7 @@ func verify(gnv gnverify.GNVerify, data string) {
 func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
 	batch := gnv.Config().Batch
 	in := make(chan []string)
-	out := make(chan []gne.Verification)
+	out := make(chan []vlib.Verification)
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go gnv.VerifyStream(in, out)
@@ -336,11 +340,11 @@ func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
 	wg.Wait()
 }
 
-func processResults(gnv gnverify.GNVerify, out <-chan []gne.Verification,
+func processResults(gnv gnverify.GNVerify, out <-chan []vlib.Verification,
 	wg *sync.WaitGroup) {
 	defer wg.Done()
 	timeStart := time.Now().UnixNano()
-	if gnv.Config().Format == format.CSV {
+	if gnv.Config().Format == gnfmt.CSV {
 		fmt.Println(output.CSVHeader())
 	}
 	var count int
@@ -364,7 +368,7 @@ func processResults(gnv gnverify.GNVerify, out <-chan []gne.Verification,
 
 func verifyString(gnv gnverify.GNVerify, name string) {
 	res := gnv.VerifyOne(name)
-	if gnv.Config().Format == format.CSV {
+	if gnv.Config().Format == gnfmt.CSV {
 		fmt.Println(output.CSVHeader())
 	}
 	fmt.Println(res)
@@ -372,7 +376,8 @@ func verifyString(gnv gnverify.GNVerify, name string) {
 
 // touchConfigFile checks if config file exists, and if not, it gets created.
 func touchConfigFile(configPath string, configFile string) {
-	if sys.FileExists(configPath) {
+	fileExists, _ := gnsys.FileExists(configPath)
+	if fileExists {
 		return
 	}
 
@@ -382,7 +387,7 @@ func touchConfigFile(configPath string, configFile string) {
 
 // createConfig creates config file.
 func createConfig(path string, file string) {
-	err := sys.MakeDir(filepath.Dir(path))
+	err := gnsys.MakeDir(filepath.Dir(path))
 	if err != nil {
 		log.Fatalf("Cannot create dir %s: %s.", path, err)
 	}

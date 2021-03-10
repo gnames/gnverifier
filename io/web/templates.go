@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	rice "github.com/GeertJohan/go.rice"
-	vlib "github.com/gnames/gnlib/domain/entity/verifier"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 )
@@ -114,7 +114,7 @@ func addFuncs(tmpl *template.Template) {
 			}
 			switch mt {
 			case vlib.Exact:
-				res = fmt.Sprintf("<span style='color: %s'>%s match</span>", clr["green"], mt)
+				res = fmt.Sprintf("<span style='color: %s'>%s match by canonical form</span>", clr["green"], mt)
 			case vlib.NoMatch:
 				res = fmt.Sprintf("<span style='color: %s'>%s</span>", clr["red"], mt)
 			case vlib.Fuzzy, vlib.PartialFuzzy:

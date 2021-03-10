@@ -4,10 +4,8 @@ import (
 	"strconv"
 	"strings"
 
-	gncsv "github.com/gnames/gnlib/csv"
-	vlib "github.com/gnames/gnlib/domain/entity/verifier"
-	"github.com/gnames/gnlib/encode"
-	"github.com/gnames/gnlib/format"
+	"github.com/gnames/gnfmt"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 )
 
 type csvField int
@@ -30,13 +28,13 @@ const (
 
 // Output takes result of verification for one string and converts it into
 // required format (CSV or JSON).
-func Output(ver vlib.Verification, f format.Format, prefOnly bool) string {
+func Output(ver vlib.Verification, f gnfmt.Format, prefOnly bool) string {
 	switch f {
-	case format.CSV:
+	case gnfmt.CSV:
 		return csvOutput(ver, prefOnly)
-	case format.CompactJSON:
+	case gnfmt.CompactJSON:
 		return jsonOutput(ver, prefOnly, false)
-	case format.PrettyJSON:
+	case gnfmt.PrettyJSON:
 		return jsonOutput(ver, prefOnly, true)
 	}
 	return "N/A"
@@ -87,11 +85,11 @@ func csvRow(ver vlib.Verification, prefIndex int) string {
 		s[classificationPath] = res.ClassificationPath
 	}
 
-	return gncsv.ToCSV(s)
+	return gnfmt.ToCSV(s)
 }
 
 func jsonOutput(ver vlib.Verification, prefOnly bool, pretty bool) string {
-	enc := encode.GNjson{Pretty: pretty}
+	enc := gnfmt.GNjson{Pretty: pretty}
 	if prefOnly {
 		ver.BestResult = nil
 	}

@@ -41,7 +41,20 @@
     </div>
     <div id='advanced_selections'>
       <fieldset>
-        <legend>Sample Data Sources</legend>
+        <legend>Output</legend>
+        <input id='format_html' name='format' value='html' type='radio' checked='checked'>
+        <label for='format_html'>HTML</label>
+        <input id='format_json' name='format' value='json' type='radio'>
+        <label for='format_json'>JSON</label>
+        <input id='format_csv' name='format' value='csv' type='radio'>
+        <label for='format_csv'>CSV</label>
+        <br/><br/>
+        <input id='preferred_only' name='preferred_only' type='checkbox'>
+        <label for='preferred_only'>Show Only Preferred Results</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Preferred Data Sources</legend>
         <table class="nobg">
           <tr>
             <td>

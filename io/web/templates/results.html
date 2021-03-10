@@ -2,7 +2,11 @@
     <div class='source-match'>
 
       <div class='source-names-score'>
+        {{ if .Outlink }}
+        <span class='source-name-string'><a href="{{ .Outlink }}">{{ .MatchedName }}</a></span>
+        {{ else }}
         <span class='source-name-string'>{{ .MatchedName }}</span>
+        {{ end }}
         [ {{ matchType .MatchType .EditDistance }} ]
       </div>
 

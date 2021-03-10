@@ -1,13 +1,13 @@
 package config
 
 import (
-	"github.com/gnames/gnlib/format"
+	"github.com/gnames/gnfmt"
 )
 
 // Config collects and stores external configuration data.
 type Config struct {
 	// Format determins the output. It can be either JSON or CSV.
-	Format format.Format
+	Format gnfmt.Format
 
 	// PreferredOnly hides BestResult if the user wants to see only
 	// preferred results.
@@ -35,7 +35,7 @@ type Config struct {
 // update default values to external ones.
 func NewConfig(opts ...Option) Config {
 	cnf := Config{
-		Format:      format.CSV,
+		Format:      gnfmt.CSV,
 		VerifierURL: "https://verifier.globalnames.org/api/v1/",
 		Batch:       5000,
 		Jobs:        4,
@@ -50,7 +50,7 @@ func NewConfig(opts ...Option) Config {
 type Option func(cnf *Config)
 
 // OptFormat sets output format
-func OptFormat(f format.Format) Option {
+func OptFormat(f gnfmt.Format) Option {
 	return func(cnf *Config) {
 		cnf.Format = f
 	}

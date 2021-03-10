@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	vlib "github.com/gnames/gnlib/domain/entity/verifier"
-	"github.com/gnames/gnlib/encode"
+	"github.com/gnames/gnfmt"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnuuid"
 	"github.com/gnames/gnverify/entity/verifier"
 	log "github.com/sirupsen/logrus"
@@ -40,7 +40,7 @@ func (vr *verifrest) Verify(
 ) []vlib.Verification {
 	var attempts int
 	var response []vlib.Verification
-	enc := encode.GNjson{}
+	enc := gnfmt.GNjson{}
 	paramsData, err := enc.Encode(params)
 	if err != nil {
 		log.Printf("Cannot encode names for verification: %s.", err)

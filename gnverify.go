@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	vlib "github.com/gnames/gnlib/domain/entity/verifier"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnverify/config"
 	"github.com/gnames/gnverify/entity/output"
 	"github.com/gnames/gnverify/entity/verifier"
