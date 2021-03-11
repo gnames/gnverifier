@@ -15,11 +15,17 @@ GOGET = $(GOCMD) get
 all: install
 
 test: deps install
+	@echo Run tests
 	$(FLAG_MODULE) go test ./...
 
 deps:
+	@echo Download go.mod dependencies
 	$(GOCMD) mod download; \
 	$(GOGENERATE)
+
+tools: deps
+	@echo Installing tools from tools.go
+	@cat gnverify/tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
 
 build:
 	$(GOGENERATE)
@@ -27,7 +33,8 @@ build:
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) $(GOBUILD);
 
-release:
+release: assets
+	@echo Building releases for Linux, Mac, Windows
 	cd gnverify; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD); \
@@ -45,3 +52,6 @@ install:
 	cd gnverify; \
 	$(FLAGS_SHARED) $(GOINSTALL);
 
+assets:
+	cd io/web; \
+	rice embed-go;
