@@ -2,9 +2,9 @@ body {
 	color: #323232;
 	background: url(/static/images/body-background.png) repeat scroll 0 0 transparent;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 14px;
+	font-size: 1.2em;
 	height: auto !important;
-	line-height: 1em;
+	line-height: 1.3em;
 	margin: 0px;
 	padding: 0px
 }
@@ -253,7 +253,7 @@ label {
 	min-height: 200px;
 	padding: 0 40px 30px;
 	position: relative;
-	font-size: 1.2em
+	font-size: 1em
 }
 
 #content-features {
@@ -303,7 +303,7 @@ label {
 }
 
 .tagline {
-	font-size: 1.5em;
+	font-size: 1em;
 	font-weight: bold;
 	text-align: center;
 	margin: 1em 0;
@@ -353,7 +353,7 @@ table {
 }
 
 table thead tr {
-	height: 1.75em
+	height: 2em
 }
 
 th.identifier,
@@ -376,7 +376,6 @@ table thead th {
 
 table tr {
 	border: 1px solid #aaa;
-	height: 1.5em;
 }
 
 table tr.even {
@@ -384,7 +383,9 @@ table tr.even {
 }
 
 table td {
-	padding-left: 5px
+	padding-left: 5px;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
 }
 
 table.nobg {
@@ -425,7 +426,7 @@ input[type="email"],
 input[type="file"],
 textarea {
 	color: #000000;
-	font-size: 1em;
+	font-size: 1.2em;
 	font-size-adjust: none;
 	font-stretch: normal;
 	font-style: normal;
@@ -443,7 +444,7 @@ textarea {
 	padding: 10px;
 	width: 98%;
 	resize: none;
-	font-size: 1em
+	font-size: 1.3em
 }
 
 fieldset {
@@ -500,7 +501,7 @@ form span {
 	height: 100px;
 	line-height: 100px;
 	padding-left: 50px;
-	font-size: 1.2em;
+	font-size: 1em;
 	background-position: 0px 50%;
 	background-repeat: no-repeat;
 	background-image: url(/assets/ajax-loader-7af96fab911d309b0057682c74f224c8.gif)

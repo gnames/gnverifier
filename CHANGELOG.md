@@ -2,6 +2,7 @@
 
 ## [v0.1.1]
 
+- Add [#32]: documenation for web UI.
 - Add [#31]: install tools via Makefile.
 - Add [#30]: display data-sources meta-information via web UI.
 - Add [#29]: CSV, JSON, HTML formats for web UI.

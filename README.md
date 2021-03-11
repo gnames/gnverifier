@@ -12,11 +12,13 @@ biodiversity [Data Sources][data_source_ids]
   * [Linux and Mac](#linux-and-mac)
   * [Compile from source](#compile-from-source)
 * [Usage](#usage)
+  * [As a web service](#as-a-web-service)
   * [One name-string](#one-name-string)
   * [Many name-strings in a file](#many-name-strings-in-a-file)
   * [Options and flags](#options-and-flags)
     * [help](#help)
     * [version](#version)
+    * [web_port](#web_port)
     * [format](#format)
     * [sources](#sources)
     * [preferred_only](#preferred_only)
@@ -126,6 +128,15 @@ as an argument, sends a query with these data to [remote
 biodiversity databases and returns results to STDOUT either in JSON or CSV
 format.
 
+### As a web service
+
+```bash
+gnverify -w 8080
+```
+
+You should be able to access web user interface via a browser at
+``http://localhost:8080``
+
 ### One name-string
 
 ```bash
@@ -168,6 +179,17 @@ gnverify -V
 # or
 gnverify --version
 ```
+
+#### web_port
+
+Starts gnverify as a web service using entered port
+
+```bash
+gnverify -w 8080
+```
+
+This command will run user-interface accessible by a browser
+at ``http://localhost:8080``
 
 #### format
 

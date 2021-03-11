@@ -22,10 +22,29 @@
       </a>
     </div>
     <ul id="SiteNavigation">
+      {{ if eq .Page "home" }}
         <li class="active"><a href="/">Home</a></li>
+      {{ else }}
+        <li><a href="/">Home</a></li>
+      {{ end }}
+      
+      {{ if eq .Page "data_sources" "data_source" }}
+        <li class="active"><a href="/data_sources">Sources</a></li>
+      {{ else }}
         <li><a href="/data_sources">Sources</a></li>
+      {{ end }}
+
+      {{ if eq .Page "about" }}
+        <li class="active"><a href="/about">About</a></li>
+      {{ else }}
         <li><a href="/about">About</a></li>
+      {{ end }}
+
+      {{ if eq .Page "api" }}
+        <li class="active"><a href="/api">API</a></li>
+      {{ else }}
         <li><a href="/api">API</a></li>
+      {{ end }}
     </ul>
   </div>
 </div>
@@ -40,6 +59,10 @@
              {{ template "data_sources" . }}
            {{ else if eq .Page "data_source" }}
              {{ template "data_source" . }}
+           {{ else if eq .Page "about" }}
+             {{ template "about" . }}
+           {{ else if eq .Page "api" }}
+             {{ template "api" . }}
            {{ end }}
 
 <p>

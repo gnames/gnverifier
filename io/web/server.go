@@ -40,6 +40,8 @@ func Run(gnv gnverify.GNVerify, port int) {
 	e.GET("/", home(gnv))
 	e.GET("/data_sources", dataSources(gnv))
 	e.GET("/data_sources/:id", dataSource(gnv))
+	e.GET("/about", about())
+	e.GET("/api", api())
 
 	assetHandler := http.FileServer(rice.MustFindBox("assets").HTTPBox())
 	e.GET("/static/*", echo.WrapHandler(http.StripPrefix("/static/", assetHandler)))
@@ -61,6 +63,20 @@ type Data struct {
 	Verified    []vlib.Verification
 	DataSources []vlib.DataSource
 	DataSource  vlib.DataSource
+}
+
+func about() func(echo.Context) error {
+	return func(c echo.Context) error {
+		data := Data{Page: "about"}
+		return c.Render(http.StatusOK, "layout", data)
+	}
+}
+
+func api() func(echo.Context) error {
+	return func(c echo.Context) error {
+		data := Data{Page: "api"}
+		return c.Render(http.StatusOK, "layout", data)
+	}
 }
 
 func dataSources(gnv gnverify.GNVerify) func(echo.Context) error {

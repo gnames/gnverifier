@@ -58,6 +58,7 @@ func parseFiles(box *rice.Box, t *template.Template) (*template.Template, error)
 	}
 	for _, filename := range filenames {
 		name := path.Base(filename)
+		fmt.Println(name)
 		s, err := box.String(name)
 		if err != nil {
 			return nil, errors.Wrap(err, "box.String")
