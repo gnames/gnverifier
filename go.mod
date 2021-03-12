@@ -3,7 +3,6 @@ module github.com/gnames/gnverify
 go 1.16
 
 require (
-	github.com/GeertJohan/go.rice v1.0.2
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gnames/gnfmt v0.1.0
 	github.com/gnames/gnlib v0.2.1

@@ -3,6 +3,7 @@ package cmd
 
 import (
 	"bufio"
+	_ "embed"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -27,27 +28,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-const configText = `# Format of the output. Can be 'csv', 'compact', 'pretty'.
-# Format: csv
-
-# PreferredOnly if true, do not show BestResult, only Preferred Results.
-# Its valid values are 'true' and 'false'.
-# PreferredOnly: false
-
-# PreferredSources is a list of data-source IDs that should always return
-# matched records if they are found.
-# You can find list of all data-sources at
-# https://verifier.globalnames.org/api/v1/data_sources
-# PreferredSources:
-#  - 1
-#  - 11
-
-# VerifierURL is a URL to gnames REST API
-# VerifierURL: "https://verifier.globalnames.org/api/v1/"
-
-# Jobs is number of jobs to run in parallel.
-# Jobs: 4
-`
+//go:embed gnverify.yaml
+var configText string
 
 var (
 	opts []config.Option

@@ -1,18 +1,20 @@
 package web
 
 import (
+	"embed"
 	"fmt"
 	"html/template"
 	"io"
-	"os"
 	"path"
 	"strings"
 
-	rice "github.com/GeertJohan/go.rice"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 )
+
+//go:embed templates
+var tmpls embed.FS
 
 // echoTempl implements echo.Renderer interface.
 type echoTempl struct {
@@ -30,39 +32,31 @@ func (t *echoTempl) Render(
 }
 
 func NewTemplate() (*echoTempl, error) {
-	box, err := rice.FindBox("./templates")
-	if err != nil {
-		return nil, errors.Wrap(err, "rice.FindBox")
-	}
-	t, err := parseFiles(box, nil)
+	t, err := parseFiles()
 	if err != nil {
 		return nil, errors.Wrap(err, "parseFile")
 	}
 	return &echoTempl{t}, nil
 }
 
-func parseFiles(box *rice.Box, t *template.Template) (*template.Template, error) {
-	filenames := []string{}
-	err := box.Walk(".", func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() {
-			return nil
+func parseFiles() (*template.Template, error) {
+	var err error
+	var t *template.Template
+
+	var filenames []string
+	dir := "templates"
+	entries, _ := tmpls.ReadDir(dir)
+	for i := range entries {
+		if entries[i].Type().IsRegular() {
+			filenames = append(
+				filenames,
+				fmt.Sprintf("%s/%s", dir, entries[i].Name()),
+			)
 		}
-		filenames = append(filenames, path)
-		return nil
-	})
-	if err != nil {
-		return nil, err
 	}
-	if len(filenames) == 0 {
-		return nil, errors.New("no files found")
-	}
+
 	for _, filename := range filenames {
 		name := path.Base(filename)
-		fmt.Println(name)
-		s, err := box.String(name)
-		if err != nil {
-			return nil, errors.Wrap(err, "box.String")
-		}
 		var tmpl *template.Template
 		if t == nil {
 			t = template.New(name)
@@ -73,11 +67,12 @@ func parseFiles(box *rice.Box, t *template.Template) (*template.Template, error)
 			tmpl = t.New(name)
 		}
 		addFuncs(tmpl)
-		_, err = tmpl.Parse(s)
+		_, err = tmpl.ParseFS(tmpls, filename)
 		if err != nil {
 			return nil, err
 		}
 	}
+	fmt.Printf("templ: %+v", *t)
 	return t, nil
 }
 

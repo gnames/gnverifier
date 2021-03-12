@@ -1,13 +1,13 @@
 package web
 
 import (
+	"embed"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
 
-	rice "github.com/GeertJohan/go.rice"
 	"github.com/gnames/gnfmt"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnverify"
@@ -17,7 +17,10 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-const withLogs = true
+const withLogs = false
+
+//go:embed static
+var static embed.FS
 
 // Run starts the GNparser web service and servies both RESTful API and
 // a website.
@@ -43,8 +46,8 @@ func Run(gnv gnverify.GNVerify, port int) {
 	e.GET("/about", about())
 	e.GET("/api", api())
 
-	assetHandler := http.FileServer(rice.MustFindBox("assets").HTTPBox())
-	e.GET("/static/*", echo.WrapHandler(http.StripPrefix("/static/", assetHandler)))
+	fs := http.FileServer(http.FS(static))
+	e.GET("/static/*", echo.WrapHandler(fs))
 
 	addr := fmt.Sprintf(":%d", port)
 	s := &http.Server{

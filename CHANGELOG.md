@@ -2,6 +2,7 @@
 
 ## [v0.1.1]
 
+- Add [#33]: use `embed` from Go 1.16 and remove `rice` dependency.
 - Add [#32]: documenation for web UI.
 - Add [#31]: install tools via Makefile.
 - Add [#30]: display data-sources meta-information via web UI.

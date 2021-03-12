@@ -33,7 +33,7 @@ build:
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) $(GOBUILD);
 
-release: assets
+release: 
 	@echo Building releases for Linux, Mac, Windows
 	cd gnverify; \
 	$(GOCLEAN); \
@@ -51,7 +51,3 @@ install:
 	$(GOGENERATE)
 	cd gnverify; \
 	$(FLAGS_SHARED) $(GOINSTALL);
-
-assets:
-	cd io/web; \
-	rice embed-go;
