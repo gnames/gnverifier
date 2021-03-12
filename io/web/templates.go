@@ -72,7 +72,6 @@ func parseFiles() (*template.Template, error) {
 			return nil, err
 		}
 	}
-	fmt.Printf("templ: %+v", *t)
 	return t, nil
 }
 

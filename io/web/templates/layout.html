@@ -1,90 +1,89 @@
 {{ define "layout" }}
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Global Names Resolver</title>
-  <link href="/static/styles/screen.css" media="screen" rel="stylesheet" type="text/css" />
-  <script src="/static/js/jquery-3.6.0.min.js"></script>
-  {{ if eq .Page "home" }}
-  <script src="/static/js/home.js"></script>
-  {{ end }}
-</head>
-<body>
-  <div id="SiteContainer" class="structural">
+  <head>
+    <title>Global Names Resolver</title>
+    <link href="/static/styles/screen.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    {{ if eq .Page "home" }}
+    <script src="/static/js/home.js"></script>
+    {{ end }}
+  </head>
+  <body>
+    <div id="SiteContainer" class="structural">
 
-    <div class="background"></div>
+      <div class="background"></div>
 
-    <div id="Header" class="structural fixedWidth">
-  <div class="inner">
-    <div id="Logo">
-      <a href="/">
-        <h1>Global Names Verifier</h1>
-      </a>
+      <div id="Header" class="structural fixedWidth">
+        <div class="inner">
+          <div id="Logo">
+            <a href="/">
+              <h1>Global Names Verifier</h1>
+            </a>
+          </div>
+          <ul id="SiteNavigation">
+            {{ if eq .Page "home" }}
+            <li class="active"><a href="/">Home</a></li>
+            {{ else }}
+            <li><a href="/">Home</a></li>
+            {{ end }}
+
+            {{ if eq .Page "data_sources" "data_source" }}
+            <li class="active"><a href="/data_sources">Sources</a></li>
+            {{ else }}
+            <li><a href="/data_sources">Sources</a></li>
+            {{ end }}
+
+            {{ if eq .Page "about" }}
+            <li class="active"><a href="/about">About</a></li>
+            {{ else }}
+            <li><a href="/about">About</a></li>
+            {{ end }}
+
+            {{ if eq .Page "api" }}
+            <li class="active"><a href="/api">API</a></li>
+            {{ else }}
+            <li><a href="/api">API</a></li>
+            {{ end }}
+          </ul>
+        </div>
+      </div>
+
+      <div id="BodyContent" class="structural fixedWidth clear">
+        <div class="inner">
+          <div id="content-wrapper">
+            <div id="content-body">
+              {{ if eq .Page "home" }}
+              {{ template "home" . }}
+              {{ else if eq .Page "data_sources" }}
+              {{ template "data_sources" . }}
+              {{ else if eq .Page "data_source" }}
+              {{ template "data_source" . }}
+              {{ else if eq .Page "about" }}
+              {{ template "about" . }}
+              {{ else if eq .Page "api" }}
+              {{ template "api" . }}
+              {{ end }}
+
+              <p>
+              <a href='https://github.com/gnames/gnverify'>Code</a>
+              on GitHub
+              </p>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="Footer" class="structural fixedWidth">
+        <div class="inner">
+          <span><a href="http://www.globalnames.org">Global Names</a></span>|
+          <span><a href="https://parser.globalnames.org">Global Names Parser</a></span>|
+          <span><a href="https://gnrd.globalnames.org">Global Names Finder</a></span>|
+          <span><a href="https://verifier.globalnames.org">Global Names Verifier</a></span>|
+        </div>
+      </div>
     </div>
-    <ul id="SiteNavigation">
-      {{ if eq .Page "home" }}
-        <li class="active"><a href="/">Home</a></li>
-      {{ else }}
-        <li><a href="/">Home</a></li>
-      {{ end }}
-      
-      {{ if eq .Page "data_sources" "data_source" }}
-        <li class="active"><a href="/data_sources">Sources</a></li>
-      {{ else }}
-        <li><a href="/data_sources">Sources</a></li>
-      {{ end }}
-
-      {{ if eq .Page "about" }}
-        <li class="active"><a href="/about">About</a></li>
-      {{ else }}
-        <li><a href="/about">About</a></li>
-      {{ end }}
-
-      {{ if eq .Page "api" }}
-        <li class="active"><a href="/api">API</a></li>
-      {{ else }}
-        <li><a href="/api">API</a></li>
-      {{ end }}
-    </ul>
-  </div>
-</div>
-
-   <div id="BodyContent" class="structural fixedWidth clear">
-     <div class="inner">
-       <div id="content-wrapper">
-         <div id="content-body">
-           {{ if eq .Page "home" }}
-             {{ template "home" . }}
-           {{ else if eq .Page "data_sources" }}
-             {{ template "data_sources" . }}
-           {{ else if eq .Page "data_source" }}
-             {{ template "data_source" . }}
-           {{ else if eq .Page "about" }}
-             {{ template "about" . }}
-           {{ else if eq .Page "api" }}
-             {{ template "api" . }}
-           {{ end }}
-
-<p>
-<a href='https://github.com/gnames/gnverify'>Code</a>
-on GitHub
-</p>
-
-         </div>
-       </div>
-     </div>
-   </div>
-
-   <div id="Footer" class="structural fixedWidth">
-  <div class="inner">
-      <span><a href="http://www.globalnames.org">Global Names Architecture</a></span>|
-      <span><a href="http://gnrd.globalnames.org">Global Names Recognition &amp; Discovery</a></span>|
-      <span><a href="http://gnite.org">Global Names Integrated Taxonomic Editor</a></span>
-    </div>
-  </div>
-</div>
-
-  </div>
 </body>
 </html>
 {{ end }}

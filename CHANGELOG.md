@@ -1,7 +1,8 @@
 # Changelog
 
-## [v0.1.1]
+## [v0.2.0]
 
+- Add [#34]: public service at globalnames.org
 - Add [#33]: use `embed` from Go 1.16 and remove `rice` dependency.
 - Add [#32]: documenation for web UI.
 - Add [#31]: install tools via Makefile.
@@ -29,7 +30,7 @@
 
 This document follows [changelog guidelines]
 
-[v0.1.1]: https://github.com/gnames/gnverify/compare/v0.1.0...v0.1.1
+[v0.2.0]: https://github.com/gnames/gnverify/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnverify/tree/v0.1.0
 
 [#40]: https://github.com/gnames/gnverify/issues/40

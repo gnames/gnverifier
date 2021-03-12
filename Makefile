@@ -33,7 +33,7 @@ build:
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) $(GOBUILD);
 
-release: 
+release: dockerhub
 	@echo Building releases for Linux, Mac, Windows
 	cd gnverify; \
 	$(GOCLEAN); \
@@ -51,3 +51,13 @@ install:
 	$(GOGENERATE)
 	cd gnverify; \
 	$(FLAGS_SHARED) $(GOINSTALL);
+
+docker: build
+	docker build -t gnames/gnverify:latest -t gnames/gnverify:$(VERSION) .; \
+	cd gnverify; \
+	$(GOCLEAN);
+
+dockerhub: docker
+	docker push gnames/gnverify; \
+	docker push gnames/gnverify:$(VERSION)
+
