@@ -23,7 +23,7 @@
     <h5>From preferred Data Sources:</h5>
     {{ end }}
 
-    {{ range $pref }} 
+    {{ range $pref }}
       {{ template "results" . }}
     {{ end }}
   </div>
@@ -33,8 +33,8 @@
   {{ else }}
   <p>Verify a list of scientific names against <a href="/data_sources">biodiversity data-sources</a>. This service parses incoming names, executes exact or fuzzy matching as required, and returns the best-scored result. It can also return matches from data-sources selected by a user.</p>
 <div id='resolver-form'>
-  <form action='/' method='get'>
-    <label for='names'>Paste Scientific Names, one per line</label>
+  <form action='/' method='POST'>
+    <label for='names'>Paste Scientific Names, one per line (up to 5,000 names)</label>
     <textarea cols='24' name='names' rows='12'></textarea>
     <div id='advanced_options'>
       <a href='#'>Advanced Options &gt;&gt;</a>
@@ -69,12 +69,12 @@
               <input id='data_source_ids_4' name='ds' value='4' type='checkbox'>
               <label for='data_source_ids_4'>NCBI</label>
             </td class="nobg">
+          </tr>
+          <tr class="nobg">
             <td class="nobg">
               <input id='data_source_ids_5' name='ds' value='5' type='checkbox'>
               <label for='data_source_ids_5'>Index Fungorum</label>
             </td class="nobg">
-          </tr>
-          <tr class="nobg">
             <td class="nobg">
               <input id='data_source_ids_9' name='ds' value='9' type='checkbox'>
               <label for='data_source_ids_9'>WoRMS</label>
@@ -83,6 +83,8 @@
               <input id='data_source_ids_11' name='ds' value='11' type='checkbox'>
               <label for='data_source_ids_11'>GBIF</label>
             </td>
+          </tr>
+          <tr class="nobg">
             <td class="nobg">
               <input id='data_source_ids_167' name='ds' value='167' type='checkbox'>
               <label for='data_source_ids_167'>IPNI</label>
@@ -91,12 +93,12 @@
               <input id='data_source_ids_12' name='ds' value='12' type='checkbox'>
               <label for='data_source_ids_12'>EOL</label>
             </td>
-          </tr>
-          <tr class="nobg">
             <td class="nobg">
               <input id='data_source_ids_170' name='ds' value='170' type='checkbox'>
               <label for='data_source_ids_170'>Arctos</label>
             </td>
+          </tr>
+          <tr class="nobg">
             <td class="nobg">
               <input id='data_source_ids_179' name='ds' value='179' type='checkbox'>
               <label for='data_source_ids_179'>Open Tree Of Life</label>

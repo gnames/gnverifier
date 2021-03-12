@@ -29,8 +29,6 @@ func Run(gnv gnverify.GNVerify, port int) {
 	e := echo.New()
 
 	e.Use(middleware.Gzip())
-	e.Use(middleware.CORS())
-	e.Use(middleware.CSRF())
 	if withLogs {
 		e.Use(middleware.Logger())
 	}
@@ -40,7 +38,8 @@ func Run(gnv gnverify.GNVerify, port int) {
 		e.Logger.Fatal(err)
 	}
 
-	e.GET("/", home(gnv))
+	e.GET("/", homeGET())
+	e.POST("/", homePOST(gnv))
 	e.GET("/data_sources", dataSources(gnv))
 	e.GET("/data_sources/:id", dataSource(gnv))
 	e.GET("/about", about())
@@ -111,23 +110,45 @@ func dataSource(gnv gnverify.GNVerify) func(echo.Context) error {
 	}
 }
 
-func home(gnv gnverify.GNVerify) func(echo.Context) error {
+func homeGET() func(echo.Context) error {
 	return func(c echo.Context) error {
+		data := Data{Page: "home"}
+		return c.Render(http.StatusOK, "layout", data)
+	}
+}
+
+func homePOST(gnv gnverify.GNVerify) func(echo.Context) error {
+	type input struct {
+		Names         string `form:"names"`
+		Format        string `form:"format"`
+		PreferredOnly string `form:"preferred_only"`
+		DS            []int  `form:"ds"`
+	}
+
+	return func(c echo.Context) error {
+		inp := new(input)
 		data := Data{Page: "home", Format: "html"}
 		var names []string
 
-		params := c.QueryParams()
-		data.Input = params.Get("names")
-		data.Preferred = getPreferredSources(params["ds"])
-		prefOnly := params.Get("preferred_only") == "on"
+		err := c.Bind(inp)
+		if err != nil {
+			return err
+		}
 
-		format := params.Get("format")
+		prefOnly := inp.PreferredOnly == "on"
+
+		data.Input = inp.Names
+		data.Preferred = inp.DS
+		format := inp.Format
 		if format == "csv" || format == "json" {
 			data.Format = format
 		}
 
 		if data.Input != "" {
 			split := strings.Split(data.Input, "\n")
+			if len(split) > 5_000 {
+				split = split[0:5_000]
+			}
 			names = make([]string, len(split))
 			for i := range split {
 				names[i] = strings.TrimSpace(split[i])

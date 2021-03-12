@@ -1,8 +1,10 @@
 # Changelog
 
+- Add [#38]: move web UI to POST from GET.
+
 ## [v0.2.0]
 
-- Add [#34]: public service at globalnames.org
+- Add [#34]: public service at globalnames.org.
 - Add [#33]: use `embed` from Go 1.16 and remove `rice` dependency.
 - Add [#32]: documenation for web UI.
 - Add [#31]: install tools via Makefile.
