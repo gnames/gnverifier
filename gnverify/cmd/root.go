@@ -20,7 +20,7 @@ import (
 	"github.com/gnames/gnsys"
 	"github.com/gnames/gnverify"
 	"github.com/gnames/gnverify/config"
-	"github.com/gnames/gnverify/entity/output"
+	"github.com/gnames/gnverify/ent/output"
 	"github.com/gnames/gnverify/io/web"
 	"github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"

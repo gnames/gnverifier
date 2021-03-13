@@ -12,7 +12,7 @@ import (
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnverify"
 	"github.com/gnames/gnverify/config"
-	"github.com/gnames/gnverify/entity/output"
+	"github.com/gnames/gnverify/ent/output"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )

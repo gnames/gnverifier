@@ -26,6 +26,8 @@ const (
 	error
 )
 
+const prefMatch = "PreferredMatch"
+
 // Output takes result of verification for one string and converts it into
 // required format (CSV or JSON).
 func Output(ver vlib.Verification, f gnfmt.Format, prefOnly bool) string {
@@ -51,6 +53,9 @@ func csvOutput(ver vlib.Verification, prefOnly bool) string {
 		best := csvRow(ver, -1)
 		res = append(res, best)
 	}
+	if prefOnly && len(ver.PreferredResults) == 0 {
+		res = append(res, csvNoPrefRow(ver))
+	}
 	for i := range ver.PreferredResults {
 		pref := csvRow(ver, i)
 		res = append(res, pref)
@@ -59,12 +64,20 @@ func csvOutput(ver vlib.Verification, prefOnly bool) string {
 	return strings.Join(res, "\n")
 }
 
+func csvNoPrefRow(ver vlib.Verification) string {
+	s := []string{
+		prefMatch, vlib.NoMatch.String(), "", ver.Input,
+		"", "", "", "", "", "", "", "", ver.Error,
+	}
+	return gnfmt.ToCSV(s)
+}
+
 func csvRow(ver vlib.Verification, prefIndex int) string {
 	kind := "BestMatch"
 	res := ver.BestResult
 
 	if prefIndex > -1 {
-		kind = "PreferredMatch"
+		kind = prefMatch
 		res = ver.PreferredResults[prefIndex]
 	}
 

@@ -8,8 +8,8 @@ import (
 
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnverify/config"
-	"github.com/gnames/gnverify/entity/output"
-	"github.com/gnames/gnverify/entity/verifier"
+	"github.com/gnames/gnverify/ent/output"
+	"github.com/gnames/gnverify/ent/verifier"
 	"github.com/gnames/gnverify/io/verifrest"
 )
 
