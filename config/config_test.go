@@ -11,7 +11,7 @@ import (
 var url = "https://gnames.globalnames.org"
 
 func TestConfigDefault(t *testing.T) {
-	cnf := config.NewConfig()
+	cnf := config.New()
 	deflt := config.Config{
 		Format:      gnfmt.CSV,
 		VerifierURL: "https://verifier.globalnames.org/api/v1/",
@@ -22,7 +22,7 @@ func TestConfigDefault(t *testing.T) {
 
 func TestConfigOpts(t *testing.T) {
 	opts := opts()
-	cnf := config.NewConfig(opts...)
+	cnf := config.New(opts...)
 	updt := config.Config{
 		Format:           gnfmt.PrettyJSON,
 		PreferredOnly:    true,

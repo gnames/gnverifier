@@ -1,0 +1,31 @@
+---
+version: 1
+interactions:
+- request:
+    body: '{"nameStrings":["Plantago major"],"preferredSources":null,"withVernaculars":false}'
+    form: {}
+    headers:
+      Content-Type:
+      - application/json
+    url: https://verifier.globalnames.org/api/v1/verifications
+    method: POST
+  response:
+    body: |
+      [{"inputId":"4a559942-bde0-5df4-9983-9312864e340a","input":"Plantago major","matchType":"Exact","bestResult":{"dataSourceId":1,"dataSourceTitleShort":"Catalogue of Life","curation":"Curated","recordId":"2953900","localId":"bb25537566741bcd0190f3a09cb689e5","outlink":"http://www.catalogueoflife.org/annual-checklist/2019/details/species/id/bb25537566741bcd0190f3a09cb689e5","entryDate":"2020-06-15","matchedName":"Plantago major L.","matchedCardinality":2,"matchedCanonicalSimple":"Plantago major","matchedCanonicalFull":"Plantago major","currentRecordId":"2953900","currentName":"Plantago major L.","currentCardinality":2,"currentCanonicalSimple":"Plantago major","currentCanonicalFull":"Plantago major","isSynonym":false,"classificationPath":"Plantae|Tracheophyta|Magnoliopsida|Lamiales|Plantaginaceae|Plantago|Plantago major","classificationRanks":"kingdom|phylum|class|order|family|genus|species","editDistance":0,"stemEditDistance":0,"matchType":"Exact"},"dataSourcesNum":29,"curation":"Curated"}]
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=UTF-8
+      Date:
+      - Sun, 14 Mar 2021 00:42:40 GMT
+      Server:
+      - nginx/1.14.2
+      Vary:
+      - Accept-Encoding
+      - Origin
+    status: 200 OK
+    code: 200
+    duration: ""

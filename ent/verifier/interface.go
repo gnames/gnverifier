@@ -6,6 +6,8 @@ import (
 	vlib "github.com/gnames/gnlib/ent/verifier"
 )
 
+//go:generate counterfeiter -o verifiertesting/fake_verifier.go . Verifier
+
 // Verifier takes verification parameters and returns back results
 //  of verification of name-strings.
 type Verifier interface {

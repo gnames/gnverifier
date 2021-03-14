@@ -2,15 +2,14 @@ package gnverify
 
 import (
 	"context"
+	"errors"
 	"log"
 	"sync"
 	"time"
 
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnverify/config"
-	"github.com/gnames/gnverify/ent/output"
 	"github.com/gnames/gnverify/ent/verifier"
-	"github.com/gnames/gnverify/io/verifrest"
 )
 
 type gnverify struct {
@@ -18,12 +17,12 @@ type gnverify struct {
 	verifier verifier.Verifier
 }
 
-// NewGNVerify constructs an object that implements GNVerify interface
+// New constructs an object that implements GNVerify interface
 // and can be used for matching strings to scientfic names.
-func NewGNVerify(cnf config.Config) GNVerify {
+func New(cnf config.Config, vfr verifier.Verifier) GNVerify {
 	return &gnverify{
 		config:   cnf,
-		verifier: verifrest.NewVerifier(cnf.VerifierURL),
+		verifier: vfr,
 	}
 }
 
@@ -51,16 +50,16 @@ func (gnv *gnverify) Config() config.Config {
 
 // VerifyOne verifies one input string and returns results
 // as a string in JSON or CSV format.
-func (gnv *gnverify) VerifyOne(name string) string {
+func (gnv *gnverify) VerifyOne(name string) (vlib.Verification, error) {
 	params := vlib.VerifyParams{
 		NameStrings:      []string{name},
 		PreferredSources: gnv.config.PreferredSources,
 	}
 	verif := gnv.verifier.Verify(context.Background(), params)
 	if len(verif) < 1 {
-		log.Fatalf("Did not get results from verifier")
+		return vlib.Verification{}, errors.New("no verification results")
 	}
-	return output.Output(verif[0], gnv.config.Format, gnv.config.PreferredOnly)
+	return verif[0], nil
 }
 
 // VerifyBatch takes a list of name-strings, verifies them and returns
@@ -70,7 +69,7 @@ func (gnv *gnverify) VerifyBatch(nameStrings []string) []vlib.Verification {
 		NameStrings:      nameStrings,
 		PreferredSources: gnv.config.PreferredSources,
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	return gnv.verifier.Verify(ctx, params)

@@ -9,9 +9,8 @@ import (
 // methods needed to verify (reconcile/resolve) strings to scientific
 // names.
 type GNVerify interface {
-	// VerifyOne takes a name-string and returns result of verification as a
-	// JSON of CSV string.
-	VerifyOne(name string) string
+	// VerifyOne takes a name-string and returns the result of verification.
+	VerifyOne(name string) (vlib.Verification, error)
 
 	// VerifyBatch takes a slice of names and verifies them all at once
 	VerifyBatch(names []string) []vlib.Verification

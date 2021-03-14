@@ -1,6 +1,10 @@
 # Changelog
 
+## [v0.2.1]
+
+- Add [#34]: improve tests.
 - Add [#38]: move web UI to POST from GET.
+- Fix [#36]: correct output for preferred_only CSV files.
 
 ## [v0.2.0]
 

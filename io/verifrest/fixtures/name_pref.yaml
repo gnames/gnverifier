@@ -1,0 +1,31 @@
+---
+version: 1
+interactions:
+- request:
+    body: '{"nameStrings":["Pomatomus saltatrix (Linnaeus, 1766)"],"preferredSources":[1,12],"withVernaculars":false}'
+    form: {}
+    headers:
+      Content-Type:
+      - application/json
+    url: https://verifier.globalnames.org/api/v1/verifications
+    method: POST
+  response:
+    body: |
+      [{"inputId":"744fa750-9087-5fda-b197-c44833c32bca","input":"Pomatomus saltatrix (Linnaeus, 1766)","matchType":"Exact","bestResult":{"dataSourceId":1,"dataSourceTitleShort":"Catalogue of Life","curation":"Curated","recordId":"888770","localId":"d9ac988f149a3d2822d71c673be09317","outlink":"http://www.catalogueoflife.org/annual-checklist/2019/details/species/id/d9ac988f149a3d2822d71c673be09317","entryDate":"2020-06-15","matchedName":"Pomatomus saltatrix (Linnaeus, 1766)","matchedCardinality":2,"matchedCanonicalSimple":"Pomatomus saltatrix","matchedCanonicalFull":"Pomatomus saltatrix","currentRecordId":"888770","currentName":"Pomatomus saltatrix (Linnaeus, 1766)","currentCardinality":2,"currentCanonicalSimple":"Pomatomus saltatrix","currentCanonicalFull":"Pomatomus saltatrix","isSynonym":false,"classificationPath":"Animalia|Chordata|Actinopterygii|Perciformes|Pomatomidae|Pomatomus|Pomatomus saltatrix","classificationRanks":"kingdom|phylum|class|order|family|genus|species","editDistance":0,"stemEditDistance":0,"matchType":"Exact"},"preferredResults":[{"dataSourceId":12,"dataSourceTitleShort":"EOL","curation":"NotCurated","recordId":"46578890","localId":"46578890","outlink":"https://eol.org/pages/46578890","entryDate":"2021-01-25","matchedName":"Pomatomus saltatrix","matchedCardinality":2,"matchedCanonicalSimple":"Pomatomus saltatrix","matchedCanonicalFull":"Pomatomus saltatrix","currentRecordId":"46578890","currentName":"Pomatomus saltatrix","currentCardinality":2,"currentCanonicalSimple":"Pomatomus saltatrix","currentCanonicalFull":"Pomatomus saltatrix","isSynonym":false,"editDistance":0,"stemEditDistance":0,"matchType":"Exact"},{"dataSourceId":1,"dataSourceTitleShort":"Catalogue of Life","curation":"Curated","recordId":"888770","localId":"d9ac988f149a3d2822d71c673be09317","outlink":"http://www.catalogueoflife.org/annual-checklist/2019/details/species/id/d9ac988f149a3d2822d71c673be09317","entryDate":"2020-06-15","matchedName":"Pomatomus saltatrix (Linnaeus, 1766)","matchedCardinality":2,"matchedCanonicalSimple":"Pomatomus saltatrix","matchedCanonicalFull":"Pomatomus saltatrix","currentRecordId":"888770","currentName":"Pomatomus saltatrix (Linnaeus, 1766)","currentCardinality":2,"currentCanonicalSimple":"Pomatomus saltatrix","currentCanonicalFull":"Pomatomus saltatrix","isSynonym":false,"classificationPath":"Animalia|Chordata|Actinopterygii|Perciformes|Pomatomidae|Pomatomus|Pomatomus saltatrix","classificationRanks":"kingdom|phylum|class|order|family|genus|species","editDistance":0,"stemEditDistance":0,"matchType":"Exact"}],"dataSourcesNum":24,"curation":"Curated"}]
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=UTF-8
+      Date:
+      - Sun, 14 Mar 2021 00:52:46 GMT
+      Server:
+      - nginx/1.14.2
+      Vary:
+      - Accept-Encoding
+      - Origin
+    status: 200 OK
+    code: 200
+    duration: ""

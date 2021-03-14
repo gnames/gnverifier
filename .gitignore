@@ -13,3 +13,4 @@ t.json
 bench*.txt
 binding/*.so
 binding/*.h
+*out

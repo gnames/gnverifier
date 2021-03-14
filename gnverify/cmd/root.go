@@ -6,7 +6,6 @@ import (
 	_ "embed"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -21,6 +20,7 @@ import (
 	"github.com/gnames/gnverify"
 	"github.com/gnames/gnverify/config"
 	"github.com/gnames/gnverify/ent/output"
+	"github.com/gnames/gnverify/io/verifrest"
 	"github.com/gnames/gnverify/io/web"
 	"github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
@@ -95,20 +95,22 @@ more than 100 biodiverisity data-sources.`,
 
 		port, _ := cmd.Flags().GetInt("web_port")
 		if port > 0 {
-			cnf := config.NewConfig(webOpts...)
-			gnv := gnverify.NewGNVerify(cnf)
+			cnf := config.New(webOpts...)
+			vfr := verifrest.New(cnf.VerifierURL)
+			gnv := gnverify.New(cnf, vfr)
 			web.Run(gnv, port)
 			os.Exit(0)
 		}
 
-		cnf := config.NewConfig(opts...)
+		cnf := config.New(opts...)
+		vfr := verifrest.New(cnf.VerifierURL)
 
 		if len(args) == 0 {
 			processStdin(cmd, cnf)
 			os.Exit(0)
 		}
 		data := getInput(cmd, args)
-		gnv := gnverify.NewGNVerify(cnf)
+		gnv := gnverify.New(cnf, vfr)
 		verify(gnv, data)
 	},
 }
@@ -253,12 +255,16 @@ func parseDataSources(s string) []int {
 	return nil
 }
 
-func processStdin(cmd *cobra.Command, cnf config.Config) {
+func processStdin(
+	cmd *cobra.Command,
+	cfg config.Config,
+) {
 	if !checkStdin() {
 		_ = cmd.Help()
 		return
 	}
-	gnv := gnverify.NewGNVerify(cnf)
+	vfr := verifrest.New(cfg.VerifierURL)
+	gnv := gnverify.New(cfg, vfr)
 	verifyFile(gnv, os.Stdin)
 }
 
@@ -349,11 +355,14 @@ func processResults(gnv gnverify.GNVerify, out <-chan []vlib.Verification,
 }
 
 func verifyString(gnv gnverify.GNVerify, name string) {
-	res := gnv.VerifyOne(name)
+	res, err := gnv.VerifyOne(name)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if gnv.Config().Format == gnfmt.CSV {
 		fmt.Println(output.CSVHeader())
 	}
-	fmt.Println(res)
+	fmt.Println(output.Output(res, gnv.Config().Format, gnv.Config().PreferredOnly))
 }
 
 // touchConfigFile checks if config file exists, and if not, it gets created.
@@ -374,7 +383,7 @@ func createConfig(path string, file string) {
 		log.Fatalf("Cannot create dir %s: %s.", path, err)
 	}
 
-	err = ioutil.WriteFile(path, []byte(configText), 0644)
+	err = os.WriteFile(path, []byte(configText), 0644)
 	if err != nil {
 		log.Fatalf("Cannot write to file %s: %s", path, err)
 	}

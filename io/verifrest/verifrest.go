@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 
@@ -20,8 +20,8 @@ type verifrest struct {
 	client      *http.Client
 }
 
-// NewVerifier returns object that implements Verifier interface.
-func NewVerifier(url string) verifier.Verifier {
+// New returns object that implements Verifier interface.
+func New(url string) verifier.Verifier {
 	if url[len(url)-1] != '/' {
 		url = url + "/"
 	}
@@ -53,7 +53,7 @@ func (vr *verifrest) DataSources(
 	}
 	defer resp.Body.Close()
 
-	respBytes, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Warn("Body reading is failing for data-sources.")
 		return nil, err
@@ -89,7 +89,7 @@ func (vr *verifrest) DataSource(
 	}
 	defer resp.Body.Close()
 
-	respBytes, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Warn("Body reading is failing for data-sources.")
 		return response, err
@@ -143,7 +143,7 @@ func (vr *verifrest) Verify(
 		}
 		defer resp.Body.Close()
 
-		respBytes, err := ioutil.ReadAll(resp.Body)
+		respBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			log.Warnf("Body reading is failing for %s.", namesRange)
 			return true, err
@@ -178,7 +178,7 @@ func try(fn func(int) (bool, error)) (int, error) {
 	var (
 		err        error
 		tryAgain   bool
-		maxRetries int = 5
+		maxRetries int = 3
 		attempt    int = 1
 	)
 	for {

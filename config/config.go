@@ -31,9 +31,9 @@ type Config struct {
 	Batch int
 }
 
-// NewConfig is a Config constructor that takes external options to
+// New is a Config constructor that takes external options to
 // update default values to external ones.
-func NewConfig(opts ...Option) Config {
+func New(opts ...Option) Config {
 	cnf := Config{
 		Format:      gnfmt.CSV,
 		VerifierURL: "https://verifier.globalnames.org/api/v1/",
