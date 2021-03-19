@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.2.2]
+
+- Add [#39]: add Wikispecies and Plazi to web-interface.
+
 ## [v0.2.1]
 
 - Add [#34]: improve tests.
