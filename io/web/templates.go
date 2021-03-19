@@ -10,7 +10,6 @@ import (
 
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/labstack/echo/v4"
-	"github.com/pkg/errors"
 )
 
 //go:embed templates
@@ -34,7 +33,7 @@ func (t *echoTempl) Render(
 func NewTemplate() (*echoTempl, error) {
 	t, err := parseFiles()
 	if err != nil {
-		return nil, errors.Wrap(err, "parseFile")
+		return nil, fmt.Errorf("cannot parse templates: %w", err)
 	}
 	return &echoTempl{t}, nil
 }
