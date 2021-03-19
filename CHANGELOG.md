@@ -6,8 +6,8 @@
 
 ## [v0.2.1]
 
-- Add [#34]: improve tests.
 - Add [#38]: move web UI to POST from GET.
+- Add [#34]: improve tests.
 - Fix [#36]: correct output for preferred_only CSV files.
 
 ## [v0.2.0]
@@ -40,9 +40,21 @@
 
 This document follows [changelog guidelines]
 
+[v0.2.2]: https://github.com/gnames/gnverify/compare/v0.2.1...v0.2.2
+[v0.2.1]: https://github.com/gnames/gnverify/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/gnames/gnverify/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnverify/tree/v0.1.0
 
+[#50]: https://github.com/gnames/gnverify/issues/50
+[#40]: https://github.com/gnames/gnverify/issues/40
+[#48]: https://github.com/gnames/gnverify/issues/48
+[#47]: https://github.com/gnames/gnverify/issues/47
+[#46]: https://github.com/gnames/gnverify/issues/46
+[#45]: https://github.com/gnames/gnverify/issues/45
+[#44]: https://github.com/gnames/gnverify/issues/44
+[#43]: https://github.com/gnames/gnverify/issues/43
+[#42]: https://github.com/gnames/gnverify/issues/42
+[#41]: https://github.com/gnames/gnverify/issues/41
 [#40]: https://github.com/gnames/gnverify/issues/40
 [#39]: https://github.com/gnames/gnverify/issues/39
 [#38]: https://github.com/gnames/gnverify/issues/38
