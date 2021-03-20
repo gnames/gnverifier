@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -17,7 +18,14 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-const withLogs = true
+const withLogs = false
+
+type formInput struct {
+	Names         string `query:"names" form:"names"`
+	Format        string `query:"format" form:"format"`
+	PreferredOnly string `query:"preferred_only" form:"preferred_only"`
+	DS            []int  `query:"ds" form:"ds"`
+}
 
 //go:embed static
 var static embed.FS
@@ -38,7 +46,7 @@ func Run(gnv gnverify.GNVerify, port int) {
 		e.Logger.Fatal(err)
 	}
 
-	e.GET("/", homeGET())
+	e.GET("/", homeGET(gnv))
 	e.POST("/", homePOST(gnv))
 	e.GET("/data_sources", dataSources(gnv))
 	e.GET("/data_sources/:id", dataSource(gnv))
@@ -110,74 +118,48 @@ func dataSource(gnv gnverify.GNVerify) func(echo.Context) error {
 	}
 }
 
-func homeGET() func(echo.Context) error {
+func homeGET(gnv gnverify.GNVerify) func(echo.Context) error {
 	return func(c echo.Context) error {
-		data := Data{Page: "home"}
-		return c.Render(http.StatusOK, "layout", data)
+		data := Data{Page: "home", Format: "html"}
+
+		inp := new(formInput)
+		err := c.Bind(inp)
+		if err != nil {
+			return err
+		}
+
+		if strings.TrimSpace(inp.Names) == "" {
+			return c.Render(http.StatusOK, "layout", data)
+		}
+
+		return verificationResults(c, gnv, inp, data)
 	}
 }
 
 func homePOST(gnv gnverify.GNVerify) func(echo.Context) error {
-	type input struct {
-		Names         string `form:"names"`
-		Format        string `form:"format"`
-		PreferredOnly string `form:"preferred_only"`
-		DS            []int  `form:"ds"`
-	}
-
 	return func(c echo.Context) error {
-		inp := new(input)
+		inp := new(formInput)
 		data := Data{Page: "home", Format: "html"}
-		var names []string
 
 		err := c.Bind(inp)
 		if err != nil {
 			return err
 		}
 
-		prefOnly := inp.PreferredOnly == "on"
-
-		data.Input = inp.Names
-		data.Preferred = inp.DS
-		format := inp.Format
-		if format == "csv" || format == "json" {
-			data.Format = format
+		if strings.TrimSpace(inp.Names) == "" {
+			return c.Redirect(http.StatusFound, "")
 		}
 
-		if data.Input != "" {
-			split := strings.Split(data.Input, "\n")
-			if len(split) > 5_000 {
-				split = split[0:5_000]
-			}
-			names = make([]string, len(split))
-			for i := range split {
-				names[i] = strings.TrimSpace(split[i])
-			}
-
-			opts := []config.Option{config.OptPreferredSources(data.Preferred)}
-			gnv.ChangeConfig(opts...)
-
-			data.Verified = gnv.VerifyBatch(names)
-			if prefOnly {
-				for i := range data.Verified {
-					data.Verified[i].BestResult = nil
-				}
-			}
+		split := strings.Split(inp.Names, "\n")
+		if len(split) > 5_000 {
+			split = split[0:5_000]
 		}
 
-		switch data.Format {
-		case "json":
-			return c.JSON(http.StatusOK, data.Verified)
-		case "csv":
-			res := make([]string, len(data.Verified)+1)
-			res[0] = output.CSVHeader()
-			for i, v := range data.Verified {
-				res[i+1] = output.Output(v, gnfmt.CSV, prefOnly)
-			}
-			return c.String(http.StatusOK, strings.Join(res, "\n"))
-		default:
-			return c.Render(http.StatusOK, "layout", data)
+		if len(split) < gnv.Config().NamesNumThreshold {
+			return redirectToHomeGET(c, inp)
 		}
+
+		return verificationResults(c, gnv, inp, data)
 	}
 }
 
@@ -195,4 +177,73 @@ func getPreferredSources(ds []string) []int {
 		res = append(res, id)
 	}
 	return res
+}
+
+func redirectToHomeGET(c echo.Context, inp *formInput) error {
+	prefOnly := inp.PreferredOnly == "on"
+	q := make(url.Values)
+	q.Set("names", inp.Names)
+	q.Set("format", inp.Format)
+	if prefOnly {
+		q.Set("preferred_only", inp.PreferredOnly)
+	}
+	for i := range inp.DS {
+		q.Add("ds", strconv.Itoa(inp.DS[i]))
+	}
+	url := fmt.Sprintf("/?%s", q.Encode())
+	return c.Redirect(http.StatusFound, url)
+}
+
+func verificationResults(
+	c echo.Context,
+	gnv gnverify.GNVerify,
+	inp *formInput,
+	data Data,
+) error {
+	var names []string
+	prefOnly := inp.PreferredOnly == "on"
+
+	data.Input = inp.Names
+	data.Preferred = inp.DS
+	format := inp.Format
+	if format == "csv" || format == "json" {
+		data.Format = format
+	}
+
+	if data.Input != "" {
+		split := strings.Split(data.Input, "\n")
+		if len(split) > 5_000 {
+			split = split[0:5_000]
+		}
+
+		names = make([]string, len(split))
+		for i := range split {
+			names[i] = strings.TrimSpace(split[i])
+		}
+
+		opts := []config.Option{config.OptPreferredSources(data.Preferred)}
+		gnv.ChangeConfig(opts...)
+
+		data.Verified = gnv.VerifyBatch(names)
+		if prefOnly {
+			for i := range data.Verified {
+				data.Verified[i].BestResult = nil
+			}
+		}
+	}
+	inp = new(formInput)
+
+	switch data.Format {
+	case "json":
+		return c.JSON(http.StatusOK, data.Verified)
+	case "csv":
+		res := make([]string, len(data.Verified)+1)
+		res[0] = output.CSVHeader()
+		for i, v := range data.Verified {
+			res[i+1] = output.Output(v, gnfmt.CSV, prefOnly)
+		}
+		return c.String(http.StatusOK, strings.Join(res, "\n"))
+	default:
+		return c.Render(http.StatusOK, "layout", data)
+	}
 }

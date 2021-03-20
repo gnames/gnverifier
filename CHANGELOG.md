@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.2.3]
+
+- Add [#40]: redirect to GET if names number is small.
+
 ## [v0.2.2]
 
 - Add [#39]: add Wikispecies and Plazi to web-interface.
@@ -40,6 +44,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.2.3]: https://github.com/gnames/gnverify/compare/v0.2.2...v0.2.3
 [v0.2.2]: https://github.com/gnames/gnverify/compare/v0.2.1...v0.2.2
 [v0.2.1]: https://github.com/gnames/gnverify/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/gnames/gnverify/compare/v0.1.0...v0.2.0

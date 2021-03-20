@@ -29,16 +29,21 @@ type Config struct {
 	// Batch is the size of the string slices fed into input channel for
 	// verification.
 	Batch int
+
+	// NamesNumThreshold the number of names after which POST gets redirected
+	// to GET.
+	NamesNumThreshold int
 }
 
 // New is a Config constructor that takes external options to
 // update default values to external ones.
 func New(opts ...Option) Config {
 	cnf := Config{
-		Format:      gnfmt.CSV,
-		VerifierURL: "https://verifier.globalnames.org/api/v1/",
-		Batch:       5000,
-		Jobs:        4,
+		Format:            gnfmt.CSV,
+		VerifierURL:       "https://verifier.globalnames.org/api/v1/",
+		Batch:             5000,
+		Jobs:              4,
+		NamesNumThreshold: 20,
 	}
 	for _, opt := range opts {
 		opt(&cnf)
@@ -82,5 +87,13 @@ func OptPreferredSources(srs []int) Option {
 func OptVerifierURL(s string) Option {
 	return func(cnf *Config) {
 		cnf.VerifierURL = s
+	}
+}
+
+// OptNamesNumThreshold sets number of names after which there is a redirect
+// from POST to GET.
+func OptNamesNumThreshold(i int) Option {
+	return func(cnf *Config) {
+		cnf.NamesNumThreshold = i
 	}
 }

@@ -49,7 +49,13 @@ func TestAPI(t *testing.T) {
 func TestHomeGET(t *testing.T) {
 	c, rec := handlerGET("/", t)
 
-	assert.Nil(t, homeGET()(c))
+	verifs := verifications(t)
+	cfg := config.New()
+	vfr := new(vtest.FakeVerifier)
+	vfr.VerifyReturns(verifs)
+	gnv := gnverify.New(cfg, vfr)
+
+	assert.Nil(t, homeGET(gnv)(c))
 	assert.Equal(t, rec.Code, http.StatusOK)
 	assert.Contains(t, rec.Body.String(), "Global Names Verifier")
 	assert.Contains(t, rec.Body.String(), "Advanced Options")
@@ -74,12 +80,42 @@ func TestHomePOST(t *testing.T) {
 	assert.Nil(t, err)
 	c := e.NewContext(req, rec)
 
-	cfg := config.New()
+	cfg := config.New(config.OptNamesNumThreshold(2))
 	vfr := new(vtest.FakeVerifier)
 	vfr.VerifyReturns(verifs)
 	gnv := gnverify.New(cfg, vfr)
 	assert.Nil(t, homePOST(gnv)(c))
+	assert.Equal(t, rec.Code, http.StatusOK)
 	assert.Contains(t, rec.Body.String(), "Bubo (genus)")
+}
+
+func TestHomePostGet(t *testing.T) {
+	var err error
+	verifs := verifications(t)
+	f := make(url.Values)
+	f.Set("names", "Bubo bubo\nPomatomus saltator\nNotName")
+	f.Set("format", "html")
+
+	req := httptest.NewRequest(
+		http.MethodPost,
+		"/",
+		strings.NewReader(f.Encode()),
+	)
+	rec := httptest.NewRecorder()
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
+	e := echo.New()
+	e.Renderer, err = NewTemplate()
+	assert.Nil(t, err)
+	c := e.NewContext(req, rec)
+
+	cfg := config.New(config.OptNamesNumThreshold(20))
+	vfr := new(vtest.FakeVerifier)
+	vfr.VerifyReturns(verifs)
+	gnv := gnverify.New(cfg, vfr)
+	assert.Nil(t, homePOST(gnv)(c))
+	// redirect to GET
+	assert.Equal(t, rec.Code, http.StatusFound)
+	assert.NotContains(t, rec.Body.String(), "Bubo (genus)")
 }
 
 func verifications(t *testing.T) []vlib.Verification {
