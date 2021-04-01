@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 package main
 
-import "github.com/gnames/gnverify/gnverify/cmd"
+import "github.com/gnames/gnverifier/gnverifier/cmd"
 
 func main() {
 	cmd.Execute()

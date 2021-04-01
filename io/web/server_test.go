@@ -11,9 +11,9 @@ import (
 	"github.com/dnaeon/go-vcr/cassette"
 	"github.com/gnames/gnfmt"
 	vlib "github.com/gnames/gnlib/ent/verifier"
-	"github.com/gnames/gnverify"
-	"github.com/gnames/gnverify/config"
-	vtest "github.com/gnames/gnverify/ent/verifier/verifiertesting"
+	"github.com/gnames/gnverifier"
+	"github.com/gnames/gnverifier/config"
+	vtest "github.com/gnames/gnverifier/ent/verifier/verifiertesting"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
@@ -53,7 +53,7 @@ func TestHomeGET(t *testing.T) {
 	cfg := config.New()
 	vfr := new(vtest.FakeVerifier)
 	vfr.VerifyReturns(verifs)
-	gnv := gnverify.New(cfg, vfr)
+	gnv := gnverifier.New(cfg, vfr)
 
 	assert.Nil(t, homeGET(gnv)(c))
 	assert.Equal(t, rec.Code, http.StatusOK)
@@ -83,7 +83,7 @@ func TestHomePOST(t *testing.T) {
 	cfg := config.New(config.OptNamesNumThreshold(2))
 	vfr := new(vtest.FakeVerifier)
 	vfr.VerifyReturns(verifs)
-	gnv := gnverify.New(cfg, vfr)
+	gnv := gnverifier.New(cfg, vfr)
 	assert.Nil(t, homePOST(gnv)(c))
 	assert.Equal(t, rec.Code, http.StatusOK)
 	assert.Contains(t, rec.Body.String(), "Bubo (genus)")
@@ -111,7 +111,7 @@ func TestHomePostGet(t *testing.T) {
 	cfg := config.New(config.OptNamesNumThreshold(20))
 	vfr := new(vtest.FakeVerifier)
 	vfr.VerifyReturns(verifs)
-	gnv := gnverify.New(cfg, vfr)
+	gnv := gnverifier.New(cfg, vfr)
 	assert.Nil(t, homePOST(gnv)(c))
 	// redirect to GET
 	assert.Equal(t, rec.Code, http.StatusFound)

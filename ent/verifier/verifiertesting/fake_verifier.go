@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	verifiera "github.com/gnames/gnlib/ent/verifier"
-	"github.com/gnames/gnverify/ent/verifier"
+	"github.com/gnames/gnverifier/ent/verifier"
 )
 
 type FakeVerifier struct {

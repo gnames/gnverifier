@@ -1,4 +1,4 @@
-package gnverify_test
+package gnverifier_test
 
 import (
 	"errors"
@@ -9,9 +9,9 @@ import (
 	"github.com/dnaeon/go-vcr/cassette"
 	"github.com/gnames/gnfmt"
 	vlib "github.com/gnames/gnlib/ent/verifier"
-	"github.com/gnames/gnverify"
-	"github.com/gnames/gnverify/config"
-	vtest "github.com/gnames/gnverify/ent/verifier/verifiertesting"
+	"github.com/gnames/gnverifier"
+	"github.com/gnames/gnverifier/config"
+	vtest "github.com/gnames/gnverifier/ent/verifier/verifiertesting"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 )
@@ -21,7 +21,7 @@ func TestDataSources(t *testing.T) {
 	vfr := new(vtest.FakeVerifier)
 	vfr.DataSourcesReturns(dss, nil)
 	cfg := config.New()
-	gnv := gnverify.New(cfg, vfr)
+	gnv := gnverifier.New(cfg, vfr)
 	res, err := gnv.DataSources()
 	assert.Nil(t, err)
 	assert.Equal(t, res, dss)
@@ -36,7 +36,7 @@ func TestDataSource(t *testing.T) {
 	vfr := new(vtest.FakeVerifier)
 	vfr.DataSourceReturns(ds, nil)
 	cfg := config.New()
-	gnv := gnverify.New(cfg, vfr)
+	gnv := gnverifier.New(cfg, vfr)
 	res, err := gnv.DataSource(1)
 	assert.Nil(t, err)
 	assert.Equal(t, res.ID, 1)
@@ -46,7 +46,7 @@ func TestDataSource(t *testing.T) {
 func TestChangeConfig(t *testing.T) {
 	vfr := new(vtest.FakeVerifier)
 	cfg := config.New()
-	gnv := gnverify.New(cfg, vfr)
+	gnv := gnverifier.New(cfg, vfr)
 	assert.Equal(t, gnv.Config().Format, gnfmt.CSV)
 	assert.Equal(t, gnv.Config().Jobs, 4)
 	gnv.ChangeConfig(
@@ -60,7 +60,7 @@ func TestChangeConfig(t *testing.T) {
 func TestConfig(t *testing.T) {
 	vfr := new(vtest.FakeVerifier)
 	cfg := config.New()
-	gnv := gnverify.New(cfg, vfr)
+	gnv := gnverifier.New(cfg, vfr)
 	res := gnv.Config()
 	assert.Equal(t, res, cfg)
 }
@@ -69,7 +69,7 @@ func TestVerifyOne(t *testing.T) {
 	verifs := verifications(t)
 	vfr := new(vtest.FakeVerifier)
 	cfg := config.New()
-	gnv := gnverify.New(cfg, vfr)
+	gnv := gnverifier.New(cfg, vfr)
 
 	vfr.VerifyReturns(verifs[0:1])
 	res, err := gnv.VerifyOne("Pomatomus saltatrix (Linnaeus, 1766)")
@@ -88,7 +88,7 @@ func TestVerifyBatch(t *testing.T) {
 	verifs := verifications(t)
 	vfr := new(vtest.FakeVerifier)
 	cfg := config.New()
-	gnv := gnverify.New(cfg, vfr)
+	gnv := gnverifier.New(cfg, vfr)
 
 	vfr.VerifyReturns(verifs)
 	batch := []string{
@@ -105,7 +105,7 @@ func TestVerifyStream(t *testing.T) {
 	verifs := verifications(t)
 	vfr := new(vtest.FakeVerifier)
 	cfg := config.New()
-	gnv := gnverify.New(cfg, vfr)
+	gnv := gnverifier.New(cfg, vfr)
 
 	vfr.VerifyReturns(verifs)
 	batch := []string{

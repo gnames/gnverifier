@@ -6,8 +6,8 @@ ENV LAST_FULL_REBUILD 2021-03-12
 
 WORKDIR /bin
 
-COPY ./gnverify/gnverify /bin
+COPY ./gnverifier/gnverifier /bin
 
-ENTRYPOINT [ "gnverify" ]
+ENTRYPOINT [ "gnverifier" ]
 
 CMD ["-w", "8181"]

@@ -11,7 +11,7 @@ import (
 	"github.com/gnames/gnfmt"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnuuid"
-	"github.com/gnames/gnverify/ent/verifier"
+	"github.com/gnames/gnverifier/ent/verifier"
 	log "github.com/sirupsen/logrus"
 )
 

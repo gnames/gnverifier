@@ -11,9 +11,9 @@ import (
 
 	"github.com/gnames/gnfmt"
 	vlib "github.com/gnames/gnlib/ent/verifier"
-	"github.com/gnames/gnverify"
-	"github.com/gnames/gnverify/config"
-	"github.com/gnames/gnverify/ent/output"
+	"github.com/gnames/gnverifier"
+	"github.com/gnames/gnverifier/config"
+	"github.com/gnames/gnverifier/ent/output"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -32,7 +32,7 @@ var static embed.FS
 
 // Run starts the GNparser web service and servies both RESTful API and
 // a website.
-func Run(gnv gnverify.GNVerify, port int) {
+func Run(gnv gnverifier.GNVerify, port int) {
 	var err error
 	e := echo.New()
 
@@ -89,7 +89,7 @@ func api() func(echo.Context) error {
 	}
 }
 
-func dataSources(gnv gnverify.GNVerify) func(echo.Context) error {
+func dataSources(gnv gnverifier.GNVerify) func(echo.Context) error {
 	return func(c echo.Context) error {
 		var err error
 		data := Data{Page: "data_sources"}
@@ -101,7 +101,7 @@ func dataSources(gnv gnverify.GNVerify) func(echo.Context) error {
 	}
 }
 
-func dataSource(gnv gnverify.GNVerify) func(echo.Context) error {
+func dataSource(gnv gnverifier.GNVerify) func(echo.Context) error {
 	return func(c echo.Context) error {
 		var err error
 		data := Data{Page: "data_source"}
@@ -118,7 +118,7 @@ func dataSource(gnv gnverify.GNVerify) func(echo.Context) error {
 	}
 }
 
-func homeGET(gnv gnverify.GNVerify) func(echo.Context) error {
+func homeGET(gnv gnverifier.GNVerify) func(echo.Context) error {
 	return func(c echo.Context) error {
 		data := Data{Page: "home", Format: "html"}
 
@@ -136,7 +136,7 @@ func homeGET(gnv gnverify.GNVerify) func(echo.Context) error {
 	}
 }
 
-func homePOST(gnv gnverify.GNVerify) func(echo.Context) error {
+func homePOST(gnv gnverifier.GNVerify) func(echo.Context) error {
 	return func(c echo.Context) error {
 		inp := new(formInput)
 		data := Data{Page: "home", Format: "html"}
@@ -196,7 +196,7 @@ func redirectToHomeGET(c echo.Context, inp *formInput) error {
 
 func verificationResults(
 	c echo.Context,
-	gnv gnverify.GNVerify,
+	gnv gnverifier.GNVerify,
 	inp *formInput,
 	data Data,
 ) error {

@@ -1,4 +1,4 @@
-// Package cmd creates a command line interface for gnverify app.
+// Package cmd creates a command line interface for gnverifier app.
 package cmd
 
 import (
@@ -17,18 +17,18 @@ import (
 	"github.com/gnames/gnfmt"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnsys"
-	"github.com/gnames/gnverify"
-	"github.com/gnames/gnverify/config"
-	"github.com/gnames/gnverify/ent/output"
-	"github.com/gnames/gnverify/io/verifrest"
-	"github.com/gnames/gnverify/io/web"
+	"github.com/gnames/gnverifier"
+	"github.com/gnames/gnverifier/config"
+	"github.com/gnames/gnverifier/ent/output"
+	"github.com/gnames/gnverifier/io/verifrest"
+	"github.com/gnames/gnverifier/io/web"
 	"github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-//go:embed gnverify.yaml
+//go:embed gnverifier.yaml
 var configText string
 
 var (
@@ -47,9 +47,9 @@ type cfgData struct {
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "gnverify",
+	Use:   "gnverifier",
 	Short: "Verifies scientific names agains many sources.",
-	Long: `gnverify uses a remote service to verify scientific names against
+	Long: `gnverifier uses a remote service to verify scientific names against
 more than 100 biodiverisity data-sources.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		webOpts := make([]config.Option, len(opts))
@@ -97,7 +97,7 @@ more than 100 biodiverisity data-sources.`,
 		if port > 0 {
 			cnf := config.New(webOpts...)
 			vfr := verifrest.New(cnf.VerifierURL)
-			gnv := gnverify.New(cnf, vfr)
+			gnv := gnverifier.New(cnf, vfr)
 			web.Run(gnv, port)
 			os.Exit(0)
 		}
@@ -110,7 +110,7 @@ more than 100 biodiverisity data-sources.`,
 			os.Exit(0)
 		}
 		data := getInput(cmd, args)
-		gnv := gnverify.New(cnf, vfr)
+		gnv := gnverifier.New(cnf, vfr)
 		verify(gnv, data)
 	},
 }
@@ -163,7 +163,7 @@ func init() {
 func initConfig() {
 	var home string
 	var err error
-	configFile := "gnverify"
+	configFile := "gnverifier"
 
 	// Find home directory.
 	home, err = homedir.Dir()
@@ -225,7 +225,7 @@ func showVersionFlag(cmd *cobra.Command) bool {
 	}
 
 	if hasVersionFlag {
-		fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnverify.Version, gnverify.Build)
+		fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnverifier.Version, gnverifier.Build)
 	}
 	return hasVersionFlag
 }
@@ -264,7 +264,7 @@ func processStdin(
 		return
 	}
 	vfr := verifrest.New(cfg.VerifierURL)
-	gnv := gnverify.New(cfg, vfr)
+	gnv := gnverifier.New(cfg, vfr)
 	verifyFile(gnv, os.Stdin)
 }
 
@@ -289,7 +289,7 @@ func getInput(cmd *cobra.Command, args []string) string {
 	return data
 }
 
-func verify(gnv gnverify.GNVerify, data string) {
+func verify(gnv gnverifier.GNVerify, data string) {
 	path := string(data)
 	fileExists, _ := gnsys.FileExists(path)
 	if fileExists {
@@ -305,7 +305,7 @@ func verify(gnv gnverify.GNVerify, data string) {
 	}
 }
 
-func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
+func verifyFile(gnv gnverifier.GNVerify, f io.Reader) {
 	batch := gnv.Config().Batch
 	in := make(chan []string)
 	out := make(chan []vlib.Verification)
@@ -328,7 +328,7 @@ func verifyFile(gnv gnverify.GNVerify, f io.Reader) {
 	wg.Wait()
 }
 
-func processResults(gnv gnverify.GNVerify, out <-chan []vlib.Verification,
+func processResults(gnv gnverifier.GNVerify, out <-chan []vlib.Verification,
 	wg *sync.WaitGroup) {
 	defer wg.Done()
 	timeStart := time.Now().UnixNano()
@@ -354,7 +354,7 @@ func processResults(gnv gnverify.GNVerify, out <-chan []vlib.Verification,
 	}
 }
 
-func verifyString(gnv gnverify.GNVerify, name string) {
+func verifyString(gnv gnverifier.GNVerify, name string) {
 	res, err := gnv.VerifyOne(name)
 	if err != nil {
 		log.Fatal(err)

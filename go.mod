@@ -1,4 +1,4 @@
-module github.com/gnames/gnverify
+module github.com/gnames/gnverifier
 
 go 1.16
 

@@ -1,11 +1,11 @@
-package gnverify
+package gnverifier
 
 import (
 	vlib "github.com/gnames/gnlib/ent/verifier"
-	"github.com/gnames/gnverify/config"
+	"github.com/gnames/gnverifier/config"
 )
 
-// GNVerify is the use-case interface of the gnverify app. It determines
+// GNVerify is the use-case interface of the gnverifier app. It determines
 // methods needed to verify (reconcile/resolve) strings to scientific
 // names.
 type GNVerify interface {
@@ -19,7 +19,7 @@ type GNVerify interface {
 	// the strings and sends results to another channel.
 	VerifyStream(in <-chan []string, out chan []vlib.Verification)
 
-	// ChangeConfig modifies configuration of GNVerify.
+	// ChangeConfig modifies configuration of GNVerifier.
 	ChangeConfig(opts ...config.Option)
 
 	// Config returns  configuration data.

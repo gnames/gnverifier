@@ -1,4 +1,4 @@
-package gnverify
+package gnverifier
 
 var (
 	// Version of the gnmatcher
