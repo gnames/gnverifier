@@ -102,15 +102,15 @@ more than 100 biodiverisity data-sources.`,
 			os.Exit(0)
 		}
 
-		cnf := config.New(opts...)
-		vfr := verifrest.New(cnf.VerifierURL)
+		cfg := config.New(opts...)
+		vfr := verifrest.New(cfg.VerifierURL)
 
 		if len(args) == 0 {
-			processStdin(cmd, cnf)
+			processStdin(cmd, cfg)
 			os.Exit(0)
 		}
 		data := getInput(cmd, args)
-		gnv := gnverifier.New(cnf, vfr)
+		gnv := gnverifier.New(cfg, vfr)
 		verify(gnv, data)
 	},
 }
