@@ -5,10 +5,10 @@ import (
 	"github.com/gnames/gnverifier/config"
 )
 
-// GNVerify is the use-case interface of the gnverifier app. It determines
+// GNverifier is the use-case interface of the gnverifier app. It determines
 // methods needed to verify (reconcile/resolve) strings to scientific
 // names.
-type GNVerify interface {
+type GNverifier interface {
 	// VerifyOne takes a name-string and returns the result of verification.
 	VerifyOne(name string) (vlib.Verification, error)
 

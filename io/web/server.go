@@ -32,7 +32,7 @@ var static embed.FS
 
 // Run starts the GNparser web service and servies both RESTful API and
 // a website.
-func Run(gnv gnverifier.GNVerify, port int) {
+func Run(gnv gnverifier.GNverifier, port int) {
 	var err error
 	e := echo.New()
 
@@ -89,7 +89,7 @@ func api() func(echo.Context) error {
 	}
 }
 
-func dataSources(gnv gnverifier.GNVerify) func(echo.Context) error {
+func dataSources(gnv gnverifier.GNverifier) func(echo.Context) error {
 	return func(c echo.Context) error {
 		var err error
 		data := Data{Page: "data_sources"}
@@ -101,7 +101,7 @@ func dataSources(gnv gnverifier.GNVerify) func(echo.Context) error {
 	}
 }
 
-func dataSource(gnv gnverifier.GNVerify) func(echo.Context) error {
+func dataSource(gnv gnverifier.GNverifier) func(echo.Context) error {
 	return func(c echo.Context) error {
 		var err error
 		data := Data{Page: "data_source"}
@@ -118,7 +118,7 @@ func dataSource(gnv gnverifier.GNVerify) func(echo.Context) error {
 	}
 }
 
-func homeGET(gnv gnverifier.GNVerify) func(echo.Context) error {
+func homeGET(gnv gnverifier.GNverifier) func(echo.Context) error {
 	return func(c echo.Context) error {
 		data := Data{Page: "home", Format: "html"}
 
@@ -136,7 +136,7 @@ func homeGET(gnv gnverifier.GNVerify) func(echo.Context) error {
 	}
 }
 
-func homePOST(gnv gnverifier.GNVerify) func(echo.Context) error {
+func homePOST(gnv gnverifier.GNverifier) func(echo.Context) error {
 	return func(c echo.Context) error {
 		inp := new(formInput)
 		data := Data{Page: "home", Format: "html"}
@@ -196,7 +196,7 @@ func redirectToHomeGET(c echo.Context, inp *formInput) error {
 
 func verificationResults(
 	c echo.Context,
-	gnv gnverifier.GNVerify,
+	gnv gnverifier.GNverifier,
 	inp *formInput,
 	data Data,
 ) error {

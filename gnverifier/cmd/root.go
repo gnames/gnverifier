@@ -289,7 +289,7 @@ func getInput(cmd *cobra.Command, args []string) string {
 	return data
 }
 
-func verify(gnv gnverifier.GNVerify, data string) {
+func verify(gnv gnverifier.GNverifier, data string) {
 	path := string(data)
 	fileExists, _ := gnsys.FileExists(path)
 	if fileExists {
@@ -305,7 +305,7 @@ func verify(gnv gnverifier.GNVerify, data string) {
 	}
 }
 
-func verifyFile(gnv gnverifier.GNVerify, f io.Reader) {
+func verifyFile(gnv gnverifier.GNverifier, f io.Reader) {
 	batch := gnv.Config().Batch
 	in := make(chan []string)
 	out := make(chan []vlib.Verification)
@@ -328,7 +328,7 @@ func verifyFile(gnv gnverifier.GNVerify, f io.Reader) {
 	wg.Wait()
 }
 
-func processResults(gnv gnverifier.GNVerify, out <-chan []vlib.Verification,
+func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Verification,
 	wg *sync.WaitGroup) {
 	defer wg.Done()
 	timeStart := time.Now().UnixNano()
@@ -354,7 +354,7 @@ func processResults(gnv gnverifier.GNVerify, out <-chan []vlib.Verification,
 	}
 }
 
-func verifyString(gnv gnverifier.GNVerify, name string) {
+func verifyString(gnv gnverifier.GNverifier, name string) {
 	res, err := gnv.VerifyOne(name)
 	if err != nil {
 		log.Fatal(err)

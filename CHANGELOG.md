@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.2.5]
+
+- rename GNVerify to GNverifier to be consistent with GNparser
+
 ## [v0.2.4]
 
 - Add [#42]: rename project to gnverifier

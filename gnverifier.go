@@ -19,7 +19,7 @@ type gnverifier struct {
 
 // New constructs an object that implements GNVerifier interface
 // and can be used for matching strings to scientfic names.
-func New(cnf config.Config, vfr verifier.Verifier) GNVerify {
+func New(cnf config.Config, vfr verifier.Verifier) GNverifier {
 	return &gnverifier{
 		config:   cnf,
 		verifier: vfr,
