@@ -38,11 +38,12 @@ var (
 // cfgData purpose is to achieve automatic import of data from the
 // configuration file, if it exists.
 type cfgData struct {
-	Format           string
-	PreferredOnly    bool
-	PreferredSources []int
-	VerifierURL      string
-	Jobs             int
+	Format             string
+	PreferredOnly      bool
+	PreferredSources   []int
+	WithCapitalization bool
+	VerifierURL        string
+	Jobs               int
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -56,15 +57,17 @@ more than 100 biodiverisity data-sources.`,
 		for i, v := range opts {
 			webOpts[i] = v
 		}
+		webOpts = append(webOpts, config.OptWithCapitalization(true))
 
 		if showVersionFlag(cmd) {
 			os.Exit(0)
 		}
 
-		pref, _ := cmd.Flags().GetBool("preferred_only")
-		if pref {
-			opts = append(opts, config.OptPreferredOnly(pref))
-		}
+		caps, _ := cmd.Flags().GetBool("capitalize")
+		opts = append(opts, config.OptWithCapitalization(caps))
+
+		pref, _ := cmd.Flags().GetBool("only_preferred")
+		opts = append(opts, config.OptPreferredOnly(pref))
 
 		formatString, _ := cmd.Flags().GetString("format")
 		if formatString != "csv" {
@@ -93,7 +96,7 @@ more than 100 biodiverisity data-sources.`,
 			webOpts = append(webOpts, config.OptVerifierURL(url))
 		}
 
-		port, _ := cmd.Flags().GetInt("web_port")
+		port, _ := cmd.Flags().GetInt("port")
 		if port > 0 {
 			cnf := config.New(webOpts...)
 			vfr := verifrest.New(cnf.VerifierURL)
@@ -134,14 +137,15 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("version", "V", false, "Prints version information")
-	rootCmd.Flags().BoolP("preferred_only", "p", false, "Ignores best match, returns only preferred results (if any).")
+	rootCmd.Flags().BoolP("capitalize", "c", false, "capitalizes first character")
+	rootCmd.Flags().BoolP("only_preferred", "o", false, "Ignores best match, returns only preferred results (if any).")
 	rootCmd.Flags().StringP("format", "f", "csv", `Format of the output: "compact", "pretty", "csv".
   compact: compact JSON,
   pretty: pretty JSON,
   csv: CSV (DEFAULT)`)
 	rootCmd.Flags().IntP("name_field", "n", 1, "Set position of ScientificName field, the first field is 1.")
 	rootCmd.Flags().IntP("jobs", "j", 4, "Number of jobs running in parallel.")
-	rootCmd.Flags().IntP("web_port", "w", 0, "Port to run web GUI.")
+	rootCmd.Flags().IntP("port", "p", 0, "Port to run web GUI.")
 	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
   If sources are set and there are matches to their data,
   such matches are returned in "preferred_result" results.

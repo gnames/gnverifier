@@ -1,12 +1,16 @@
 # Changelog
 
+## [v0.3.0]
+
+- Add [#45] an option to capitalize names with low-case uninomials and genera.
+
 ## [v0.2.5]
 
-- rename GNVerify to GNverifier to be consistent with GNparser
+- rename GNVerify to GNverifier to be consistent with GNparser.
 
 ## [v0.2.4]
 
-- Add [#42]: rename project to gnverifier
+- Add [#42]: rename project to gnverifier.
 
 ## [v0.2.3]
 
@@ -52,6 +56,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.3.0]: https://github.com/gnames/gnverifier/compare/v0.2.5...v0.3.0
+[v0.2.5]: https://github.com/gnames/gnverifier/compare/v0.2.4...v0.2.5
 [v0.2.4]: https://github.com/gnames/gnverifier/compare/v0.2.3...v0.2.4
 [v0.2.3]: https://github.com/gnames/gnverifier/compare/v0.2.2...v0.2.3
 [v0.2.2]: https://github.com/gnames/gnverifier/compare/v0.2.1...v0.2.2

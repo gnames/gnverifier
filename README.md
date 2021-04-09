@@ -18,10 +18,11 @@ biodiversity [Data Sources][data_source_ids]
   * [Options and flags](#options-and-flags)
     * [help](#help)
     * [version](#version)
-    * [web_port](#web_port)
+    * [port](#port)
+    * [capitalize](#capitalize)
     * [format](#format)
     * [sources](#sources)
-    * [preferred_only](#preferred_only)
+    * [only_preferred](#only_preferred)
     * [jobs](#jobs)
   * [Configuration file](#configuration-file)
 * [Copyright](#copyright)
@@ -131,7 +132,7 @@ format.
 ### As a web service
 
 ```bash
-gnverifier -w 8080
+gnverifier -p 8080
 ```
 
 You should be able to access web user interface via a browser at
@@ -180,16 +181,29 @@ gnverifier -V
 gnverifier --version
 ```
 
-#### web_port
+#### port
 
 Starts gnverifier as a web service using entered port
 
 ```bash
-gnverifier -w 8080
+gnverifier -p 8080
 ```
 
 This command will run user-interface accessible by a browser
 at ``http://localhost:8080``
+
+#### capitalize
+
+If your names are co not have uninomials or genera capitalized according to
+rules on nomenclature, you can still verify them using this option. If
+`capitalize` flag is set, the first character of every name-string will be
+capitalized (when appropriate).
+
+```bash
+gnverifier -c "bubo bubo"
+# or
+gnverifier --capitalize "bubo bubo"
+```
 
 #### format
 
@@ -229,16 +243,16 @@ gnverifier file.tsv --sources="12"
 cat file.txt | gnverifier -s '1,12'
 ```
 
-#### preferred_only
+#### only_preferred
 
 Sometimes a users wants to map a list of names to a DataSource. They
 are not interested if name matched anywhere else. In such case you can use
-the ``preferred_only`` flag.
+the ``only_preferred`` flag.
 
 ```bash
-gnverifier -p -s '12' file.txt
+gnverifier -o -s '12' file.txt
 # or
-gnverifier --preferred_only --sources='1,12' file.tsv
+gnverifier --only_preferred --sources='1,12' file.tsv
 ```
 
 #### jobs

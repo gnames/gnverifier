@@ -24,6 +24,7 @@ type formInput struct {
 	Names         string `query:"names" form:"names"`
 	Format        string `query:"format" form:"format"`
 	PreferredOnly string `query:"preferred_only" form:"preferred_only"`
+	Capitalize    string `query:"capitalize" form:"capitalize"`
 	DS            []int  `query:"ds" form:"ds"`
 }
 
@@ -181,11 +182,15 @@ func getPreferredSources(ds []string) []int {
 
 func redirectToHomeGET(c echo.Context, inp *formInput) error {
 	prefOnly := inp.PreferredOnly == "on"
+	caps := inp.Capitalize == "on"
 	q := make(url.Values)
 	q.Set("names", inp.Names)
 	q.Set("format", inp.Format)
 	if prefOnly {
 		q.Set("preferred_only", inp.PreferredOnly)
+	}
+	if caps {
+		q.Set("capitalize", inp.Capitalize)
 	}
 	for i := range inp.DS {
 		q.Add("ds", strconv.Itoa(inp.DS[i]))
@@ -202,6 +207,7 @@ func verificationResults(
 ) error {
 	var names []string
 	prefOnly := inp.PreferredOnly == "on"
+	caps := inp.Capitalize == "on"
 
 	data.Input = inp.Names
 	data.Preferred = inp.DS
@@ -221,7 +227,10 @@ func verificationResults(
 			names[i] = strings.TrimSpace(split[i])
 		}
 
-		opts := []config.Option{config.OptPreferredSources(data.Preferred)}
+		opts := []config.Option{
+			config.OptPreferredSources(data.Preferred),
+			config.OptWithCapitalization(caps),
+		}
 		gnv.ChangeConfig(opts...)
 
 		data.Verified = gnv.VerifyBatch(names)

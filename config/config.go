@@ -19,6 +19,10 @@ type Config struct {
 	// returned.
 	PreferredSources []int
 
+	// WithCapitalization flag; if true, the first rune of the name-string
+	// will be capitalized when appropriate.
+	WithCapitalization bool
+
 	// VerifierURL URL for gnames verification service. It only needs to
 	// be changed if user sets local version of gnames.
 	VerifierURL string
@@ -66,6 +70,13 @@ func OptFormat(f gnfmt.Format) Option {
 func OptPreferredOnly(b bool) Option {
 	return func(cnf *Config) {
 		cnf.PreferredOnly = b
+	}
+}
+
+// OptWithCapitalization sets WithCapitalization field.
+func OptWithCapitalization(b bool) Option {
+	return func(cnf *Config) {
+		cnf.WithCapitalization = b
 	}
 }
 

@@ -7,22 +7,18 @@ interactions:
     headers:
       Content-Type:
       - application/json
-    url: https://verifier.globalnames.org/api/v1/data_sources/4
+    url: http://localhost:8888/api/v1/data_sources/4
     method: GET
   response:
     body: |
-      {"id":4,"uuid":"97d7633b-5f79-4307-a397-3c29402d9311","title":"National Center for Biotechnology Information","titleShort":"NCBI","description":"The National Center for Biotechnology Information advances science and health by providing access to biomedical and genomic information.","homeURL":"https://www.ncbi.nlm.nih.gov/","isOutlinkReady":true,"curation":"NotCurated","recordCount":2305646,"updatedAt":"2021-01-25"}
+      {"id":4,"uuid":"97d7633b-5f79-4307-a397-3c29402d9311","title":"National Center for Biotechnology Information","titleShort":"NCBI","description":"The National Center for Biotechnology Information advances science and health by providing access to biomedical and genomic information.","homeURL":"https://www.ncbi.nlm.nih.gov/","isOutlinkReady":true,"curation":"NotCurated","recordCount":2317405,"updatedAt":"2021-03-23"}
     headers:
       Access-Control-Allow-Origin:
       - '*'
-      Connection:
-      - keep-alive
       Content-Type:
       - application/json; charset=UTF-8
       Date:
-      - Sun, 14 Mar 2021 00:24:18 GMT
-      Server:
-      - nginx/1.14.2
+      - Fri, 09 Apr 2021 23:23:17 GMT
       Vary:
       - Accept-Encoding
       - Origin

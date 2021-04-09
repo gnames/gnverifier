@@ -10,6 +10,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// var urlVerif = "https://verifier.globalnames.org/api/v1/"
+var urlVerif = "http://localhost:8888/api/v1/"
+
 func TestDataSources(t *testing.T) {
 	r, err := recorder.New("fixtures/dss")
 	defer r.Stop()
@@ -17,7 +20,7 @@ func TestDataSources(t *testing.T) {
 
 	client := &http.Client{Transport: r}
 	verif := &verifrest{
-		verifierURL: "https://verifier.globalnames.org/api/v1/",
+		verifierURL: urlVerif,
 		client:      client,
 	}
 	ds, err := verif.DataSources(context.Background())
@@ -32,7 +35,7 @@ func TestDataSource(t *testing.T) {
 
 	client := &http.Client{Transport: r}
 	verif := &verifrest{
-		verifierURL: "https://verifier.globalnames.org/api/v1/",
+		verifierURL: urlVerif,
 		client:      client,
 	}
 
@@ -49,6 +52,18 @@ func TestVerify(t *testing.T) {
 		matchCanonicals []string
 		hasPreferred    []bool
 	}{
+		{
+			fixture: "fixtures/capitalize",
+			params: vlib.VerifyParams{
+				NameStrings:        []string{"plantago major"},
+				WithCapitalization: true,
+			},
+			matchTypes: []vlib.MatchTypeValue{
+				vlib.Exact,
+			},
+			matchCanonicals: []string{"Plantago major"},
+			hasPreferred:    []bool{false},
+		},
 		{
 			fixture: "fixtures/name",
 			params: vlib.VerifyParams{
@@ -97,7 +112,7 @@ func TestVerify(t *testing.T) {
 
 		client := &http.Client{Transport: r}
 		verif := &verifrest{
-			verifierURL: "https://verifier.globalnames.org/api/v1/",
+			verifierURL: urlVerif,
 			client:      client,
 		}
 		vs := verif.Verify(context.Background(), tests[i].params)

@@ -52,8 +52,9 @@ func (gnv *gnverifier) Config() config.Config {
 // as a string in JSON or CSV format.
 func (gnv *gnverifier) VerifyOne(name string) (vlib.Verification, error) {
 	params := vlib.VerifyParams{
-		NameStrings:      []string{name},
-		PreferredSources: gnv.config.PreferredSources,
+		NameStrings:        []string{name},
+		PreferredSources:   gnv.config.PreferredSources,
+		WithCapitalization: gnv.config.WithCapitalization,
 	}
 	verif := gnv.verifier.Verify(context.Background(), params)
 	if len(verif) < 1 {
@@ -65,10 +66,7 @@ func (gnv *gnverifier) VerifyOne(name string) (vlib.Verification, error) {
 // VerifyBatch takes a list of name-strings, verifies them and returns
 // a batch of results back.
 func (gnv *gnverifier) VerifyBatch(nameStrings []string) []vlib.Verification {
-	params := vlib.VerifyParams{
-		NameStrings:      nameStrings,
-		PreferredSources: gnv.config.PreferredSources,
-	}
+	params := gnv.setParams(nameStrings)
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
@@ -129,10 +127,7 @@ func (gnv *gnverifier) loadNames(
 		defer close(vwChan)
 		for names := range inChan {
 
-			params := vlib.VerifyParams{
-				NameStrings:      names,
-				PreferredSources: gnv.config.PreferredSources,
-			}
+			params := gnv.setParams(names)
 			select {
 			case <-ctx.Done():
 				return
@@ -141,4 +136,13 @@ func (gnv *gnverifier) loadNames(
 		}
 	}()
 	return vwChan
+}
+
+func (gnv *gnverifier) setParams(names []string) vlib.VerifyParams {
+	res := vlib.VerifyParams{
+		NameStrings:        names,
+		PreferredSources:   gnv.config.PreferredSources,
+		WithCapitalization: gnv.config.WithCapitalization,
+	}
+	return res
 }
