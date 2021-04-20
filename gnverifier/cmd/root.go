@@ -22,7 +22,6 @@ import (
 	"github.com/gnames/gnverifier/ent/output"
 	"github.com/gnames/gnverifier/io/verifrest"
 	"github.com/gnames/gnverifier/io/web"
-	"github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -165,22 +164,21 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	var home string
+	var configDir string
 	var err error
 	configFile := "gnverifier"
 
-	// Find home directory.
-	home, err = homedir.Dir()
+	// Find config directory.
+	configDir, err = os.UserConfigDir()
 	if err != nil {
-		log.Fatalf("Cannot find home directory: %s.", err)
+		log.Fatalf("Cannot find config directory: %s.", err)
 	}
-	home = filepath.Join(home, ".config")
 
 	// Search config in home directory with name ".gnmatcher" (without extension).
-	viper.AddConfigPath(home)
+	viper.AddConfigPath(configDir)
 	viper.SetConfigName(configFile)
 
-	configPath := filepath.Join(home, fmt.Sprintf("%s.yaml", configFile))
+	configPath := filepath.Join(configDir, fmt.Sprintf("%s.yaml", configFile))
 	touchConfigFile(configPath, configFile)
 
 	// If a config file is found, read it in.
