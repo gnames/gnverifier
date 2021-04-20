@@ -7,7 +7,7 @@ interactions:
     headers:
       Content-Type:
       - application/json
-    url: http://localhost:8888/api/v1/data_sources
+    url: https://verifier.globalnames.org/api/v1/data_sources
     method: GET
   response:
     body: |
@@ -15,10 +15,14 @@ interactions:
     headers:
       Access-Control-Allow-Origin:
       - '*'
+      Connection:
+      - keep-alive
       Content-Type:
       - application/json; charset=UTF-8
       Date:
-      - Fri, 09 Apr 2021 23:23:17 GMT
+      - Tue, 20 Apr 2021 14:05:08 GMT
+      Server:
+      - nginx/1.14.2
       Vary:
       - Accept-Encoding
       - Origin

@@ -10,8 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// var urlVerif = "https://verifier.globalnames.org/api/v1/"
-var urlVerif = "http://localhost:8888/api/v1/"
+var urlVerif = "https://verifier.globalnames.org/api/v1/"
 
 func TestDataSources(t *testing.T) {
 	r, err := recorder.New("fixtures/dss")
