@@ -19,8 +19,8 @@ type GNverifier interface {
 	// the strings and sends results to another channel.
 	VerifyStream(in <-chan []string, out chan []vlib.Verification)
 
-	// ChangeConfig modifies configuration of GNVerifier.
-	ChangeConfig(opts ...config.Option)
+	// ChangeConfig modifies configuration of GNverifier.
+	ChangeConfig(opts ...config.Option) GNverifier
 
 	// Config returns  configuration data.
 	Config() config.Config

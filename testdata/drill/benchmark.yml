@@ -1,0 +1,31 @@
+---
+
+concurrency: 40
+base: 'http://localhost:9000'
+iterations: 500
+rampup: 1
+
+plan:
+  - name: Fetch static 'about' page
+    request:
+      url: /about
+
+  - name: Fetch data_sources
+    request:
+      url: /data_sources
+
+  - name: Fetch names verification
+    request:
+      url: /?capitalize=on&format=csv&names={{ item }}
+    with_items:
+      - Pomatomus+saltator
+      - bubo+bubo
+      - Pardosa+moesta
+
+  - name: Fetch names verification with preferred data sources
+    request:
+      url: /?capitalize=on&ds=170&ds=1&ds=3&ds=4&ds=179&ds=194&ds=9&format=html&names={{ item }}
+    with_items:
+      - Pomatomus+saltator
+      - bubo+bubo
+      - Pardosa+moesta

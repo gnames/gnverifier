@@ -34,7 +34,7 @@ func New(url string) verifier.Verifier {
 }
 
 // DataSources returns meta-data about aggregated data-sources.
-func (vr *verifrest) DataSources(
+func (vr verifrest) DataSources(
 	ctx context.Context,
 ) ([]vlib.DataSource, error) {
 	enc := gnfmt.GNjson{}
@@ -68,7 +68,7 @@ func (vr *verifrest) DataSources(
 }
 
 // DataSource returns meta-data about a data-source found by ID.
-func (vr *verifrest) DataSource(
+func (vr verifrest) DataSource(
 	ctx context.Context,
 	id int,
 ) (vlib.DataSource, error) {
@@ -103,7 +103,7 @@ func (vr *verifrest) DataSource(
 }
 
 // Verify takes names-strings and options and returns verification result.
-func (vr *verifrest) Verify(
+func (vr verifrest) Verify(
 	ctx context.Context,
 	params vlib.VerifyParams,
 ) []vlib.Verification {

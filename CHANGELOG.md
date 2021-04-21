@@ -1,8 +1,13 @@
 # Changelog
 
+## [v0.3.1]
+
+- Add [#49]: avoid possible race conditions by reimplementing GNverifier
+             interface.
+
 ## [v0.3.0]
 
-- Add [#45] an option to capitalize names with low-case uninomials and genera.
+- Add [#45]: an option to capitalize names with low-case uninomials and genera.
 
 ## [v0.2.5]
 
@@ -56,6 +61,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.3.1]: https://github.com/gnames/gnverifier/compare/v0.3.0...v0.3.1
 [v0.3.0]: https://github.com/gnames/gnverifier/compare/v0.2.5...v0.3.0
 [v0.2.5]: https://github.com/gnames/gnverifier/compare/v0.2.4...v0.2.5
 [v0.2.4]: https://github.com/gnames/gnverifier/compare/v0.2.3...v0.2.4
@@ -65,8 +71,18 @@ This document follows [changelog guidelines]
 [v0.2.0]: https://github.com/gnames/gnverifier/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnverifier/tree/v0.1.0
 
+[#60]: https://github.com/gnames/gnverifier/issues/60
+[#59]: https://github.com/gnames/gnverifier/issues/59
+[#58]: https://github.com/gnames/gnverifier/issues/58
+[#57]: https://github.com/gnames/gnverifier/issues/57
+[#56]: https://github.com/gnames/gnverifier/issues/56
+[#55]: https://github.com/gnames/gnverifier/issues/55
+[#54]: https://github.com/gnames/gnverifier/issues/54
+[#53]: https://github.com/gnames/gnverifier/issues/53
+[#52]: https://github.com/gnames/gnverifier/issues/52
+[#51]: https://github.com/gnames/gnverifier/issues/51
 [#50]: https://github.com/gnames/gnverifier/issues/50
-[#40]: https://github.com/gnames/gnverifier/issues/40
+[#49]: https://github.com/gnames/gnverifier/issues/49
 [#48]: https://github.com/gnames/gnverifier/issues/48
 [#47]: https://github.com/gnames/gnverifier/issues/47
 [#46]: https://github.com/gnames/gnverifier/issues/46

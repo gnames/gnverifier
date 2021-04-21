@@ -20,37 +20,38 @@ type gnverifier struct {
 // New constructs an object that implements GNVerifier interface
 // and can be used for matching strings to scientfic names.
 func New(cnf config.Config, vfr verifier.Verifier) GNverifier {
-	return &gnverifier{
+	return gnverifier{
 		config:   cnf,
 		verifier: vfr,
 	}
 }
 
 // DataSources returns meta-information about aggregated data-sources.
-func (gnv *gnverifier) DataSources() ([]vlib.DataSource, error) {
+func (gnv gnverifier) DataSources() ([]vlib.DataSource, error) {
 	return gnv.verifier.DataSources(context.Background())
 }
 
 // DataSource returns meta-information about a data-source found by its ID.
-func (gnv *gnverifier) DataSource(id int) (vlib.DataSource, error) {
+func (gnv gnverifier) DataSource(id int) (vlib.DataSource, error) {
 	return gnv.verifier.DataSource(context.Background(), id)
 }
 
 // ChangeConfig modifies configuration.
-func (gnv *gnverifier) ChangeConfig(opts ...config.Option) {
+func (gnv gnverifier) ChangeConfig(opts ...config.Option) GNverifier {
 	for i := range opts {
 		opts[i](&gnv.config)
 	}
+	return gnv
 }
 
 // Config returns configuration data.
-func (gnv *gnverifier) Config() config.Config {
+func (gnv gnverifier) Config() config.Config {
 	return gnv.config
 }
 
 // VerifyOne verifies one input string and returns results
 // as a string in JSON or CSV format.
-func (gnv *gnverifier) VerifyOne(name string) (vlib.Verification, error) {
+func (gnv gnverifier) VerifyOne(name string) (vlib.Verification, error) {
 	params := vlib.VerifyParams{
 		NameStrings:        []string{name},
 		PreferredSources:   gnv.config.PreferredSources,
@@ -65,7 +66,7 @@ func (gnv *gnverifier) VerifyOne(name string) (vlib.Verification, error) {
 
 // VerifyBatch takes a list of name-strings, verifies them and returns
 // a batch of results back.
-func (gnv *gnverifier) VerifyBatch(nameStrings []string) []vlib.Verification {
+func (gnv gnverifier) VerifyBatch(nameStrings []string) []vlib.Verification {
 	params := gnv.setParams(nameStrings)
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
@@ -76,7 +77,7 @@ func (gnv *gnverifier) VerifyBatch(nameStrings []string) []vlib.Verification {
 // VerifyStream receives batches of strings through the input
 // channel and sends results of verification via output
 // channel.
-func (gnv *gnverifier) VerifyStream(
+func (gnv gnverifier) VerifyStream(
 	in <-chan []string,
 	out chan []vlib.Verification,
 ) {
@@ -96,7 +97,7 @@ func (gnv *gnverifier) VerifyStream(
 	close(out)
 }
 
-func (gnv *gnverifier) VerifyWorker(
+func (gnv gnverifier) VerifyWorker(
 	ctx context.Context,
 	in <-chan vlib.VerifyParams,
 	out chan<- []vlib.Verification,
@@ -118,7 +119,7 @@ func (gnv *gnverifier) VerifyWorker(
 	}
 }
 
-func (gnv *gnverifier) loadNames(
+func (gnv gnverifier) loadNames(
 	ctx context.Context,
 	inChan <-chan []string,
 ) <-chan vlib.VerifyParams {
@@ -138,7 +139,7 @@ func (gnv *gnverifier) loadNames(
 	return vwChan
 }
 
-func (gnv *gnverifier) setParams(names []string) vlib.VerifyParams {
+func (gnv gnverifier) setParams(names []string) vlib.VerifyParams {
 	res := vlib.VerifyParams{
 		NameStrings:        names,
 		PreferredSources:   gnv.config.PreferredSources,

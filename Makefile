@@ -16,7 +16,7 @@ all: install
 
 test: deps install
 	@echo Run tests
-	$(FLAG_MODULE) go test ./...
+	$(FLAG_MODULE) go test -race ./...
 
 deps:
 	@echo Download go.mod dependencies

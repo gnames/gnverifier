@@ -49,7 +49,7 @@ func TestChangeConfig(t *testing.T) {
 	gnv := gnverifier.New(cfg, vfr)
 	assert.Equal(t, gnv.Config().Format, gnfmt.CSV)
 	assert.Equal(t, gnv.Config().Jobs, 4)
-	gnv.ChangeConfig(
+	gnv = gnv.ChangeConfig(
 		config.OptFormat(gnfmt.CompactJSON),
 		config.OptJobs(10),
 	)

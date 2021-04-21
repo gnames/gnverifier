@@ -231,7 +231,7 @@ func verificationResults(
 			config.OptPreferredSources(data.Preferred),
 			config.OptWithCapitalization(caps),
 		}
-		gnv.ChangeConfig(opts...)
+		gnv = gnv.ChangeConfig(opts...)
 
 		data.Verified = gnv.VerifyBatch(names)
 		if prefOnly {

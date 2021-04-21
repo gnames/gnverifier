@@ -289,7 +289,8 @@ gnverifier file.txt
 
 Authors: [Dmitry Mozzherin][dimus]
 
-Copyright © 2020 Dmitry Mozzherin. See [LICENSE][license] for further details.
+Copyright © 2020-2021 Dmitry Mozzherin. See [LICENSE][license] for further
+details.
 
 [github]: https://github.com/gnames/gnverifier/releases/latest
 [gnames]: https://hub.apitree.com/dimus/gnames/
