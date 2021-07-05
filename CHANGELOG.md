@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.3.2]
+
+- Add [#51]: show import date for HTML of the verification records.
+
 ## [v0.3.1]
 
 - Add [#49]: avoid possible race conditions by reimplementing GNverifier
