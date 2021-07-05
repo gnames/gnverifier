@@ -2,7 +2,7 @@
 
 ## [v0.3.2]
 
-- Add [#51]: show import date for HTML of the verification records.
+- Add [#51]: show import date on web-pages for the verification records.
 
 ## [v0.3.1]
 
@@ -65,6 +65,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.3.2]: https://github.com/gnames/gnverifier/compare/v0.3.1...v0.3.2
 [v0.3.1]: https://github.com/gnames/gnverifier/compare/v0.3.0...v0.3.1
 [v0.3.0]: https://github.com/gnames/gnverifier/compare/v0.2.5...v0.3.0
 [v0.2.5]: https://github.com/gnames/gnverifier/compare/v0.2.4...v0.2.5
