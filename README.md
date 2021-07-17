@@ -1,4 +1,4 @@
-# GNverifier
+# Global Names Verifier
 
 [![DOI](https://zenodo.org/badge/297323648.svg)](https://zenodo.org/badge/latestdoi/297323648)
 
