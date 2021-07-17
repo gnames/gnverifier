@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.3.3]
+
+- Add [#52]: add DOI via Zenodo for citations.
+
 ## [v0.3.2]
 
 - Add [#51]: show import date on web-pages for the verification records.
