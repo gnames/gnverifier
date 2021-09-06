@@ -212,7 +212,7 @@ func verificationResults(
 	data.Input = inp.Names
 	data.Preferred = inp.DS
 	format := inp.Format
-	if format == "csv" || format == "json" {
+	if format == "csv" || format == "json" || format == "tsv" {
 		data.Format = format
 	}
 
@@ -243,19 +243,26 @@ func verificationResults(
 			}
 		}
 	}
-	inp = new(formInput)
 
 	switch data.Format {
 	case "json":
 		return c.JSON(http.StatusOK, data.Verified)
 	case "csv":
-		res := make([]string, len(data.Verified)+1)
-		res[0] = output.CSVHeader()
-		for i, v := range data.Verified {
-			res[i+1] = output.Output(v, gnfmt.CSV, prefOnly)
-		}
+		res := formatRows(data, prefOnly, gnfmt.CSV)
+		return c.String(http.StatusOK, strings.Join(res, "\n"))
+	case "tsv":
+		res := formatRows(data, prefOnly, gnfmt.TSV)
 		return c.String(http.StatusOK, strings.Join(res, "\n"))
 	default:
 		return c.Render(http.StatusOK, "layout", data)
 	}
+}
+
+func formatRows(data Data, prefOnly bool, f gnfmt.Format) []string {
+	res := make([]string, len(data.Verified)+1)
+	res[0] = output.CSVHeader(f)
+	for i, v := range data.Verified {
+		res[i+1] = output.Output(v, f, prefOnly)
+	}
+	return res
 }

@@ -69,14 +69,12 @@ more than 100 biodiverisity data-sources.`,
 		opts = append(opts, config.OptPreferredOnly(pref))
 
 		formatString, _ := cmd.Flags().GetString("format")
-		if formatString != "csv" {
-			frmt, _ := gnfmt.NewFormat(formatString)
-			if frmt == gnfmt.FormatNone {
-				log.Warnf("Cannot set format from '%s', setting format to csv", formatString)
-				frmt = gnfmt.CSV
-			}
-			opts = append(opts, config.OptFormat(frmt))
+		frmt, _ := gnfmt.NewFormat(formatString)
+		if frmt == gnfmt.FormatNone {
+			log.Warnf("Cannot set format from '%s', setting format to csv", formatString)
+			frmt = gnfmt.CSV
 		}
+		opts = append(opts, config.OptFormat(frmt))
 
 		jobs, _ := cmd.Flags().GetInt("jobs")
 		if jobs != 4 {
@@ -334,8 +332,9 @@ func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Verification,
 	wg *sync.WaitGroup) {
 	defer wg.Done()
 	timeStart := time.Now().UnixNano()
-	if gnv.Config().Format == gnfmt.CSV {
-		fmt.Println(output.CSVHeader())
+	f := gnv.Config().Format
+	if f == gnfmt.CSV || f == gnfmt.TSV {
+		fmt.Println(output.CSVHeader(f))
 	}
 	var count int
 	for o := range out {
@@ -350,8 +349,7 @@ func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Verification,
 			if r.Error != "" {
 				log.Println(r.Error)
 			}
-			fmt.Println(output.Output(r, gnv.Config().Format,
-				gnv.Config().PreferredOnly))
+			fmt.Println(output.Output(r, f, gnv.Config().PreferredOnly))
 		}
 	}
 }
@@ -361,10 +359,12 @@ func verifyString(gnv gnverifier.GNverifier, name string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if gnv.Config().Format == gnfmt.CSV {
-		fmt.Println(output.CSVHeader())
+
+	f := gnv.Config().Format
+	if f == gnfmt.CSV || f == gnfmt.TSV {
+		fmt.Println(output.CSVHeader(f))
 	}
-	fmt.Println(output.Output(res, gnv.Config().Format, gnv.Config().PreferredOnly))
+	fmt.Println(output.Output(res, f, gnv.Config().PreferredOnly))
 }
 
 // touchConfigFile checks if config file exists, and if not, it gets created.

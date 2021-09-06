@@ -33,7 +33,9 @@ const prefMatch = "PreferredMatch"
 func Output(ver vlib.Verification, f gnfmt.Format, prefOnly bool) string {
 	switch f {
 	case gnfmt.CSV:
-		return csvOutput(ver, prefOnly)
+		return csvOutput(ver, prefOnly, ',')
+	case gnfmt.TSV:
+		return csvOutput(ver, prefOnly, '\t')
 	case gnfmt.CompactJSON:
 		return jsonOutput(ver, prefOnly, false)
 	case gnfmt.PrettyJSON:
@@ -43,36 +45,46 @@ func Output(ver vlib.Verification, f gnfmt.Format, prefOnly bool) string {
 }
 
 // CSVHeader returns the header string for CSV output format.
-func CSVHeader() string {
-	return "Kind,MatchType,EditDistance,ScientificName,MatchedName,MatchedCanonical,TaxonId,CurrentName,Synonym,DataSourceId,DataSourceTitle,ClassificationPath,Error"
+func CSVHeader(f gnfmt.Format) string {
+	header := []string{"Kind", "MatchType", "EditDistance", "ScientificName",
+		"MatchedName", "MatchedCanonical", "TaxonId", "CurrentName", "Synonym",
+		"DataSourceId", "DataSourceTitle", "ClassificationPath", "Error"}
+	switch f {
+	case gnfmt.CSV:
+		return gnfmt.ToCSV(header, ',')
+	case gnfmt.TSV:
+		return gnfmt.ToCSV(header, '\t')
+	default:
+		return ""
+	}
 }
 
-func csvOutput(ver vlib.Verification, prefOnly bool) string {
+func csvOutput(ver vlib.Verification, prefOnly bool, sep rune) string {
 	var res []string
 	if !prefOnly {
-		best := csvRow(ver, -1)
+		best := csvRow(ver, -1, sep)
 		res = append(res, best)
 	}
 	if prefOnly && len(ver.PreferredResults) == 0 {
-		res = append(res, csvNoPrefRow(ver))
+		res = append(res, csvNoPrefRow(ver, sep))
 	}
 	for i := range ver.PreferredResults {
-		pref := csvRow(ver, i)
+		pref := csvRow(ver, i, sep)
 		res = append(res, pref)
 	}
 
 	return strings.Join(res, "\n")
 }
 
-func csvNoPrefRow(ver vlib.Verification) string {
+func csvNoPrefRow(ver vlib.Verification, sep rune) string {
 	s := []string{
 		prefMatch, vlib.NoMatch.String(), "", ver.Input,
 		"", "", "", "", "", "", "", "", ver.Error,
 	}
-	return gnfmt.ToCSV(s)
+	return gnfmt.ToCSV(s, sep)
 }
 
-func csvRow(ver vlib.Verification, prefIndex int) string {
+func csvRow(ver vlib.Verification, prefIndex int, sep rune) string {
 	kind := "BestMatch"
 	res := ver.BestResult
 
@@ -98,7 +110,7 @@ func csvRow(ver vlib.Verification, prefIndex int) string {
 		s[classificationPath] = res.ClassificationPath
 	}
 
-	return gnfmt.ToCSV(s)
+	return gnfmt.ToCSV(s, sep)
 }
 
 func jsonOutput(ver vlib.Verification, prefOnly bool, pretty bool) string {

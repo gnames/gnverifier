@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.4.0]
+
+- Add [#54]: add TSV format
 - Fix [#55]: remove empty outputs from web-interface.
 
 ## [v0.3.3]
