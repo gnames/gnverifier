@@ -1,5 +1,7 @@
 # Changelog
 
+- Fix [#55]: remove empty outputs from web-interface.
+
 ## [v0.3.3]
 
 - Add [#52]: add DOI via Zenodo for citations.

@@ -113,7 +113,7 @@ func dataSource(gnv gnverifier.GNverifier) func(echo.Context) error {
 		}
 		data.DataSource, err = gnv.DataSource(id)
 		if err != nil {
-			return fmt.Errorf("Cannot find DataSource for id '%s'", idStr)
+			return fmt.Errorf("cannot find DataSource for id '%s'", idStr)
 		}
 		return c.Render(http.StatusOK, "layout", data)
 	}
@@ -222,9 +222,12 @@ func verificationResults(
 			split = split[0:5_000]
 		}
 
-		names = make([]string, len(split))
+		names = make([]string, 0, len(split))
 		for i := range split {
-			names[i] = strings.TrimSpace(split[i])
+			name := strings.TrimSpace(split[i])
+			if name != "" {
+				names = append(names, name)
+			}
 		}
 
 		opts := []config.Option{

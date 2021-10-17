@@ -179,7 +179,7 @@ func initConfig() {
 	viper.SetConfigName(configFile)
 
 	configPath := filepath.Join(configDir, fmt.Sprintf("%s.yaml", configFile))
-	touchConfigFile(configPath, configFile)
+	touchConfigFile(configPath)
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
@@ -368,18 +368,18 @@ func verifyString(gnv gnverifier.GNverifier, name string) {
 }
 
 // touchConfigFile checks if config file exists, and if not, it gets created.
-func touchConfigFile(configPath string, configFile string) {
+func touchConfigFile(configPath string) {
 	fileExists, _ := gnsys.FileExists(configPath)
 	if fileExists {
 		return
 	}
 
 	log.Printf("Creating config file: %s.", configPath)
-	createConfig(configPath, configFile)
+	createConfig(configPath)
 }
 
 // createConfig creates config file.
-func createConfig(path string, file string) {
+func createConfig(path string) {
 	err := gnsys.MakeDir(filepath.Dir(path))
 	if err != nil {
 		log.Fatalf("Cannot create dir %s: %s.", path, err)
