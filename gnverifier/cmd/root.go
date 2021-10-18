@@ -136,7 +136,7 @@ func init() {
 	rootCmd.Flags().BoolP("version", "V", false, "Prints version information")
 	rootCmd.Flags().BoolP("capitalize", "c", false, "capitalizes first character")
 	rootCmd.Flags().BoolP("only_preferred", "o", false, "Ignores best match, returns only preferred results (if any).")
-	rootCmd.Flags().StringP("format", "f", "csv", `Format of the output: "compact", "pretty", "csv".
+	rootCmd.Flags().StringP("format", "f", "csv", `Format of the output: "compact", "pretty", "csv", "tsv".
   compact: compact JSON,
   pretty: pretty JSON,
   csv: CSV (DEFAULT)`)
