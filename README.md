@@ -130,11 +130,10 @@ go get github.com/gnames/gnverifier/gnverifier
 
 ## Usage
 
-``GNverifier`` takes one name-string or a text file with one name-string per line
-as an argument, sends a query with these data to [remote
-``gnames`` server][gnames] to match the name-strigs against many different
-biodiversity databases and returns results to STDOUT either in JSON or CSV
-format.
+``GNverifier`` takes one name-string or a text file with one name-string per
+line as an argument, sends a query with these data to [remote ``gnames``
+server][gnames] to match the name-strigs against many different biodiversity
+databases and returns results to STDOUT either in JSON, CSV or TSV format.
 
 ### As a web service
 
@@ -221,9 +220,12 @@ Allows to pick a format for output. Supported formats are
 * csv: (DEFAULT) returns CSV representation.
 
 ```bash
+# short form for compact JSON format
 gnverifier -f compact file.txt
-# or
+# or long form for "pretty" JSON format
 gnverifier --format="pretty" file.csv
+# tsv format
+gnverifier -f tsv file.csv
 ```
 
 Note that a separate JSON "document" is returned for each separate record,
@@ -240,7 +242,7 @@ provide a data source id for a dataset. Ids can be found at the following
 output as well.
 
 Data from such sources will be returned in preferred_results section of JSON
-output, or with CSV rows that start with "PreferredMatch" string.
+output, or with CSV/TSV rows that start with "PreferredMatch" string.
 
 ```bash
 gnverifier file.csv -s "1,11,172"
