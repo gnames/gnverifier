@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.4.1]
+
+- Add [#56]: add AlgaeBase to web UI
+
 ## [v0.4.0]
 
 - Add [#54]: add TSV format
