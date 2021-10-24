@@ -13,6 +13,10 @@
 #  - 1
 #  - 11
 
+# AllSources if true, returns results from all sources. With this flag true
+# the PreferredSources flag is ignored
+# AllSources: false
+
 # WithCapitalization is a boolean flag. If it is true, the first rune of a
 # name-string will be capitalized if it is appropriate. Use it if your input
 # for some reason does not follow capitalization rules of nomenclature.

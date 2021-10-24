@@ -81,6 +81,12 @@ more than 100 biodiverisity data-sources.`,
 			opts = append(opts, config.OptJobs(jobs))
 		}
 
+		allSources, _ := cmd.Flags().GetBool("all_sources")
+		opts = append(opts, config.OptWithAllSources(allSources))
+
+		allMatches, _ := cmd.Flags().GetBool("all_matches")
+		opts = append(opts, config.OptWithAllMatches(allMatches))
+
 		sources, _ := cmd.Flags().GetString("sources")
 		if sources != "" {
 			data_sources := parseDataSources(sources)
@@ -143,6 +149,8 @@ func init() {
 	rootCmd.Flags().IntP("name_field", "n", 1, "Set position of ScientificName field, the first field is 1.")
 	rootCmd.Flags().IntP("jobs", "j", 4, "Number of jobs running in parallel.")
 	rootCmd.Flags().IntP("port", "p", 0, "Port to run web GUI.")
+	rootCmd.Flags().BoolP("all_sources", "S", false, "return results from all sources that matched.")
+	rootCmd.Flags().BoolP("all_matches", "M", false, "return all matched results per source, not just the best one.")
 	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
   If sources are set and there are matches to their data,
   such matches are returned in "preferred_result" results.

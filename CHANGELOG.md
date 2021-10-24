@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.5.0]
+
+- Add [#57]: optionally, return all matches per source.
+- Add [#48]: optionally, return results from all sources.
+
 ## [v0.4.1]
 
 - Add [#56]: add AlgaeBase to web UI

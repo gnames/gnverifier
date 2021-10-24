@@ -19,6 +19,14 @@ type Config struct {
 	// returned.
 	PreferredSources []int
 
+	// WithAllSources flag; if true, best results from all matched sources are
+	// returned. If this flag is true, PreferredSources are ignored.
+	WithAllSources bool
+
+	// WithAllMatches flag; if true, results include all matches per source,
+	// not only the best match.
+	WithAllMatches bool
+
 	// WithCapitalization flag; if true, the first rune of the name-string
 	// will be capitalized when appropriate.
 	WithCapitalization bool
@@ -39,22 +47,6 @@ type Config struct {
 	NamesNumThreshold int
 }
 
-// New is a Config constructor that takes external options to
-// update default values to external ones.
-func New(opts ...Option) Config {
-	cnf := Config{
-		Format:            gnfmt.CSV,
-		VerifierURL:       "https://verifier.globalnames.org/api/v1/",
-		Batch:             5000,
-		Jobs:              4,
-		NamesNumThreshold: 20,
-	}
-	for _, opt := range opts {
-		opt(&cnf)
-	}
-	return cnf
-}
-
 // Option is a type of all options for Config.
 type Option func(cnf *Config)
 
@@ -70,6 +62,20 @@ func OptFormat(f gnfmt.Format) Option {
 func OptPreferredOnly(b bool) Option {
 	return func(cnf *Config) {
 		cnf.PreferredOnly = b
+	}
+}
+
+// OptWithAllSources sets WithAllSources flag.
+func OptWithAllSources(b bool) Option {
+	return func(cnf *Config) {
+		cnf.WithAllSources = b
+	}
+}
+
+// OptWithAllMatches sets WithAllMatches flag.
+func OptWithAllMatches(b bool) Option {
+	return func(cnf *Config) {
+		cnf.WithAllMatches = b
 	}
 }
 
@@ -107,4 +113,20 @@ func OptNamesNumThreshold(i int) Option {
 	return func(cnf *Config) {
 		cnf.NamesNumThreshold = i
 	}
+}
+
+// New is a Config constructor that takes external options to
+// update default values to external ones.
+func New(opts ...Option) Config {
+	cnf := Config{
+		Format:            gnfmt.CSV,
+		VerifierURL:       "https://verifier.globalnames.org/api/v1/",
+		Batch:             5000,
+		Jobs:              4,
+		NamesNumThreshold: 20,
+	}
+	for _, opt := range opts {
+		opt(&cnf)
+	}
+	return cnf
 }
