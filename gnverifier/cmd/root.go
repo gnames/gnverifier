@@ -40,6 +40,7 @@ type cfgData struct {
 	Format             string
 	PreferredOnly      bool
 	PreferredSources   []int
+	WithAllMatches     bool
 	WithCapitalization bool
 	VerifierURL        string
 	Jobs               int
@@ -53,9 +54,7 @@ var rootCmd = &cobra.Command{
 more than 100 biodiverisity data-sources.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		webOpts := make([]config.Option, len(opts))
-		for i, v := range opts {
-			webOpts[i] = v
-		}
+		copy(webOpts, opts)
 		webOpts = append(webOpts, config.OptWithCapitalization(true))
 
 		if showVersionFlag(cmd) {
@@ -63,10 +62,14 @@ more than 100 biodiverisity data-sources.`,
 		}
 
 		caps, _ := cmd.Flags().GetBool("capitalize")
-		opts = append(opts, config.OptWithCapitalization(caps))
+		if caps {
+			opts = append(opts, config.OptWithCapitalization(true))
+		}
 
 		pref, _ := cmd.Flags().GetBool("only_preferred")
-		opts = append(opts, config.OptPreferredOnly(pref))
+		if pref {
+			opts = append(opts, config.OptPreferredOnly(true))
+		}
 
 		formatString, _ := cmd.Flags().GetString("format")
 		frmt, _ := gnfmt.NewFormat(formatString)
@@ -81,11 +84,10 @@ more than 100 biodiverisity data-sources.`,
 			opts = append(opts, config.OptJobs(jobs))
 		}
 
-		allSources, _ := cmd.Flags().GetBool("all_sources")
-		opts = append(opts, config.OptWithAllSources(allSources))
-
 		allMatches, _ := cmd.Flags().GetBool("all_matches")
-		opts = append(opts, config.OptWithAllMatches(allMatches))
+		if allMatches {
+			opts = append(opts, config.OptWithAllMatches(true))
+		}
 
 		sources, _ := cmd.Flags().GetString("sources")
 		if sources != "" {
@@ -149,7 +151,6 @@ func init() {
 	rootCmd.Flags().IntP("name_field", "n", 1, "Set position of ScientificName field, the first field is 1.")
 	rootCmd.Flags().IntP("jobs", "j", 4, "Number of jobs running in parallel.")
 	rootCmd.Flags().IntP("port", "p", 0, "Port to run web GUI.")
-	rootCmd.Flags().BoolP("all_sources", "S", false, "return results from all sources that matched.")
 	rootCmd.Flags().BoolP("all_matches", "M", false, "return all matched results per source, not just the best one.")
 	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
   If sources are set and there are matches to their data,
@@ -216,6 +217,11 @@ func getOpts() {
 	if len(cfg.PreferredSources) > 0 {
 		opts = append(opts, config.OptPreferredSources(cfg.PreferredSources))
 	}
+
+	if cfg.WithAllMatches {
+		opts = append(opts, config.OptWithAllMatches(true))
+	}
+
 	if cfg.VerifierURL != "" {
 		opts = append(opts, config.OptVerifierURL(cfg.VerifierURL))
 	}
@@ -251,8 +257,8 @@ func parseDataSources(s string) []int {
 			log.Warnf("Cannot convert data-source '%s' to list, skipping", v)
 			return nil
 		}
-		if ds < 1 {
-			log.Warnf("Data source ID %d is less than one, skipping", ds)
+		if ds < 0 {
+			log.Warnf("Data source ID %d is less than zero, skipping", ds)
 		} else {
 			res = append(res, int(ds))
 		}

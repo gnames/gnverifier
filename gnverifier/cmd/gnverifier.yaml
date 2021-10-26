@@ -9,13 +9,14 @@
 # matched records if they are found.
 # You can find list of all data-sources at
 # https://verifier.globalnames.org/api/v1/data_sources
+#
+# If PreferredSources are set to 0, results are returned from all sources.
 # PreferredSources:
 #  - 1
 #  - 11
 
-# AllSources if true, returns results from all sources. With this flag true
-# the PreferredSources flag is ignored
-# AllSources: false
+# WithAllMatches if true, return all matched results per source.
+# WithAllMatches: false
 
 # WithCapitalization is a boolean flag. If it is true, the first rune of a
 # name-string will be capitalized if it is appropriate. Use it if your input

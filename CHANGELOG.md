@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.5.1]
+
+- Fix: command line and configuration options
+
 ## [v0.5.0]
 
 - Add [#57]: optionally, return all matches per source.

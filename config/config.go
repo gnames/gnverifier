@@ -19,10 +19,6 @@ type Config struct {
 	// returned.
 	PreferredSources []int
 
-	// WithAllSources flag; if true, best results from all matched sources are
-	// returned. If this flag is true, PreferredSources are ignored.
-	WithAllSources bool
-
 	// WithAllMatches flag; if true, results include all matches per source,
 	// not only the best match.
 	WithAllMatches bool
@@ -62,13 +58,6 @@ func OptFormat(f gnfmt.Format) Option {
 func OptPreferredOnly(b bool) Option {
 	return func(cnf *Config) {
 		cnf.PreferredOnly = b
-	}
-}
-
-// OptWithAllSources sets WithAllSources flag.
-func OptWithAllSources(b bool) Option {
-	return func(cnf *Config) {
-		cnf.WithAllSources = b
 	}
 }
 

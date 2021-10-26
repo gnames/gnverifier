@@ -26,6 +26,7 @@ biodiversity [Data Sources][data_source_ids]
     * [format](#format)
     * [sources](#sources)
     * [only_preferred](#only_preferred)
+    * [all_matches](#all_matches)
     * [jobs](#jobs)
   * [Configuration file](#configuration-file)
 * [Copyright](#copyright)
@@ -217,7 +218,8 @@ Allows to pick a format for output. Supported formats are
 
 * compact: one-liner JSON.
 * pretty: prettified JSON with new lines and tabs for easier reading.
-* csv: (DEFAULT) returns CSV representation.
+* tsv: returns tab-separated values representation.
+* csv: (DEFAULT) returns comma-separated values representation.
 
 ```bash
 # short form for compact JSON format
@@ -252,6 +254,16 @@ gnverifier file.tsv --sources="12"
 cat file.txt | gnverifier -s '1,12'
 ```
 
+If all matched sources need to be returned, set the flag to "0".
+
+WARNING: the result might be excessively large.
+
+```bash
+gnverifier "Bubo bubo" -s 0
+# potentially even more results get returned by adding --all_matches flag
+gnverifier "Bubo bubo" -s 0 -M
+```
+
 #### only_preferred
 
 Sometimes a users wants to map a list of names to a DataSource. They
@@ -263,6 +275,18 @@ gnverifier -o -s '12' file.txt
 # or
 gnverifier --only_preferred --sources='1,12' file.tsv
 ```
+
+#### all_matches
+
+Sometimes data sources have more than one match to a name. To see all matches
+instead of the best one per source use --all_matches flag.
+
+WARNING: for some names the result will be excessively large.
+
+```bash
+gnverifier -s '1,12' -M file.txt
+```
+
 
 #### jobs
 

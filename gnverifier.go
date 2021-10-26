@@ -55,7 +55,6 @@ func (gnv gnverifier) VerifyOne(name string) (vlib.Verification, error) {
 	params := vlib.VerifyParams{
 		NameStrings:        []string{name},
 		PreferredSources:   gnv.config.PreferredSources,
-		WithAllSources:     gnv.config.WithAllSources,
 		WithAllMatches:     gnv.config.WithAllMatches,
 		WithCapitalization: gnv.config.WithCapitalization,
 	}
