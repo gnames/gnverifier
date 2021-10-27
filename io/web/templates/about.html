@@ -5,152 +5,151 @@
 <div id="content-body">
 
   <p>
-  Scientific names are critical metadata elements in biodiversity. They are the scaffolding upon which all biological information hangs.
-  However, scientific names are imperfect identifiers. Some taxa share the same name (e.g. homonyms across
-  <a href='http://en.wikipedia.org/wiki/Nomenclature_codes'>nomenclature codes</a>)
-  and there can be many names for the same taxon. Names change because of taxonomic and nomenclatural revisions and they can be persistently misspelled in the literature. Optical scanning of printed material compounds the problem by introducing greater uncertainty in data integration.
+    Scientific names are critical metadata elements in biodiversity. They are the scaffolding upon which all biological information hangs.
+    However, scientific names are imperfect identifiers. Some taxa share the same name (e.g. homonyms across
+    <a href='http://en.wikipedia.org/wiki/Nomenclature_codes'>nomenclature codes</a>)
+    and there can be many names for the same taxon. Names change because of taxonomic and nomenclatural revisions and they can be persistently misspelled in the literature. Optical scanning of printed material compounds the problem by introducing greater uncertainty in data integration.
   </p>
   <p>
-  This verification service tries to answer the following questions about a string representing a scientific name:
-  <ul>
-    <li>Is this a name?</li>
-    <li>Is it spelled correctly?</li>
-    <li>Is this name currently in use?</li>
-    <li>What other names are related to this name 
-        (e.g. synonyms, lexical variants)?</li>
-    <li>If this name is a homonym, which is the correct one?</li>
-  </ul>
+    This verification service tries to answer the following questions about a string representing a scientific name:
+    <ul>
+      <li>Is this a name?</li>
+      <li>Is it spelled correctly?</li>
+      <li>Is this name currently in use?</li>
+      <li>What other names are related to this name 
+      (e.g. synonyms, lexical variants)?</li>
+      <li>If this name is a homonym, which is the correct one?</li>
+    </ul>
   </p>
 
   <h2>Matching Process</h2>
   <h3>1. Exact Matching</h3>
 
   <p>
-  Submitted names are parsed first and their canonical forms are checked
-  for exact matches against names in the entire verifier database. An algorithm
-  than sorts names according to scoring algorithm and returns the best match
-  back.
+    Submitted names are parsed first and their canonical forms are checked
+    for exact matches against names in the entire verifier database. An algorithm
+    than sorts names according to scoring algorithm and returns the best match
+    back.
   </p>
 
   <h4>Canonical forms</h4>
 
   <p>
-  Name strings are often supplied with complex authorship information [e.g.
-  <em>Racomitrium canescens</em> f.  <em>epilosum</em> (H. Müll. ex Milde) G.
-  Jones in Grout]. The Global Name parser strips authorship and rank
-  information from names [e.g.  <em>Racomitrium canescens epilosum</em>], which
-  makes it possible to compare the string with other variants of the same name.
-  Resulting canonical forms are checked for exact matches against canonical
-  forms in specified data sources or in the entire resolver database. All found
-  names are removed from the process at the completion of this step.
+    Name strings are often supplied with complex authorship information [e.g.
+    <em>Racomitrium canescens</em> f.  <em>epilosum</em> (H. Müll. ex Milde) G.
+    Jones in Grout]. The Global Name parser strips authorship and rank
+    information from names [e.g.  <em>Racomitrium canescens epilosum</em>], which
+    makes it possible to compare the string with other variants of the same name.
+    Resulting canonical forms are checked for exact matches against canonical
+    forms in specified data sources or in the entire resolver database. All found
+    names are removed from the process at the completion of this step.
   </p>
 
   <p>
-  The <a href="https://github.com/gnames/gnparser">GNparser program</a> 
-  performs all the parsing steps
+    The <a href="https://github.com/gnames/gnparser">GNparser program</a> 
+    performs all the parsing steps
   </p>
 
   <h3>2. Fuzzy Matching of Canonical Forms</h3>
 
   <p>
-  Mistakes, misspellings, or OCR errors can create incorrect variants of
-  scientific names. Remaining canonical forms generated from the previous step
-  are fuzzily matched against canonical forms in specified data sources. We use
-  a modified version of the TaxaMatch algorithm developed by <a
-  href='http://www.cmar.csiro.au/datacentre/taxamatch.htm'>Tony Rees</a>.
-  After this step all found names are removed from the process.
+    Mistakes, misspellings, or OCR errors can create incorrect variants of
+    scientific names. Remaining canonical forms generated from the previous step
+    are fuzzily matched against canonical forms in specified data sources.
+    After this step all found names are removed from the process.
   </p>
 
-<h3>3. Partial Exact Matching of Names</h3>
+  <h3>3. Partial Exact Matching of Names</h3>
 
   <p>
-  Some infraspecific names do not match anything in the verification database.
-  Sometimes it happens because the name does not exist in the collected data.
-  Sometimes a 'junk' word is wrongly included and the parser may recognize it
-  as an infraspecific epithet. Sometimes an infraspecies are "promoted" to
-  species and the middle word disappears. The algorithm removes middle or
-  terminal words and tries to match resulting canonical forms. For example,
-  the last word &quot;<em>Pardosa moesta</em> spider&quot; would be ignored
-  given a match to &quot;<em>Pardosa moesta</em>&quot;.
+    Some infraspecific names do not match anything in the verification database.
+    Sometimes it happens because the name does not exist in the collected data.
+    Sometimes a 'junk' word is wrongly included and the parser may recognize it
+    as an infraspecific epithet. Sometimes an infraspecies are "promoted" to
+    species and the middle word disappears. The algorithm removes middle or
+    terminal words and tries to match resulting canonical forms. For example,
+    the last word &quot;<em>Pardosa moesta</em> spider&quot; would be ignored
+    given a match to &quot;<em>Pardosa moesta</em>&quot;.
   </p>
 
   <h3>4. Fuzzy Partial Matching</h3>
 
   <p>
-  If exact partial matching failed, we try to make an aproximate match.
+    If exact partial matching failed, we try to make an aproximate match.
   </p>
 
   <h3>5. Exact Matching of a Genus Part</h3>
 
   <p>
-  If anything else fails we try to match an apparent genus of the input.
+    If anything else fails we try to match an apparent genus of the input.
   </p>
 
-<h2>Scoring algorithm</h2>
+  <h2>Scoring algorithm</h2>
 
-<p>
-More often than not, the verification returns more than one result back. In
-some occations there might be thousands of matching names. We decided to
-return only one "best" result, still giving a possibility to get data from
-data-sources a user is interested in. The algorithm uses the following criteria
-for sorting the results:
-</p>
+  <p>
+    More often than not, the verification returns more than one result back. In
+    some occations there might be thousands of matching names. We decided to
+    return only one "best" result, still giving a possibility to get data from
+    data-sources a user is interested in. The algorithm uses the following criteria
+    for sorting the results:
+  </p>
 
-<h3>Infraspecific ranks</h3>
+  <h3>Infraspecific ranks</h3>
 
-<p>
-<a href="https://www.iapt-taxon.org/nomen/main.php">Botanical nomenclatural
-  code</a> allows a variety of ranks in the infraspecific names. The
-algorithm favors results that contain the same rank as the input name.
-</p>
+  <p>
+    <a href="https://www.iapt-taxon.org/nomen/main.php">Botanical nomenclatural
+    code</a> allows a variety of ranks in the infraspecific names. The
+    algorithm favors results that contain the same rank as the input name.
+  </p>
 
-<h3>Edit distance</h3>
+  <h3>Edit distance</h3>
 
-<p>
-In cases when results are "fuzzy-matched", algorithm favors matches with the
-smallest <a href="https://en.wikipedia.org/wiki/Edit_distance">edit
-distance</a> determined according to <a
-href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein
-algorithm</a>.
-</p>
+  <p>
+    In cases when results are "fuzzy-matched", algorithm favors matches with the
+    smallest <a href="https://en.wikipedia.org/wiki/Edit_distance">edit
+    distance</a> determined according to <a
+      href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein
+    algorithm</a>.
+  </p>
 
-<h3>Data source curation</h3>
+  <h3>Data source curation</h3>
 
-<p>
-Algorithm favors data-sources that are known for a significant curatorial
-effort over ones that are not curated, or their curation effort is unknown.
-</p>
+  <p>
+    Algorithm favors data-sources that are known for a significant curatorial
+    effort over ones that are not curated, or their curation effort is unknown.
+  </p>
 
-<h3>Authorship</h3>
+  <h3>Authorship</h3>
 
-<p>
-For inputs that contain authorship, algorithm favors matches that contain
-the same, or similar authorship.
-</p>
+  <p>
+    For inputs that contain authorship, algorithm favors matches that contain
+    the same, or similar authorship.
+  </p>
 
-<h3>Current acceptance of a name</h3>
+  <h3>Current acceptance of a name</h3>
 
-<p>
-A result is favored over other results, if it is a currently accepted name,
-and not some kind of a synonym or a misspelling.
-</p>
+  <p>
+    A result is favored over other results, if it is a currently accepted name,
+    and not some kind of a synonym or a misspelling.
+  </p>
 
-<h3>Parsing quality</h3>
+  <h3>Parsing quality</h3>
 
-<p>
-<a href="https://github.com/gnames/gnparser">GNparser</a> returns a parsing
-quality value after extraction of a canonical form. The algorithm favors
-high quality parsing over lower quality.
-</p>
+  <p>
+    <a href="https://github.com/gnames/gnparser">GNparser</a> returns a parsing
+    quality value after extraction of a canonical form. The algorithm favors
+    high quality parsing over lower quality.
+  </p>
 
-<h2>Preferred data sources</h2>
+  <h2>Preferred data sources</h2>
 
-<p>
-Sometimes a user is more interested to get results from a particular
-data-source, and less interested in a "best result". For such cases there is
-an option to always return data from such a data-source.
+  <p>
+    Sometimes a user is more interested to get results from a particular
+    data-source, and less interested in a "best result". For such cases there is
+    an option to always return data from such a data-source.
 
-It is also possible to completely ignore "best result". It might be useful when
-a user tries to map their checklist to a particular data-source.
-</p>
+    It is also possible to completely ignore "best result". It might be useful when
+    a user tries to map their checklist to a particular data-source.
+  </p>
+</div>
 {{ end }}

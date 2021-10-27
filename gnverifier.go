@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gnames/gnlib/ent/gnvers"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnverifier/config"
 	"github.com/gnames/gnverifier/ent/verifier"
@@ -24,6 +25,11 @@ func New(cnf config.Config, vfr verifier.Verifier) GNverifier {
 		config:   cnf,
 		verifier: vfr,
 	}
+}
+
+// GetVersion returns version and build of GNverifier
+func (gnv gnverifier) GetVersion() gnvers.Version {
+	return gnvers.Version{Version: Version, Build: Build}
 }
 
 // DataSources returns meta-information about aggregated data-sources.
@@ -52,12 +58,7 @@ func (gnv gnverifier) Config() config.Config {
 // VerifyOne verifies one input string and returns results
 // as a string in JSON or CSV format.
 func (gnv gnverifier) VerifyOne(name string) (vlib.Verification, error) {
-	params := vlib.VerifyParams{
-		NameStrings:        []string{name},
-		PreferredSources:   gnv.config.PreferredSources,
-		WithAllMatches:     gnv.config.WithAllMatches,
-		WithCapitalization: gnv.config.WithCapitalization,
-	}
+	params := gnv.setParams([]string{name})
 	verif := gnv.verifier.Verify(context.Background(), params)
 	if len(verif) < 1 {
 		return vlib.Verification{}, errors.New("no verification results")
@@ -145,6 +146,7 @@ func (gnv gnverifier) setParams(names []string) vlib.VerifyParams {
 		NameStrings:        names,
 		PreferredSources:   gnv.config.PreferredSources,
 		WithCapitalization: gnv.config.WithCapitalization,
+		WithAllMatches:     gnv.config.WithAllMatches,
 	}
 	return res
 }

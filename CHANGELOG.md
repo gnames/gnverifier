@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.5.2]
+
+- Add [#58]: add all matches/all sources to web interface.
+
 ## [v0.5.1]
 
 - Fix: command line and configuration options
@@ -87,6 +91,12 @@
 
 This document follows [changelog guidelines]
 
+[v0.5.2]: https://github.com/gnames/gnverifier/compare/v0.5.1...v0.5.2
+[v0.5.1]: https://github.com/gnames/gnverifier/compare/v0.5.0...v0.5.1
+[v0.5.0]: https://github.com/gnames/gnverifier/compare/v0.4.1...v0.5.0
+[v0.4.1]: https://github.com/gnames/gnverifier/compare/v0.4.0...v0.4.1
+[v0.4.0]: https://github.com/gnames/gnverifier/compare/v0.3.3...v0.4.0
+[v0.3.3]: https://github.com/gnames/gnverifier/compare/v0.3.2...v0.3.3
 [v0.3.2]: https://github.com/gnames/gnverifier/compare/v0.3.1...v0.3.2
 [v0.3.1]: https://github.com/gnames/gnverifier/compare/v0.3.0...v0.3.1
 [v0.3.0]: https://github.com/gnames/gnverifier/compare/v0.2.5...v0.3.0
@@ -98,6 +108,16 @@ This document follows [changelog guidelines]
 [v0.2.0]: https://github.com/gnames/gnverifier/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnverifier/tree/v0.1.0
 
+[#70]: https://github.com/gnames/gnverifier/issues/70
+[#69]: https://github.com/gnames/gnverifier/issues/69
+[#68]: https://github.com/gnames/gnverifier/issues/68
+[#67]: https://github.com/gnames/gnverifier/issues/67
+[#66]: https://github.com/gnames/gnverifier/issues/66
+[#65]: https://github.com/gnames/gnverifier/issues/65
+[#64]: https://github.com/gnames/gnverifier/issues/64
+[#63]: https://github.com/gnames/gnverifier/issues/63
+[#62]: https://github.com/gnames/gnverifier/issues/62
+[#61]: https://github.com/gnames/gnverifier/issues/61
 [#60]: https://github.com/gnames/gnverifier/issues/60
 [#59]: https://github.com/gnames/gnverifier/issues/59
 [#58]: https://github.com/gnames/gnverifier/issues/58

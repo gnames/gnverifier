@@ -1,7 +1,7 @@
 {{ define "home" }}
-  {{ if .Verified }}
+{{ if .Verified }}
 <h2>Results</h2>
-    {{ range .Verified }}
+{{ range .Verified }}
 <div id="content-body">
 
   <div class='section'>
@@ -14,7 +14,7 @@
   <div class='results'>
     {{ $best := .BestResult }}
     {{ if $best }}
-      {{ template "results" $best}}
+    {{ template "results" $best}}
     {{ end }}
 
     {{ $pref := .PreferredResults }}
@@ -24,41 +24,60 @@
     {{ end }}
 
     {{ range $pref }}
-      {{ template "results" . }}
+    {{ template "results" . }}
     {{ end }}
   </div>
 
 </div>
-    {{ end }}
-  {{ else }}
-  <p>Verify a list of scientific names against <a href="/data_sources">biodiversity data-sources</a>. This service parses incoming names, executes exact or fuzzy matching as required, and returns the best-scored result. It can also return matches from data-sources selected by a user.</p>
+{{ end }}
+{{ else }}
+<p>Verify a list of scientific names against
+  <a href="/data_sources">biodiversity data-sources</a>.
+  This service parses incoming names, executes exact or
+  fuzzy matching as required, and returns the best-scored result
+  Optionally, it can also return matches from data-sources selected by a user.
+</p>
 <div id='resolver-form'>
+    <p>Paste Scientific Names, one per line (up to 5,000 names)</p>
   <form action='/' method='POST'>
-    <label for='names'>Paste Scientific Names, one per line (up to 5,000 names)</label>
+    <div>
+      <label for='format'>Output format</label>
+      <select id='format' name='format'>
+        <option value='html'>HTML</option>
+        <option value='json'>JSON</option>
+        <option value='csv'>CSV</option>
+        <option value='tsv'>TSV</option>
+      </select>
+      &nbsp;&nbsp;&nbsp;
+      <input id='capitalize' name='capitalize' type='checkbox' checked='checked'/>
+      <label for='capitalize'>Capitalize the first character</label>
+    </div>
     <textarea cols='24' name='names' rows='12'></textarea>
     <div id='advanced_options'>
       <a href='#'>Advanced Options &gt;&gt;</a>
     </div>
     <div id='advanced_selections'>
       <fieldset>
-        <legend>Output</legend>
-        <input id='format_html' name='format' value='html' type='radio' checked='checked'>
-        <label for='format_html'>HTML</label>
-        <input id='format_json' name='format' value='json' type='radio'>
-        <label for='format_json'>JSON</label>
-        <input id='format_csv' name='format' value='csv' type='radio'>
-        <label for='format_csv'>CSV</label>
-        <input id='format_tsv' name='format' value='tsv' type='radio'>
-        <label for='format_tsv'>TSV</label>
-        <br/><br/>
-        <input id='preferred_only' name='preferred_only' type='checkbox'/>
-        <label for='preferred_only'>Show Only Preferred Results</label>
-        <input id='capitalize' name='capitalize' type='checkbox' checked='checked'/>
-        <label for='capitalize'>Capitalize the first character</label>
-      </fieldset>
-
-      <fieldset>
         <legend>Preferred Data Sources</legend>
+        <table class="nobg">
+          <tr class="nobg">
+            <td class="nobg">
+              <input id='all_sources' name='all_sources' type='checkbox'>
+              <label for='all_sources'>All Sources</label>
+            </td>
+            <td class="nobg">
+              <input id='all_matches' name='all_matches' type='checkbox'>
+              <label for='all_matches'>All Matches per Source</label>
+            </td>
+            <td class="nobg">
+              <input id='preferred_only' name='preferred_only' type='checkbox'/>
+              <label for='preferred_only'>Only Preferred Results</label>
+            </td>
+          </tr>
+        </table>
+
+        <br/>
+
         <table class="nobg">
           <tr class="nobg">
             <td class="nobg">
@@ -140,5 +159,5 @@
     </div>
   </form>
 </div>
-  {{ end }}
+{{ end }}
 {{ end }}

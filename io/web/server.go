@@ -24,6 +24,8 @@ type formInput struct {
 	Names         string `query:"names" form:"names"`
 	Format        string `query:"format" form:"format"`
 	PreferredOnly string `query:"preferred_only" form:"preferred_only"`
+	AllSources    string `query:"all_sources" form:"all_sources"`
+	AllMatches    string `query:"all_matches" form:"all_matches"`
 	Capitalize    string `query:"capitalize" form:"capitalize"`
 	DS            []int  `query:"ds" form:"ds"`
 }
@@ -51,8 +53,8 @@ func Run(gnv gnverifier.GNverifier, port int) {
 	e.POST("/", homePOST(gnv))
 	e.GET("/data_sources", dataSources(gnv))
 	e.GET("/data_sources/:id", dataSource(gnv))
-	e.GET("/about", about())
-	e.GET("/api", api())
+	e.GET("/about", about(gnv))
+	e.GET("/api", api(gnv))
 
 	fs := http.FileServer(http.FS(static))
 	e.GET("/static/*", echo.WrapHandler(fs))
@@ -71,21 +73,23 @@ type Data struct {
 	Input       string
 	Format      string
 	Preferred   []int
+	AllMatches  bool
 	Verified    []vlib.Verification
 	DataSources []vlib.DataSource
 	DataSource  vlib.DataSource
+	Version     string
 }
 
-func about() func(echo.Context) error {
+func about(gnv gnverifier.GNverifier) func(echo.Context) error {
 	return func(c echo.Context) error {
-		data := Data{Page: "about"}
+		data := Data{Page: "about", Version: gnv.GetVersion().Version}
 		return c.Render(http.StatusOK, "layout", data)
 	}
 }
 
-func api() func(echo.Context) error {
+func api(gnv gnverifier.GNverifier) func(echo.Context) error {
 	return func(c echo.Context) error {
-		data := Data{Page: "api"}
+		data := Data{Page: "api", Version: gnv.GetVersion().Version}
 		return c.Render(http.StatusOK, "layout", data)
 	}
 }
@@ -93,7 +97,7 @@ func api() func(echo.Context) error {
 func dataSources(gnv gnverifier.GNverifier) func(echo.Context) error {
 	return func(c echo.Context) error {
 		var err error
-		data := Data{Page: "data_sources"}
+		data := Data{Page: "data_sources", Version: gnv.GetVersion().Version}
 		data.DataSources, err = gnv.DataSources()
 		if err != nil {
 			return err
@@ -105,7 +109,7 @@ func dataSources(gnv gnverifier.GNverifier) func(echo.Context) error {
 func dataSource(gnv gnverifier.GNverifier) func(echo.Context) error {
 	return func(c echo.Context) error {
 		var err error
-		data := Data{Page: "data_source"}
+		data := Data{Page: "data_source", Version: gnv.GetVersion().Version}
 		idStr := c.Param("id")
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
@@ -121,7 +125,7 @@ func dataSource(gnv gnverifier.GNverifier) func(echo.Context) error {
 
 func homeGET(gnv gnverifier.GNverifier) func(echo.Context) error {
 	return func(c echo.Context) error {
-		data := Data{Page: "home", Format: "html"}
+		data := Data{Page: "home", Format: "html", Version: gnv.GetVersion().Version}
 
 		inp := new(formInput)
 		err := c.Bind(inp)
@@ -140,7 +144,7 @@ func homeGET(gnv gnverifier.GNverifier) func(echo.Context) error {
 func homePOST(gnv gnverifier.GNverifier) func(echo.Context) error {
 	return func(c echo.Context) error {
 		inp := new(formInput)
-		data := Data{Page: "home", Format: "html"}
+		data := Data{Page: "home", Format: "html", Version: gnv.GetVersion().Version}
 
 		err := c.Bind(inp)
 		if err != nil {
@@ -186,6 +190,8 @@ func redirectToHomeGET(c echo.Context, inp *formInput) error {
 	q := make(url.Values)
 	q.Set("names", inp.Names)
 	q.Set("format", inp.Format)
+	q.Set("all_sources", inp.AllSources)
+	q.Set("all_matches", inp.AllMatches)
 	if prefOnly {
 		q.Set("preferred_only", inp.PreferredOnly)
 	}
@@ -208,9 +214,15 @@ func verificationResults(
 	var names []string
 	prefOnly := inp.PreferredOnly == "on"
 	caps := inp.Capitalize == "on"
+	data.AllMatches = inp.AllMatches == "on"
 
 	data.Input = inp.Names
+
 	data.Preferred = inp.DS
+	if inp.AllSources == "on" {
+		data.Preferred = []int{0}
+	}
+
 	format := inp.Format
 	if format == "csv" || format == "json" || format == "tsv" {
 		data.Format = format
@@ -233,6 +245,7 @@ func verificationResults(
 		opts := []config.Option{
 			config.OptPreferredSources(data.Preferred),
 			config.OptWithCapitalization(caps),
+			config.OptWithAllMatches(data.AllMatches),
 		}
 		gnv = gnv.ChangeConfig(opts...)
 

@@ -33,7 +33,13 @@ func handlerGET(path string, t *testing.T) (echo.Context, *httptest.ResponseReco
 func TestAbout(t *testing.T) {
 	c, rec := handlerGET("/about", t)
 
-	assert.Nil(t, about()(c))
+	verifs := verifications(t)
+	cfg := config.New()
+	vfr := new(vtest.FakeVerifier)
+	vfr.VerifyReturns(verifs)
+	gnv := gnverifier.New(cfg, vfr)
+
+	assert.Nil(t, about(gnv)(c))
 	assert.Equal(t, rec.Code, http.StatusOK)
 	assert.Contains(t, rec.Body.String(), "Matching Process")
 }
@@ -41,7 +47,13 @@ func TestAbout(t *testing.T) {
 func TestAPI(t *testing.T) {
 	c, rec := handlerGET("/api", t)
 
-	assert.Nil(t, api()(c))
+	verifs := verifications(t)
+	cfg := config.New()
+	vfr := new(vtest.FakeVerifier)
+	vfr.VerifyReturns(verifs)
+	gnv := gnverifier.New(cfg, vfr)
+
+	assert.Nil(t, api(gnv)(c))
 	assert.Equal(t, rec.Code, http.StatusOK)
 	assert.Contains(t, rec.Body.String(), "OpenAPI Schema")
 }

@@ -1,33 +1,33 @@
 {{ define "results" }}
-    <div class='source-match'>
+<div class='source-match'>
 
-      <div class='source-names-score'>
-        {{ if .Outlink }}
-        <span class='source-name-string'><a href="{{ .Outlink }}">{{ .MatchedName }}</a></span>
-        {{ else }}
-        <span class='source-name-string'>{{ .MatchedName }}</span>
-        {{ end }}
-        [ {{ matchType .MatchType .EditDistance }} ]
-      </div>
+  <div class='source-names-score'>
+    {{ if .Outlink }}
+    <span class='source-name-string'><a href="{{ .Outlink }}">🌍 {{ .MatchedName }}</a></span>
+    {{ else }}
+    <span class='source-name-string'>{{ .MatchedName }}</span>
+    {{ end }}
+    [ {{ matchType .MatchType .EditDistance }} ]
+  </div>
 
-      {{ if .CurrentName }}
-      {{ if ne .MatchedName .CurrentName }}
-      <div class='source-names-score'>
-        Current name:
-        <span class='source-current-name-string'>{{ .CurrentName }}</span>
-      </div>
-      {{ end }}
-      {{ end }}
+  {{ if .CurrentName }}
+  {{ if ne .MatchedName .CurrentName }}
+  <div class='source-names-score'>
+    Current name:
+    <span class='source-current-name-string'>{{ .CurrentName }}</span>
+  </div>
+  {{ end }}
+  {{ end }}
 
-      <div class='source-title'>
-        <a href='/data_sources/{{ .DataSourceID }}'>
-          {{ .DataSourceTitleShort }} (updated on {{ .EntryDate }})
-        </a>
-      </div>
+  <div class='source-title'>
+    <a href='/data_sources/{{ .DataSourceID }}'>
+      {{ .DataSourceTitleShort }} (updated on {{ .EntryDate }})
+    </a>
+  </div>
 
-      {{ if .ClassificationPath }}
-      <div class='source-classification-path'>{{ classification .ClassificationPath .ClassificationRanks }}</div>
-      {{ end }}
+  {{ if .ClassificationPath }}
+  <div class='source-classification-path'>{{ classification .ClassificationPath .ClassificationRanks }}</div>
+  {{ end }}
 
-    </div>
+</div>
 {{ end }}

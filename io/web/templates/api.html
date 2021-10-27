@@ -2,49 +2,52 @@
 <div id="content-splash">
   <h2>Application Programming Interface (API)</h2>
 </div>
+<div id="content-body">
+  <p>Web-based verification service includes a RESTful interface.</p>
 
-<p>Web-based verification service includes a RESTful interface.</p>
+  <h3 id="get">GET</h3>
 
-<h3 id="get">GET</h3>
+  <p>
+    Append a vertical line separated array of strings to your domain url.
+    Make sure that '&amp;' in the names are escaped as '%26',
+    and spaces are escaped as '+'.
+  </p>
 
-<p>
-Append a vertical line separated array of strings to your domain url.
-Make sure that '&amp;' in the names are escaped as '%26',
-and spaces are escaped as '+'.
-</p>
+  <pre class='code'>
+    /api/v1/verifications/Aus+bus|Aus+bus+D.+%26+M.,+1870
+  </pre>
 
-<p>
-<code>/api/v1/verifications/Aus+bus|Aus+bus+D.+%26+M.,+1870</code>
-</p>
+  <h3 id="post">POST</h3>
 
-<h3 id="post">POST</h3>
+  <p><code>/api/v1/verifications</code></p>
 
-<p><code>/api/v1/verifications</code></p>
+  <p>
+    with request body in JSON format according to
+    <a href="https://apidoc.globalnames.org/gnames">
+      specification
+    </a>:
+  </p>
 
-<p>
-with request body in JSON format:
-</p>
+  <pre class='code'>
+    {
+      "nameStrings": [
+        "Pomatomus soltator",
+        "Bubo bubo (Linnaeus, 1758)"
+      ],
+      "preferredSources": [
+        1,
+        12,
+        169
+      ]
+    }
+  </pre>
 
-<pre>
-  {
-    "nameStrings": [
-    "Pomatomus soltator",
-    "Bubo bubo (Linnaeus, 1758)"
-    ],
-    "preferredSources": [
-      1,
-      12,
-      169
-    ]
-  }
-</pre>
-
-<h3> OpenAPI Schema</h3>
-<p>
-Read the GNames's
-<a href="https://apidoc.globalnames.org/gnames">
-  Verification OpenAPI documentation
-</a> to learn about all options and the output schema.
-</p>
+  <h3> OpenAPI Schema</h3>
+  <p>
+    Read the GNames's
+    <a href="https://apidoc.globalnames.org/gnames">
+      Verification OpenAPI documentation
+    </a> to learn about all options and the output schema.
+  </p>
 </div>
 {{ end }}

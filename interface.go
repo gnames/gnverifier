@@ -1,6 +1,7 @@
 package gnverifier
 
 import (
+	"github.com/gnames/gnlib/ent/gnvers"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnverifier/config"
 )
@@ -32,4 +33,7 @@ type GNverifier interface {
 	// DataSource uses ID input to return meta-information about a particular
 	// data-source.
 	DataSource(id int) (vlib.DataSource, error)
+
+	// GetVersion returns version of the gnverifier
+	GetVersion() gnvers.Version
 }

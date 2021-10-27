@@ -105,19 +105,19 @@ func addFuncs(tmpl *template.Template) {
 		"matchType": func(mt vlib.MatchTypeValue, ed int) template.HTML {
 			var res string
 			clr := map[string]string{
-				"green":  "#080",
-				"yellow": "#a80",
-				"red":    "#800",
+				"green":  "green",
+				"yellow": "orange",
+				"red":    "red",
 			}
 			switch mt {
 			case vlib.Exact:
-				res = fmt.Sprintf("<span style='color: %s'>%s match by canonical form</span>", clr["green"], mt)
+				res = fmt.Sprintf("<span style='color: %s'>✔</span> %s match by canonical form", clr["green"], mt)
 			case vlib.NoMatch:
-				res = fmt.Sprintf("<span style='color: %s'>%s</span>", clr["red"], mt)
+				res = fmt.Sprintf("<span style='color: %s'>✕</span> %s", clr["red"], mt)
 			case vlib.Fuzzy, vlib.PartialFuzzy:
-				res = fmt.Sprintf("<span style='color: %s'>%s match, edit distance: %d</span>", clr["yellow"], mt, ed)
+				res = fmt.Sprintf("<span style='color: %s'>✔</span> %s match, edit distance: %d", clr["yellow"], mt, ed)
 			default:
-				res = fmt.Sprintf("<span style='color: %s'>%s match</span>", clr["yellow"], mt)
+				res = fmt.Sprintf("<span style='color: %s'>✔</span> %s match</span>", clr["yellow"], mt)
 			}
 			return template.HTML(res)
 		},
