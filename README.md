@@ -322,7 +322,7 @@ gnverifier file.txt
 
 Authors: [Dmitry Mozzherin][dimus]
 
-Copyright © 2020-2021 Dmitry Mozzherin. See [LICENSE][license] for further
+Copyright © 2020-2021 Dmitry Mozzherin. See [LICENSE] for further
 details.
 
 [Catalogue of Life]: https://catalogueoflife.org/
@@ -336,7 +336,7 @@ details.
 [github]: https://github.com/gnames/gnverifier/releases/latest
 [gnames]: https://hub.apitree.com/dimus/gnames/
 [go-install]: https://golang.org/doc/install
-[license]: https://github.com/gnames/gnverifier/blob/master/LICENSE
+[LICENSE]: https://github.com/gnames/gnverifier/blob/master/LICENSE
 [test directory]: https://github.com/gnames/gnverifier/tree/master/testdata
 [uBio]: https://ubio.org/
 [win-pdf]: https://github.com/gnames/gnverifier/blob/master/use-gnverifier-windows.pdf

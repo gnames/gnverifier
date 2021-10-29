@@ -155,7 +155,9 @@ func init() {
 	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
   If sources are set and there are matches to their data,
   such matches are returned in "preferred_result" results.
-  To find IDs refer to "https://resolver.globalnames.org/data_sources".
+  If the option is set to "0" all matched sources are returned.
+
+  To find IDs refer to "https://verifier.globalnames.org/data_sources".
   1 - Catalogue of Life
   3 - ITIS
   4 - NCBI
@@ -165,8 +167,12 @@ func init() {
   167 - IPNI
   170 - Arctos
   172 - PaleoBioDB
-  181 - IRMNG`)
-	rootCmd.Flags().StringP("verifier_url", "v", "", "URL for verification service")
+  181 - IRMNG
+  194 - PLAZI
+  195 - AlgaeBase`)
+	rootCmd.Flags().StringP("verifier_url", "v", "",
+		`URL for verification service.
+  Default: https://verifier.globalnames.org/api/v1`)
 }
 
 // initConfig reads in config file and ENV variables if set.
