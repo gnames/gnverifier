@@ -6,7 +6,7 @@
 
   <div class='section'>
     <div class='searched-name'>
-      <h4>{{ .Input }}</h4>
+      <h4>{{ .Name }}</h4>
       <span class='number-matches'>Matched in {{ .DataSourcesNum }} data-sources</span>
     </div>
   </div>
@@ -17,13 +17,13 @@
     {{ template "results" $best}}
     {{ end }}
 
-    {{ $pref := .PreferredResults }}
+    {{ $res := .Results }}
 
-    {{ if $pref }}
-    <h5>From preferred Data Sources:</h5>
+    {{ if $res }}
+    <h5>From selected Data Sources:</h5>
     {{ end }}
 
-    {{ range $pref }}
+    {{ range $res }}
     {{ template "results" . }}
     {{ end }}
   </div>
@@ -34,7 +34,7 @@
 <p>Verify a list of scientific names against
   <a href="/data_sources">biodiversity data-sources</a>.
   This service parses incoming names, executes exact or
-  fuzzy matching as required, and returns the best-scored result
+  fuzzy matching as required, and returns the best-scored result.
   Optionally, it can also return matches from data-sources selected by a user.
 </p>
 <div id='resolver-form'>

@@ -37,17 +37,17 @@ type FakeVerifier struct {
 		result1 []verifiera.DataSource
 		result2 error
 	}
-	VerifyStub        func(context.Context, verifiera.VerifyParams) []verifiera.Verification
+	VerifyStub        func(context.Context, verifiera.Input) verifiera.Output
 	verifyMutex       sync.RWMutex
 	verifyArgsForCall []struct {
 		arg1 context.Context
-		arg2 verifiera.VerifyParams
+		arg2 verifiera.Input
 	}
 	verifyReturns struct {
-		result1 []verifiera.Verification
+		result1 verifiera.Output
 	}
 	verifyReturnsOnCall map[int]struct {
-		result1 []verifiera.Verification
+		result1 verifiera.Output
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -182,12 +182,12 @@ func (fake *FakeVerifier) DataSourcesReturnsOnCall(i int, result1 []verifiera.Da
 	}{result1, result2}
 }
 
-func (fake *FakeVerifier) Verify(arg1 context.Context, arg2 verifiera.VerifyParams) []verifiera.Verification {
+func (fake *FakeVerifier) Verify(arg1 context.Context, arg2 verifiera.Input) verifiera.Output {
 	fake.verifyMutex.Lock()
 	ret, specificReturn := fake.verifyReturnsOnCall[len(fake.verifyArgsForCall)]
 	fake.verifyArgsForCall = append(fake.verifyArgsForCall, struct {
 		arg1 context.Context
-		arg2 verifiera.VerifyParams
+		arg2 verifiera.Input
 	}{arg1, arg2})
 	stub := fake.VerifyStub
 	fakeReturns := fake.verifyReturns
@@ -208,39 +208,39 @@ func (fake *FakeVerifier) VerifyCallCount() int {
 	return len(fake.verifyArgsForCall)
 }
 
-func (fake *FakeVerifier) VerifyCalls(stub func(context.Context, verifiera.VerifyParams) []verifiera.Verification) {
+func (fake *FakeVerifier) VerifyCalls(stub func(context.Context, verifiera.Input) verifiera.Output) {
 	fake.verifyMutex.Lock()
 	defer fake.verifyMutex.Unlock()
 	fake.VerifyStub = stub
 }
 
-func (fake *FakeVerifier) VerifyArgsForCall(i int) (context.Context, verifiera.VerifyParams) {
+func (fake *FakeVerifier) VerifyArgsForCall(i int) (context.Context, verifiera.Input) {
 	fake.verifyMutex.RLock()
 	defer fake.verifyMutex.RUnlock()
 	argsForCall := fake.verifyArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeVerifier) VerifyReturns(result1 []verifiera.Verification) {
+func (fake *FakeVerifier) VerifyReturns(result1 verifiera.Output) {
 	fake.verifyMutex.Lock()
 	defer fake.verifyMutex.Unlock()
 	fake.VerifyStub = nil
 	fake.verifyReturns = struct {
-		result1 []verifiera.Verification
+		result1 verifiera.Output
 	}{result1}
 }
 
-func (fake *FakeVerifier) VerifyReturnsOnCall(i int, result1 []verifiera.Verification) {
+func (fake *FakeVerifier) VerifyReturnsOnCall(i int, result1 verifiera.Output) {
 	fake.verifyMutex.Lock()
 	defer fake.verifyMutex.Unlock()
 	fake.VerifyStub = nil
 	if fake.verifyReturnsOnCall == nil {
 		fake.verifyReturnsOnCall = make(map[int]struct {
-			result1 []verifiera.Verification
+			result1 verifiera.Output
 		})
 	}
 	fake.verifyReturnsOnCall[i] = struct {
-		result1 []verifiera.Verification
+		result1 verifiera.Output
 	}{result1}
 }
 

@@ -13,11 +13,11 @@ type Config struct {
 	// preferred results.
 	PreferredOnly bool
 
-	// PreferredSources are IDs of DataSources that are important for
+	// DataSources are IDs of DataSources that are important for
 	// user. Normally only one "the best" reusult returns. If user gives
 	// preferred sources, then matches from these sources are also
 	// returned.
-	PreferredSources []int
+	DataSources []int
 
 	// WithAllMatches flag; if true, results include all matches per source,
 	// not only the best match.
@@ -82,10 +82,10 @@ func OptJobs(i int) Option {
 	}
 }
 
-// OptPreferredSources set list of preferred sources.
-func OptPreferredSources(srs []int) Option {
+// OptDataSources set list of preferred sources.
+func OptDataSources(srs []int) Option {
 	return func(cnf *Config) {
-		cnf.PreferredSources = srs
+		cnf.DataSources = srs
 	}
 }
 
@@ -96,7 +96,7 @@ func OptVerifierURL(s string) Option {
 	}
 }
 
-// OptNamesNumThreshold sets number of names after which there is a redirect
+// OptNamesNumThreshold sets number of names after which there is no redirect
 // from POST to GET.
 func OptNamesNumThreshold(i int) Option {
 	return func(cnf *Config) {
@@ -109,7 +109,7 @@ func OptNamesNumThreshold(i int) Option {
 func New(opts ...Option) Config {
 	cnf := Config{
 		Format:            gnfmt.CSV,
-		VerifierURL:       "https://verifier.globalnames.org/api/v1/",
+		VerifierURL:       "https://verifier.globalnames.org/api/v0/",
 		Batch:             5000,
 		Jobs:              4,
 		NamesNumThreshold: 20,

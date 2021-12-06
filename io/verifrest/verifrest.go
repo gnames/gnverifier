@@ -105,12 +105,12 @@ func (vr verifrest) DataSource(
 // Verify takes names-strings and options and returns verification result.
 func (vr verifrest) Verify(
 	ctx context.Context,
-	params vlib.VerifyParams,
-) []vlib.Verification {
+	input vlib.Input,
+) vlib.Output {
 	var attempts int
-	var response []vlib.Verification
+	var response vlib.Output
 	enc := gnfmt.GNjson{}
-	paramsData, err := enc.Encode(params)
+	paramsData, err := enc.Encode(input)
 	if err != nil {
 		log.Printf("Cannot encode names for verification: %s.", err)
 	}
@@ -125,30 +125,32 @@ func (vr verifrest) Verify(
 		d := bytes.NewReader(paramsData)
 		namesRange := fmt.Sprintf(
 			"%s-%s",
-			params.NameStrings[0],
-			params.NameStrings[len(params.NameStrings)-1],
+			input.NameStrings[0],
+			input.NameStrings[len(input.NameStrings)-1],
 		)
 
 		url := vr.verifierURL + "verifications"
-		request, err := http.NewRequestWithContext(ctx, http.MethodPost, url, d)
+		var request *http.Request
+		var resp *http.Response
+		var respBytes []byte
+		request, err = http.NewRequestWithContext(ctx, http.MethodPost, url, d)
 		if err != nil {
 			log.Fatalf("Cannot create request: %v", err)
 		}
 		request.Header.Set("Content-Type", "application/json")
 
-		resp, err := vr.client.Do(request)
+		resp, err = vr.client.Do(request)
 		if err != nil {
 			log.Warnf("Request is failing for %s.", namesRange)
 			return true, err
 		}
 		defer resp.Body.Close()
 
-		respBytes, err := io.ReadAll(resp.Body)
+		respBytes, err = io.ReadAll(resp.Body)
 		if err != nil {
 			log.Warnf("Body reading is failing for %s.", namesRange)
 			return true, err
 		}
-		response = make([]vlib.Verification, 0)
 		err = enc.Decode(respBytes, &response)
 		if err != nil {
 			log.Warnf("Response decoding is failing for %s.", namesRange)
@@ -158,15 +160,15 @@ func (vr verifrest) Verify(
 	})
 
 	if err != nil {
-		log.Printf("Verification failed for %s-%s after %d attempts.", params.NameStrings[0],
-			params.NameStrings[len(params.NameStrings)-1], attempts)
-		res := make([]vlib.Verification, len(params.NameStrings))
-		for i := range params.NameStrings {
-			name := params.NameStrings[i]
-			res[i] = vlib.Verification{
-				InputID: gnuuid.New(name).String(),
-				Input:   name,
-				Error:   err.Error(),
+		log.Printf("Verification failed for %s-%s after %d attempts.", input.NameStrings[0],
+			input.NameStrings[len(input.NameStrings)-1], attempts)
+		res := vlib.Output{Names: make([]vlib.Name, len(input.NameStrings))}
+		for i := range input.NameStrings {
+			name := input.NameStrings[i]
+			res.Names[i] = vlib.Name{
+				ID:    gnuuid.New(name).String(),
+				Name:  name,
+				Error: err.Error(),
 			}
 		}
 		return res
@@ -178,8 +180,8 @@ func try(fn func(int) (bool, error)) (int, error) {
 	var (
 		err        error
 		tryAgain   bool
-		maxRetries int = 3
-		attempt    int = 1
+		maxRetries = 3
+		attempt    = 1
 	)
 	for {
 		tryAgain, err = fn(attempt)

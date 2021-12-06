@@ -2,6 +2,7 @@ package gnverifier_test
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"sync"
 	"testing"
@@ -29,6 +30,7 @@ func TestDataSources(t *testing.T) {
 	vfr.DataSourcesReturns(nil, errors.New("fake error"))
 	res, err = gnv.DataSources()
 	assert.NotNil(t, err)
+	fmt.Printf("\nDATSR: %#v\n", res)
 }
 
 func TestDataSource(t *testing.T) {
@@ -71,17 +73,17 @@ func TestVerifyOne(t *testing.T) {
 	cfg := config.New()
 	gnv := gnverifier.New(cfg, vfr)
 
-	vfr.VerifyReturns(verifs[0:1])
+	vfr.VerifyReturns(verifs)
 	res, err := gnv.VerifyOne("Pomatomus saltatrix (Linnaeus, 1766)")
 	assert.Nil(t, err)
-	assert.Equal(t, res.Input, "Pomatomus saltatrix (Linnaeus, 1766)")
+	assert.Equal(t, res.Name, "Pomatomus saltatrix (Linnaeus, 1766)")
 	assert.NotNil(t, res.BestResult)
 	assert.Equal(t, vfr.VerifyCallCount(), 1)
 
-	vfr.VerifyReturns([]vlib.Verification{})
+	vfr.VerifyReturns(vlib.Output{})
 	res, err = gnv.VerifyOne("something")
 	assert.NotNil(t, err)
-	assert.Equal(t, res.Input, "")
+	assert.Equal(t, res.Name, "")
 }
 
 func TestVerifyBatch(t *testing.T) {
@@ -115,7 +117,7 @@ func TestVerifyStream(t *testing.T) {
 	}
 
 	chIn := make(chan []string)
-	chOut := make(chan []vlib.Verification)
+	chOut := make(chan []vlib.Name)
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go gnv.VerifyStream(chIn, chOut)
@@ -151,7 +153,7 @@ func dataSources(t *testing.T) []vlib.DataSource {
 	return res
 }
 
-func verifications(t *testing.T) []vlib.Verification {
+func verifications(t *testing.T) vlib.Output {
 	c := cassette.New("dss")
 	data, err := os.ReadFile("io/verifrest/fixtures/names.yaml")
 	assert.Nil(t, err)
@@ -159,7 +161,7 @@ func verifications(t *testing.T) []vlib.Verification {
 	assert.Nil(t, err)
 	dssStr := c.Interactions[0].Response.Body
 	enc := gnfmt.GNjson{}
-	res := make([]vlib.Verification, 0)
+	var res vlib.Output
 	err = enc.Decode([]byte(dssStr), &res)
 	assert.Nil(t, err)
 	return res

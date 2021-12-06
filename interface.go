@@ -11,14 +11,14 @@ import (
 // names.
 type GNverifier interface {
 	// VerifyOne takes a name-string and returns the result of verification.
-	VerifyOne(name string) (vlib.Verification, error)
+	VerifyOne(name string) (vlib.Name, error)
 
 	// VerifyBatch takes a slice of names and verifies them all at once
-	VerifyBatch(names []string) []vlib.Verification
+	VerifyBatch(names []string) []vlib.Name
 
 	// VerifyStream receves batches of strings via one channel, verifies
 	// the strings and sends results to another channel.
-	VerifyStream(in <-chan []string, out chan []vlib.Verification)
+	VerifyStream(in <-chan []string, out chan []vlib.Name)
 
 	// ChangeConfig modifies configuration of GNverifier.
 	ChangeConfig(opts ...config.Option) GNverifier

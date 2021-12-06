@@ -92,7 +92,7 @@ more than 100 biodiverisity data-sources.`,
 		sources, _ := cmd.Flags().GetString("sources")
 		if sources != "" {
 			data_sources := parseDataSources(sources)
-			opts = append(opts, config.OptPreferredSources(data_sources))
+			opts = append(opts, config.OptDataSources(data_sources))
 		}
 
 		url, _ := cmd.Flags().GetString("verifier_url")
@@ -172,7 +172,7 @@ func init() {
   195 - AlgaeBase`)
 	rootCmd.Flags().StringP("verifier_url", "v", "",
 		`URL for verification service.
-  Default: https://verifier.globalnames.org/api/v1`)
+  Default: https://verifier.globalnames.org/api/v0`)
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -221,7 +221,7 @@ func getOpts() {
 		opts = append(opts, config.OptPreferredOnly(cfg.PreferredOnly))
 	}
 	if len(cfg.PreferredSources) > 0 {
-		opts = append(opts, config.OptPreferredSources(cfg.PreferredSources))
+		opts = append(opts, config.OptDataSources(cfg.PreferredSources))
 	}
 
 	if cfg.WithAllMatches {
@@ -328,7 +328,7 @@ func verify(gnv gnverifier.GNverifier, data string) {
 func verifyFile(gnv gnverifier.GNverifier, f io.Reader) {
 	batch := gnv.Config().Batch
 	in := make(chan []string)
-	out := make(chan []vlib.Verification)
+	out := make(chan []vlib.Name)
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go gnv.VerifyStream(in, out)
@@ -348,7 +348,7 @@ func verifyFile(gnv gnverifier.GNverifier, f io.Reader) {
 	wg.Wait()
 }
 
-func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Verification,
+func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Name,
 	wg *sync.WaitGroup) {
 	defer wg.Done()
 	timeStart := time.Now().UnixNano()
@@ -369,7 +369,7 @@ func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Verification,
 			if r.Error != "" {
 				log.Println(r.Error)
 			}
-			fmt.Println(output.Output(r, f, gnv.Config().PreferredOnly))
+			fmt.Println(output.NameOutput(r, f, gnv.Config().PreferredOnly))
 		}
 	}
 }
@@ -384,7 +384,7 @@ func verifyString(gnv gnverifier.GNverifier, name string) {
 	if f == gnfmt.CSV || f == gnfmt.TSV {
 		fmt.Println(output.CSVHeader(f))
 	}
-	fmt.Println(output.Output(res, f, gnv.Config().PreferredOnly))
+	fmt.Println(output.NameOutput(res, f, gnv.Config().PreferredOnly))
 }
 
 // touchConfigFile checks if config file exists, and if not, it gets created.

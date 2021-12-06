@@ -14,7 +14,7 @@ type Verifier interface {
 	// Verify takes a slice of strings to verify, optional preferred data-sources
 	// and returns results of verification of the strings against known
 	// scientific names.
-	Verify(ctx context.Context, params vlib.VerifyParams) []vlib.Verification
+	Verify(ctx context.Context, params vlib.Input) vlib.Output
 
 	// DataSources returns meta-information about aggregated data-sources.
 	DataSources(ctx context.Context) ([]vlib.DataSource, error)

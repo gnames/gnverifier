@@ -73,7 +73,7 @@ func TestHomeGET(t *testing.T) {
 	assert.Contains(t, rec.Body.String(), "Advanced Options")
 }
 
-func TestHomePOST(t *testing.T) {
+func TestHomePOSTOnly(t *testing.T) {
 	var err error
 	verifs := verifications(t)
 	f := make(url.Values)
@@ -96,7 +96,8 @@ func TestHomePOST(t *testing.T) {
 	vfr := new(vtest.FakeVerifier)
 	vfr.VerifyReturns(verifs)
 	gnv := gnverifier.New(cfg, vfr)
-	assert.Nil(t, homePOST(gnv)(c))
+	err = homePOST(gnv)(c)
+	assert.Nil(t, err)
 	assert.Equal(t, rec.Code, http.StatusOK)
 	assert.Contains(t, rec.Body.String(), "Bubo (genus)")
 }
@@ -130,7 +131,7 @@ func TestHomePostGet(t *testing.T) {
 	assert.NotContains(t, rec.Body.String(), "Bubo (genus)")
 }
 
-func verifications(t *testing.T) []vlib.Verification {
+func verifications(t *testing.T) vlib.Output {
 	c := cassette.New("dss")
 	data, err := os.ReadFile("../verifrest/fixtures/names.yaml")
 	assert.Nil(t, err)
@@ -138,7 +139,7 @@ func verifications(t *testing.T) []vlib.Verification {
 	assert.Nil(t, err)
 	dssStr := c.Interactions[0].Response.Body
 	enc := gnfmt.GNjson{}
-	res := make([]vlib.Verification, 0)
+	var res vlib.Output
 	err = enc.Decode([]byte(dssStr), &res)
 	assert.Nil(t, err)
 	return res

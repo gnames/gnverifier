@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var urlVerif = "https://verifier.globalnames.org/api/v1/"
+var urlVerif = "https://verifier.globalnames.org/api/v0/"
 
 func TestDataSources(t *testing.T) {
 	r, err := recorder.New("fixtures/dss")
@@ -46,14 +46,14 @@ func TestDataSource(t *testing.T) {
 func TestVerify(t *testing.T) {
 	tests := []struct {
 		fixture         string
-		params          vlib.VerifyParams
+		params          vlib.Input
 		matchTypes      []vlib.MatchTypeValue
 		matchCanonicals []string
-		hasPreferred    []bool
+		hasResults      []bool
 	}{
 		{
 			fixture: "fixtures/capitalize",
-			params: vlib.VerifyParams{
+			params: vlib.Input{
 				NameStrings:        []string{"plantago major"},
 				WithCapitalization: true,
 			},
@@ -61,40 +61,40 @@ func TestVerify(t *testing.T) {
 				vlib.Exact,
 			},
 			matchCanonicals: []string{"Plantago major"},
-			hasPreferred:    []bool{false},
+			hasResults:      []bool{false},
 		},
 		{
 			fixture: "fixtures/name",
-			params: vlib.VerifyParams{
+			params: vlib.Input{
 				NameStrings: []string{"Plantago major L."},
 			},
 			matchTypes: []vlib.MatchTypeValue{
 				vlib.Exact,
 			},
 			matchCanonicals: []string{"Plantago major"},
-			hasPreferred:    []bool{false},
+			hasResults:      []bool{false},
 		},
 		{
 			fixture: "fixtures/name_pref",
-			params: vlib.VerifyParams{
-				NameStrings:      []string{"Pomatomus saltatrix (Linnaeus, 1766)"},
-				PreferredSources: []int{1, 12},
+			params: vlib.Input{
+				NameStrings: []string{"Pomatomus saltatrix (Linnaeus, 1766)"},
+				DataSources: []int{1, 12},
 			},
 			matchTypes: []vlib.MatchTypeValue{
 				vlib.Exact,
 			},
 			matchCanonicals: []string{"Pomatomus saltatrix"},
-			hasPreferred:    []bool{true},
+			hasResults:      []bool{true},
 		},
 		{
 			fixture: "fixtures/names",
-			params: vlib.VerifyParams{
+			params: vlib.Input{
 				NameStrings: []string{
 					"Pomatomus saltatrix (Linnaeus, 1766)",
 					"Bubo bubo (Linnaeus, 1758)",
 					"NotAName",
 				},
-				PreferredSources: []int{4, 12},
+				DataSources: []int{4, 12},
 			},
 			matchTypes: []vlib.MatchTypeValue{
 				vlib.Exact,
@@ -102,7 +102,7 @@ func TestVerify(t *testing.T) {
 				vlib.NoMatch,
 			},
 			matchCanonicals: []string{"Pomatomus saltatrix", "Bubo bubo", ""},
-			hasPreferred:    []bool{true, true, false},
+			hasResults:      []bool{true, true, false},
 		},
 	}
 	for i := range tests {
@@ -115,16 +115,16 @@ func TestVerify(t *testing.T) {
 			client:      client,
 		}
 		vs := verif.Verify(context.Background(), tests[i].params)
-		for j := range vs {
-			assert.Equal(t, vs[j].MatchType, tests[i].matchTypes[j])
+		for j := range vs.Names {
+			assert.Equal(t, vs.Names[j].MatchType, tests[i].matchTypes[j])
 			if tests[i].matchCanonicals[j] != "" {
 				assert.Equal(
 					t,
-					vs[j].BestResult.MatchedCanonicalSimple,
+					vs.Names[j].BestResult.MatchedCanonicalSimple,
 					tests[i].matchCanonicals[j],
 				)
 			}
-			assert.Equal(t, len(vs[j].PreferredResults) > 0, tests[i].hasPreferred[j])
+			assert.Equal(t, len(vs.Names[j].Results) > 0, tests[i].hasResults[j])
 		}
 
 		r.Stop()

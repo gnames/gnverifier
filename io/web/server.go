@@ -74,7 +74,7 @@ type Data struct {
 	Format      string
 	Preferred   []int
 	AllMatches  bool
-	Verified    []vlib.Verification
+	Verified    []vlib.Name
 	DataSources []vlib.DataSource
 	DataSource  vlib.DataSource
 	Version     string
@@ -243,7 +243,7 @@ func verificationResults(
 		}
 
 		opts := []config.Option{
-			config.OptPreferredSources(data.Preferred),
+			config.OptDataSources(data.Preferred),
 			config.OptWithCapitalization(caps),
 			config.OptWithAllMatches(data.AllMatches),
 		}
@@ -275,7 +275,7 @@ func formatRows(data Data, prefOnly bool, f gnfmt.Format) []string {
 	res := make([]string, len(data.Verified)+1)
 	res[0] = output.CSVHeader(f)
 	for i, v := range data.Verified {
-		res[i+1] = output.Output(v, f, prefOnly)
+		res[i+1] = output.NameOutput(v, f, prefOnly)
 	}
 	return res
 }

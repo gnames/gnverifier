@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.6.0]
+
+- Add [#66]: migrate old functionality to use gnames-beta (v0.5.6+)
+
 ## [v0.5.2]
 
 - Add [#58]: add all matches/all sources to web interface.
@@ -91,6 +95,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.6.0]: https://github.com/gnames/gnverifier/compare/v0.5.2...v1.6.0
 [v0.5.2]: https://github.com/gnames/gnverifier/compare/v0.5.1...v0.5.2
 [v0.5.1]: https://github.com/gnames/gnverifier/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnverifier/compare/v0.4.1...v0.5.0

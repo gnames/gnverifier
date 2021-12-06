@@ -57,23 +57,23 @@ func (gnv gnverifier) Config() config.Config {
 
 // VerifyOne verifies one input string and returns results
 // as a string in JSON or CSV format.
-func (gnv gnverifier) VerifyOne(name string) (vlib.Verification, error) {
+func (gnv gnverifier) VerifyOne(name string) (vlib.Name, error) {
 	params := gnv.setParams([]string{name})
 	verif := gnv.verifier.Verify(context.Background(), params)
-	if len(verif) < 1 {
-		return vlib.Verification{}, errors.New("no verification results")
+	if len(verif.Names) < 1 {
+		return vlib.Name{}, errors.New("no verification results")
 	}
-	return verif[0], nil
+	return verif.Names[0], nil
 }
 
 // VerifyBatch takes a list of name-strings, verifies them and returns
 // a batch of results back.
-func (gnv gnverifier) VerifyBatch(nameStrings []string) []vlib.Verification {
+func (gnv gnverifier) VerifyBatch(nameStrings []string) []vlib.Name {
 	params := gnv.setParams(nameStrings)
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	return gnv.verifier.Verify(ctx, params)
+	return gnv.verifier.Verify(ctx, params).Names
 }
 
 // VerifyStream receives batches of strings through the input
@@ -81,7 +81,7 @@ func (gnv gnverifier) VerifyBatch(nameStrings []string) []vlib.Verification {
 // channel.
 func (gnv gnverifier) VerifyStream(
 	in <-chan []string,
-	out chan []vlib.Verification,
+	out chan []vlib.Name,
 ) {
 	var wg sync.WaitGroup
 	wg.Add(gnv.config.Jobs)
@@ -101,8 +101,8 @@ func (gnv gnverifier) VerifyStream(
 
 func (gnv gnverifier) VerifyWorker(
 	ctx context.Context,
-	in <-chan vlib.VerifyParams,
-	out chan<- []vlib.Verification,
+	in <-chan vlib.Input,
+	out chan<- []vlib.Name,
 	wg *sync.WaitGroup,
 ) {
 	defer wg.Done()
@@ -114,18 +114,18 @@ func (gnv gnverifier) VerifyWorker(
 			continue
 		}
 		verif := gnv.verifier.Verify(ctx, params)
-		if len(verif) < 1 {
+		if len(verif.Names) < 1 {
 			log.Fatalf("Did not get results from verifier")
 		}
-		out <- verif
+		out <- verif.Names
 	}
 }
 
 func (gnv gnverifier) loadNames(
 	ctx context.Context,
 	inChan <-chan []string,
-) <-chan vlib.VerifyParams {
-	vwChan := make(chan vlib.VerifyParams)
+) <-chan vlib.Input {
+	vwChan := make(chan vlib.Input)
 	go func() {
 		defer close(vwChan)
 		for names := range inChan {
@@ -141,10 +141,10 @@ func (gnv gnverifier) loadNames(
 	return vwChan
 }
 
-func (gnv gnverifier) setParams(names []string) vlib.VerifyParams {
-	res := vlib.VerifyParams{
+func (gnv gnverifier) setParams(names []string) vlib.Input {
+	res := vlib.Input{
 		NameStrings:        names,
-		PreferredSources:   gnv.config.PreferredSources,
+		DataSources:        gnv.config.DataSources,
 		WithCapitalization: gnv.config.WithCapitalization,
 		WithAllMatches:     gnv.config.WithAllMatches,
 	}

@@ -28,9 +28,9 @@ const (
 
 const prefMatch = "PreferredMatch"
 
-// Output takes result of verification for one string and converts it into
+// NameOutput takes result of verification for one string and converts it into
 // required format (CSV or JSON).
-func Output(ver vlib.Verification, f gnfmt.Format, prefOnly bool) string {
+func NameOutput(ver vlib.Name, f gnfmt.Format, prefOnly bool) string {
 	switch f {
 	case gnfmt.CSV:
 		return csvOutput(ver, prefOnly, ',')
@@ -59,16 +59,16 @@ func CSVHeader(f gnfmt.Format) string {
 	}
 }
 
-func csvOutput(ver vlib.Verification, prefOnly bool, sep rune) string {
+func csvOutput(ver vlib.Name, prefOnly bool, sep rune) string {
 	var res []string
 	if !prefOnly {
 		best := csvRow(ver, -1, sep)
 		res = append(res, best)
 	}
-	if prefOnly && len(ver.PreferredResults) == 0 {
+	if prefOnly && len(ver.Results) == 0 {
 		res = append(res, csvNoPrefRow(ver, sep))
 	}
-	for i := range ver.PreferredResults {
+	for i := range ver.Results {
 		pref := csvRow(ver, i, sep)
 		res = append(res, pref)
 	}
@@ -76,25 +76,25 @@ func csvOutput(ver vlib.Verification, prefOnly bool, sep rune) string {
 	return strings.Join(res, "\n")
 }
 
-func csvNoPrefRow(ver vlib.Verification, sep rune) string {
+func csvNoPrefRow(ver vlib.Name, sep rune) string {
 	s := []string{
-		prefMatch, vlib.NoMatch.String(), "", ver.Input,
+		prefMatch, vlib.NoMatch.String(), "", ver.Name,
 		"", "", "", "", "", "", "", "", ver.Error,
 	}
 	return gnfmt.ToCSV(s, sep)
 }
 
-func csvRow(ver vlib.Verification, prefIndex int, sep rune) string {
+func csvRow(ver vlib.Name, prefIndex int, sep rune) string {
 	kind := "BestMatch"
 	res := ver.BestResult
 
 	if prefIndex > -1 {
 		kind = prefMatch
-		res = ver.PreferredResults[prefIndex]
+		res = ver.Results[prefIndex]
 	}
 
 	s := []string{
-		kind, ver.MatchType.String(), "", ver.Input,
+		kind, ver.MatchType.String(), "", ver.Name,
 		"", "", "", "", "", "", "", "", ver.Error,
 	}
 
@@ -113,7 +113,7 @@ func csvRow(ver vlib.Verification, prefIndex int, sep rune) string {
 	return gnfmt.ToCSV(s, sep)
 }
 
-func jsonOutput(ver vlib.Verification, prefOnly bool, pretty bool) string {
+func jsonOutput(ver vlib.Name, prefOnly bool, pretty bool) string {
 	enc := gnfmt.GNjson{Pretty: pretty}
 	if prefOnly {
 		ver.BestResult = nil

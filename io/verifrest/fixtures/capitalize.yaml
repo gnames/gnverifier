@@ -2,25 +2,23 @@
 version: 1
 interactions:
 - request:
-    body: '{"nameStrings":["plantago major"],"preferredSources":null,"withVernaculars":false,"withCapitalization":true}'
+    body: '{"nameStrings":["plantago major"],"dataSources":null,"withAllMatches":false,"withVernaculars":false,"withCapitalization":true,"withContext":false,"contextThreshold":0}'
     form: {}
     headers:
       Content-Type:
       - application/json
-    url: https://verifier.globalnames.org/api/v1/verifications
+    url: https://verifier.globalnames.org/api/v0/verifications
     method: POST
   response:
     body: |
-      [{"inputId":"085e38af-e19b-56e5-9fec-5d81a467a656","input":"plantago major","inputCapitalized":true,"matchType":"Exact","bestResult":{"dataSourceId":1,"dataSourceTitleShort":"Catalogue of Life","curation":"Curated","recordId":"2953900","localId":"bb25537566741bcd0190f3a09cb689e5","outlink":"http://www.catalogueoflife.org/annual-checklist/2019/details/species/id/bb25537566741bcd0190f3a09cb689e5","entryDate":"2020-06-15","matchedName":"Plantago major L.","matchedCardinality":2,"matchedCanonicalSimple":"Plantago major","matchedCanonicalFull":"Plantago major","currentRecordId":"2953900","currentName":"Plantago major L.","currentCardinality":2,"currentCanonicalSimple":"Plantago major","currentCanonicalFull":"Plantago major","isSynonym":false,"classificationPath":"Plantae|Tracheophyta|Magnoliopsida|Lamiales|Plantaginaceae|Plantago|Plantago major","classificationRanks":"kingdom|phylum|class|order|family|genus|species","classificationIds":"3939764|3942634|3942724|3942745|3942749|4150696|2953900","editDistance":0,"stemEditDistance":0,"matchType":"Exact"},"dataSourcesNum":31,"curation":"Curated"}]
+      {"metadata":{"namesNumber":1,"withCapitalization":true},"names":[{"id":"085e38af-e19b-56e5-9fec-5d81a467a656","name":"plantago major","matchType":"Exact","bestResult":{"dataSourceId":1,"dataSourceTitleShort":"Catalogue of Life","curation":"Curated","recordId":"4JLPC","outlink":"https://www.catalogueoflife.org/data/taxon/4JLPC","entryDate":"2021-11-20","matchedName":"Plantago major L.","matchedCardinality":2,"matchedCanonicalSimple":"Plantago major","matchedCanonicalFull":"Plantago major","currentRecordId":"4JLPC","currentName":"Plantago major L.","currentCardinality":2,"currentCanonicalSimple":"Plantago major","currentCanonicalFull":"Plantago major","isSynonym":false,"classificationPath":"Biota|Plantae|Tracheophyta|Magnoliopsida|Lamiales|Plantaginaceae|Digitalidoideae|Plantago|Plantago major","classificationRanks":"unranked|kingdom|phylum|class|order|family|subfamily|genus|species","classificationIds":"5T6MX|P|TP|MG|3F4|6262K|7NLQD|6RHN|4JLPC","editDistance":0,"stemEditDistance":0,"matchType":"Exact"},"dataSourcesNum":32,"curation":"Curated"}]}
     headers:
-      Access-Control-Allow-Origin:
-      - '*'
       Connection:
       - keep-alive
       Content-Type:
       - application/json; charset=UTF-8
       Date:
-      - Tue, 20 Apr 2021 14:05:08 GMT
+      - Mon, 06 Dec 2021 22:14:12 GMT
       Server:
       - nginx/1.14.2
       Vary:

@@ -14,10 +14,10 @@ import (
 )
 
 func TestOutput(t *testing.T) {
-	verifs := verifications(t)
+	verifs := verifications(t).Names
 	tests := []struct {
 		msg      string
-		input    vlib.Verification
+		input    vlib.Name
 		format   gnfmt.Format
 		prefOnly bool
 		test     func(*testing.T, string)
@@ -55,11 +55,11 @@ func TestOutput(t *testing.T) {
 			format:   gnfmt.PrettyJSON,
 			prefOnly: false,
 			test: func(t *testing.T, res string) {
-				assert.Contains(t, res, "inputId", "pretty 1")
+				assert.Contains(t, res, "id", "pretty 1")
 				assert.Contains(t, res, "bestResult", "pretty 2")
-				assert.Contains(t, res, "preferredResults", "pretty 3")
+				assert.Contains(t, res, "results", "pretty 3")
 			},
-			linesNum: 80,
+			linesNum: 79,
 		},
 		{
 			msg:      "compact",
@@ -67,9 +67,9 @@ func TestOutput(t *testing.T) {
 			format:   gnfmt.CompactJSON,
 			prefOnly: false,
 			test: func(t *testing.T, res string) {
-				assert.Contains(t, res, "inputId", "compact 1")
+				assert.Contains(t, res, "id", "compact 1")
 				assert.Contains(t, res, "bestResult", "compact 2")
-				assert.Contains(t, res, "preferredResults", "compact 3")
+				assert.Contains(t, res, "results", "compact 3")
 			},
 			linesNum: 1,
 		},
@@ -77,7 +77,7 @@ func TestOutput(t *testing.T) {
 
 	for i := range tests {
 		t.Run(tests[i].msg, func(t *testing.T) {
-			res := output.Output(tests[i].input, tests[i].format, tests[i].prefOnly)
+			res := output.NameOutput(tests[i].input, tests[i].format, tests[i].prefOnly)
 			lines := strings.Split(res, "\n")
 			assert.Equal(t, len(lines), tests[i].linesNum)
 			tests[i].test(t, res)
@@ -86,7 +86,7 @@ func TestOutput(t *testing.T) {
 
 }
 
-func verifications(t *testing.T) []vlib.Verification {
+func verifications(t *testing.T) vlib.Output {
 	c := cassette.New("dss")
 	data, err := os.ReadFile("../../io/verifrest/fixtures/names.yaml")
 	assert.Nil(t, err)
@@ -94,7 +94,7 @@ func verifications(t *testing.T) []vlib.Verification {
 	assert.Nil(t, err)
 	dssStr := c.Interactions[0].Response.Body
 	enc := gnfmt.GNjson{}
-	res := make([]vlib.Verification, 0)
+	var res vlib.Output
 	err = enc.Decode([]byte(dssStr), &res)
 	assert.Nil(t, err)
 	return res
