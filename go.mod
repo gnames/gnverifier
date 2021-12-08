@@ -6,7 +6,7 @@ require (
 	github.com/dnaeon/go-vcr v1.2.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gnames/gnfmt v0.2.0
-	github.com/gnames/gnlib v0.6.4
+	github.com/gnames/gnlib v0.6.6
 	github.com/gnames/gnsys v0.2.2
 	github.com/gnames/gnuuid v0.1.1
 	github.com/labstack/echo/v4 v4.6.1

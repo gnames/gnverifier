@@ -102,6 +102,39 @@ func addFuncs(tmpl *template.Template) {
 			}
 			return strings.Join(res, " >> ")
 		},
+		"scoreDetails": func(sd vlib.ScoreDetails) template.HTML {
+			curSrc := "Curated Source"
+			sds := []struct {
+				name string
+				val  float32
+			}{
+				{"Rank Matched", sd.InfraSpecificRankScore},
+				{"Not Fuzzy", sd.FuzzyLessScore},
+				{curSrc, sd.CuratedDataScore},
+				{"Authors/Year Match", sd.AuthorMatchScore},
+				{"Is Accepted Name", sd.AcceptedNameScore},
+				{"Parsed Well", sd.ParsingQualityScore},
+			}
+
+			var color string
+			var res []string
+			for _, v := range sds {
+				switch {
+				case v.val < 0.3:
+					color = "#aaa"
+				case (v.name == curSrc && v.val > 0.5) || v.val == 1:
+					color = "#080"
+				default:
+					color = "#bb7f00"
+				}
+				// if v.val > 0 {
+				s := fmt.Sprintf("<span style='color: %s'>%s</span>", color, v.name)
+				res = append(res, s)
+				// }
+			}
+			str := "<div class='score-details'>Score Details:<br/>" + strings.Join(res, ",&nbsp;") + "</div>"
+			return template.HTML(str)
+		},
 		"matchType": func(mt vlib.MatchTypeValue, ed int) template.HTML {
 			var res string
 			clr := map[string]string{

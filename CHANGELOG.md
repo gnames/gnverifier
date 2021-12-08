@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.6.1]
+
+- Add [#67]: score details for web-UI.
+
 ## [v0.6.0]
 
 - Add [#66]: migrate old functionality to use gnames-beta (v0.5.6+)

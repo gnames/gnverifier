@@ -1,6 +1,5 @@
 {{ define "results" }}
 <div class='source-match'>
-
   <div class='source-names-score'>
     {{ if .Outlink }}
     <span class='source-name-string'><a href="{{ .Outlink }}">🔗 {{ .MatchedName }}</a></span>
@@ -9,7 +8,6 @@
     {{ end }}
     [ {{ matchType .MatchType .EditDistance }} ]
   </div>
-
   {{ if .CurrentName }}
   {{ if ne .MatchedName .CurrentName }}
   <div class='source-names-score'>
@@ -29,5 +27,6 @@
   <div class='source-classification-path'>{{ classification .ClassificationPath .ClassificationRanks }}</div>
   {{ end }}
 
+  {{ scoreDetails .ScoreDetails }}
 </div>
 {{ end }}

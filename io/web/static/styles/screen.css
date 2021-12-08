@@ -302,6 +302,13 @@ label {
 	display: none
 }
 
+.score-details {
+	margin-top: 0.4em;
+  padding:0.2em;
+  border: 1px groove #bbb;
+  font-size: 0.85em;
+}
+
 .tagline {
 	font-size: 1em;
 	font-weight: bold;
