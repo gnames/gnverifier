@@ -12,10 +12,12 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode"
 
 	"github.com/dustin/go-humanize"
 	"github.com/gnames/gnfmt"
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnquery"
 	"github.com/gnames/gnsys"
 	"github.com/gnames/gnverifier"
 	"github.com/gnames/gnverifier/config"
@@ -309,20 +311,37 @@ func getInput(cmd *cobra.Command, args []string) string {
 	return data
 }
 
-func verify(gnv gnverifier.GNverifier, data string) {
-	path := string(data)
-	fileExists, _ := gnsys.FileExists(path)
+func verify(gnv gnverifier.GNverifier, str string) {
+	fileExists, _ := gnsys.FileExists(str)
 	if fileExists {
-		f, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)
+		f, err := os.OpenFile(str, os.O_RDONLY, os.ModePerm)
 		if err != nil {
 			log.Fatal(err)
 			os.Exit(1)
 		}
 		verifyFile(gnv, f)
 		f.Close()
+	} else if isQuery(str) {
+		searchQuery(gnv, str)
 	} else {
-		verifyString(gnv, data)
+		verifyString(gnv, str)
 	}
+}
+
+func isQuery(s string) bool {
+	s = strings.TrimSpace(s)
+	idx := strings.Index(s, ":")
+	if idx == -1 {
+		return false
+	}
+
+	rs := []rune(s[0:idx])
+	for i := range rs {
+		if !unicode.IsLower(rs[i]) {
+			return false
+		}
+	}
+	return true
 }
 
 func verifyFile(gnv gnverifier.GNverifier, f io.Reader) {
@@ -385,6 +404,35 @@ func verifyString(gnv gnverifier.GNverifier, name string) {
 		fmt.Println(output.CSVHeader(f))
 	}
 	fmt.Println(output.NameOutput(res, f, gnv.Config().PreferredOnly))
+}
+
+func searchQuery(gnv gnverifier.GNverifier, s string) {
+	gnq := gnquery.New()
+	inp := gnq.Parse(s)
+	ds := gnv.Config().DataSources
+	if len(ds) > 0 {
+		if ds[0] == 0 {
+			inp.WithAllResults = true
+		} else {
+			inp.DataSourceIDs = ds
+		}
+	}
+	res, err := gnv.Search(inp)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	f := gnv.Config().Format
+	if f == gnfmt.CSV || f == gnfmt.TSV {
+		fmt.Println(output.CSVHeader(f))
+	}
+
+	for _, v := range res {
+		if v.Error != "" {
+			log.Println(v.Error)
+		}
+		fmt.Println(output.NameOutput(v, f, gnv.Config().PreferredOnly))
+	}
 }
 
 // touchConfigFile checks if config file exists, and if not, it gets created.

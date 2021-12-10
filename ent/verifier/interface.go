@@ -4,6 +4,7 @@ import (
 	"context"
 
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnquery/ent/search"
 )
 
 //go:generate counterfeiter -o verifiertesting/fake_verifier.go . Verifier
@@ -16,9 +17,22 @@ type Verifier interface {
 	// scientific names.
 	Verify(ctx context.Context, params vlib.Input) vlib.Output
 
+	DataSourcer
+	Searcher
+}
+
+// DataSourcer provides information about available data-sources.
+type DataSourcer interface {
 	// DataSources returns meta-information about aggregated data-sources.
 	DataSources(ctx context.Context) ([]vlib.DataSource, error)
 
 	// DataSource returns meta-information about a particular data source.
 	DataSource(ctx context.Context, id int) (vlib.DataSource, error)
+}
+
+// Searcher provides methods for faceted search.
+type Searcher interface {
+	// Search takes facets data (information about genus, species, author, year,
+	// data-sources). And returns back names that match these components.
+	Search(context.Context, search.Input) (search.Output, error)
 }

@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/gnames/gnfmt"
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnquery/ent/search"
 	"github.com/gnames/gnuuid"
 	"github.com/gnames/gnverifier/ent/verifier"
 	log "github.com/sirupsen/logrus"
@@ -31,6 +33,42 @@ func New(url string) verifier.Verifier {
 	}
 	client := &http.Client{Timeout: 4 * time.Minute, Transport: tr}
 	return &verifrest{verifierURL: url, client: client}
+}
+
+func (vr verifrest) Search(
+	ctx context.Context,
+	inp search.Input,
+) (search.Output, error) {
+	enc := gnfmt.GNjson{}
+	urlQ := vr.verifierURL + "search/" + url.PathEscape(inp.ToQuery())
+	var res search.Output
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, urlQ, nil)
+	if err != nil {
+		log.Warnf("Cannot create request: %v", err)
+		return res, err
+	}
+	request.Header.Set("Content-Type", "application/json")
+
+	resp, err := vr.client.Do(request)
+	if err != nil {
+		log.Warn("Cannot get data-sources information.")
+		return res, err
+	}
+	defer resp.Body.Close()
+
+	var respBytes []byte
+	respBytes, err = io.ReadAll(resp.Body)
+	if err != nil {
+		log.Warn("Body reading is failing for a search.")
+		return res, err
+	}
+	err = enc.Decode(respBytes, &res)
+	if err != nil {
+		log.Warnf("Cannot decode search result")
+		return res, err
+	}
+
+	return res, nil
 }
 
 // DataSources returns meta-data about aggregated data-sources.

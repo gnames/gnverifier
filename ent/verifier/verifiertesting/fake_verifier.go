@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	verifiera "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnquery/ent/search"
 	"github.com/gnames/gnverifier/ent/verifier"
 )
 
@@ -35,6 +36,20 @@ type FakeVerifier struct {
 	}
 	dataSourcesReturnsOnCall map[int]struct {
 		result1 []verifiera.DataSource
+		result2 error
+	}
+	SearchStub        func(context.Context, search.Input) (search.Output, error)
+	searchMutex       sync.RWMutex
+	searchArgsForCall []struct {
+		arg1 context.Context
+		arg2 search.Input
+	}
+	searchReturns struct {
+		result1 search.Output
+		result2 error
+	}
+	searchReturnsOnCall map[int]struct {
+		result1 search.Output
 		result2 error
 	}
 	VerifyStub        func(context.Context, verifiera.Input) verifiera.Output
@@ -182,6 +197,71 @@ func (fake *FakeVerifier) DataSourcesReturnsOnCall(i int, result1 []verifiera.Da
 	}{result1, result2}
 }
 
+func (fake *FakeVerifier) Search(arg1 context.Context, arg2 search.Input) (search.Output, error) {
+	fake.searchMutex.Lock()
+	ret, specificReturn := fake.searchReturnsOnCall[len(fake.searchArgsForCall)]
+	fake.searchArgsForCall = append(fake.searchArgsForCall, struct {
+		arg1 context.Context
+		arg2 search.Input
+	}{arg1, arg2})
+	stub := fake.SearchStub
+	fakeReturns := fake.searchReturns
+	fake.recordInvocation("Search", []interface{}{arg1, arg2})
+	fake.searchMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeVerifier) SearchCallCount() int {
+	fake.searchMutex.RLock()
+	defer fake.searchMutex.RUnlock()
+	return len(fake.searchArgsForCall)
+}
+
+func (fake *FakeVerifier) SearchCalls(stub func(context.Context, search.Input) (search.Output, error)) {
+	fake.searchMutex.Lock()
+	defer fake.searchMutex.Unlock()
+	fake.SearchStub = stub
+}
+
+func (fake *FakeVerifier) SearchArgsForCall(i int) (context.Context, search.Input) {
+	fake.searchMutex.RLock()
+	defer fake.searchMutex.RUnlock()
+	argsForCall := fake.searchArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeVerifier) SearchReturns(result1 search.Output, result2 error) {
+	fake.searchMutex.Lock()
+	defer fake.searchMutex.Unlock()
+	fake.SearchStub = nil
+	fake.searchReturns = struct {
+		result1 search.Output
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeVerifier) SearchReturnsOnCall(i int, result1 search.Output, result2 error) {
+	fake.searchMutex.Lock()
+	defer fake.searchMutex.Unlock()
+	fake.SearchStub = nil
+	if fake.searchReturnsOnCall == nil {
+		fake.searchReturnsOnCall = make(map[int]struct {
+			result1 search.Output
+			result2 error
+		})
+	}
+	fake.searchReturnsOnCall[i] = struct {
+		result1 search.Output
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeVerifier) Verify(arg1 context.Context, arg2 verifiera.Input) verifiera.Output {
 	fake.verifyMutex.Lock()
 	ret, specificReturn := fake.verifyReturnsOnCall[len(fake.verifyArgsForCall)]
@@ -251,6 +331,8 @@ func (fake *FakeVerifier) Invocations() map[string][][]interface{} {
 	defer fake.dataSourceMutex.RUnlock()
 	fake.dataSourcesMutex.RLock()
 	defer fake.dataSourcesMutex.RUnlock()
+	fake.searchMutex.RLock()
+	defer fake.searchMutex.RUnlock()
 	fake.verifyMutex.RLock()
 	defer fake.verifyMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

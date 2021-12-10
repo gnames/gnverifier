@@ -9,6 +9,7 @@ import (
 
 	"github.com/gnames/gnlib/ent/gnvers"
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnquery/ent/search"
 	"github.com/gnames/gnverifier/config"
 	"github.com/gnames/gnverifier/ent/verifier"
 )
@@ -20,7 +21,10 @@ type gnverifier struct {
 
 // New constructs an object that implements GNVerifier interface
 // and can be used for matching strings to scientfic names.
-func New(cnf config.Config, vfr verifier.Verifier) GNverifier {
+func New(
+	cnf config.Config,
+	vfr verifier.Verifier,
+) GNverifier {
 	return gnverifier{
 		config:   cnf,
 		verifier: vfr,
@@ -119,6 +123,13 @@ func (gnv gnverifier) VerifyWorker(
 		}
 		out <- verif.Names
 	}
+}
+
+func (gnv gnverifier) Search(
+	inp search.Input,
+) ([]vlib.Name, error) {
+	res, err := gnv.verifier.Search(context.Background(), inp)
+	return res.Names, err
 }
 
 func (gnv gnverifier) loadNames(

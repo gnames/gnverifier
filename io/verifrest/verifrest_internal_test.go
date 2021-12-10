@@ -7,10 +7,11 @@ import (
 
 	"github.com/dnaeon/go-vcr/recorder"
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnquery"
 	"github.com/stretchr/testify/assert"
 )
 
-var urlVerif = "https://verifier.globalnames.org/api/v0/"
+var urlAPI = "https://verifier.globalnames.org/api/v0/"
 
 func TestDataSources(t *testing.T) {
 	r, err := recorder.New("fixtures/dss")
@@ -19,7 +20,7 @@ func TestDataSources(t *testing.T) {
 
 	client := &http.Client{Transport: r}
 	verif := &verifrest{
-		verifierURL: urlVerif,
+		verifierURL: urlAPI,
 		client:      client,
 	}
 	ds, err := verif.DataSources(context.Background())
@@ -34,13 +35,43 @@ func TestDataSource(t *testing.T) {
 
 	client := &http.Client{Transport: r}
 	verif := &verifrest{
-		verifierURL: urlVerif,
+		verifierURL: urlAPI,
 		client:      client,
 	}
 
 	ds, err := verif.DataSource(context.Background(), 4)
 	assert.Nil(t, err)
 	assert.Equal(t, ds.TitleShort, "NCBI")
+}
+
+func TestSearch(t *testing.T) {
+	tests := []struct {
+		fixture    string
+		query      string
+		hasResults bool
+	}{
+		{"fixtures/search", "n:Bubo bubo all:t", true},
+	}
+	for i, v := range tests {
+		r, err := recorder.New(tests[i].fixture)
+		assert.Nil(t, err)
+
+		client := &http.Client{Transport: r}
+		verif := &verifrest{
+			verifierURL: urlAPI,
+			client:      client,
+		}
+
+		gnq := gnquery.New()
+		inp := gnq.Parse(v.query)
+		vs, err := verif.Search(context.Background(), inp)
+		assert.Nil(t, err)
+		for j := range vs.Names {
+			assert.Equal(t, len(vs.Names[j].Results) > 0, v.hasResults)
+		}
+
+		r.Stop()
+	}
 }
 
 func TestVerify(t *testing.T) {
@@ -111,7 +142,7 @@ func TestVerify(t *testing.T) {
 
 		client := &http.Client{Transport: r}
 		verif := &verifrest{
-			verifierURL: urlVerif,
+			verifierURL: urlAPI,
 			client:      client,
 		}
 		vs := verif.Verify(context.Background(), tests[i].params)

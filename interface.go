@@ -3,6 +3,7 @@ package gnverifier
 import (
 	"github.com/gnames/gnlib/ent/gnvers"
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnquery/ent/search"
 	"github.com/gnames/gnverifier/config"
 )
 
@@ -19,6 +20,9 @@ type GNverifier interface {
 	// VerifyStream receves batches of strings via one channel, verifies
 	// the strings and sends results to another channel.
 	VerifyStream(in <-chan []string, out chan []vlib.Name)
+
+	// Search provides faceted search functionality.
+	Search(search.Input) ([]vlib.Name, error)
 
 	// ChangeConfig modifies configuration of GNverifier.
 	ChangeConfig(opts ...config.Option) GNverifier
