@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.6.2]
+
+- Add [#69]: add faceted search to web UI.
+- Add [#61]: add faceted search to CLI app.
+
 ## [v0.6.1]
 
 - Add [#67]: score details for web-UI.
@@ -99,6 +104,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.6.2]: https://github.com/gnames/gnverifier/compare/v0.6.1...v1.6.2
+[v0.6.1]: https://github.com/gnames/gnverifier/compare/v0.6.0...v1.6.1
 [v0.6.0]: https://github.com/gnames/gnverifier/compare/v0.5.2...v1.6.0
 [v0.5.2]: https://github.com/gnames/gnverifier/compare/v0.5.1...v0.5.2
 [v0.5.1]: https://github.com/gnames/gnverifier/compare/v0.5.0...v0.5.1
@@ -117,6 +124,16 @@ This document follows [changelog guidelines]
 [v0.2.0]: https://github.com/gnames/gnverifier/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnverifier/tree/v0.1.0
 
+[#80]: https://github.com/gnames/gnverifier/issues/80
+[#79]: https://github.com/gnames/gnverifier/issues/79
+[#78]: https://github.com/gnames/gnverifier/issues/78
+[#77]: https://github.com/gnames/gnverifier/issues/77
+[#76]: https://github.com/gnames/gnverifier/issues/76
+[#75]: https://github.com/gnames/gnverifier/issues/75
+[#74]: https://github.com/gnames/gnverifier/issues/74
+[#73]: https://github.com/gnames/gnverifier/issues/73
+[#72]: https://github.com/gnames/gnverifier/issues/72
+[#71]: https://github.com/gnames/gnverifier/issues/71
 [#70]: https://github.com/gnames/gnverifier/issues/70
 [#69]: https://github.com/gnames/gnverifier/issues/69
 [#68]: https://github.com/gnames/gnverifier/issues/68

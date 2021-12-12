@@ -11,11 +11,15 @@ import (
 
 	"github.com/gnames/gnfmt"
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnquery"
+	"github.com/gnames/gnquery/ent/search"
+	"github.com/gnames/gnuuid"
 	"github.com/gnames/gnverifier"
 	"github.com/gnames/gnverifier/config"
 	"github.com/gnames/gnverifier/ent/output"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 )
 
 const withLogs = false
@@ -249,7 +253,32 @@ func verificationResults(
 		}
 		gnv = gnv.ChangeConfig(opts...)
 
-		data.Verified = gnv.VerifyBatch(names)
+		if search.IsQuery(names[0]) {
+			var err error
+			inp := gnquery.New().Parse(names[0])
+			ds := gnv.Config().DataSources
+			if len(ds) > 0 {
+				if ds[0] == 0 {
+					inp.WithAllResults = true
+				} else {
+					inp.DataSourceIDs = ds
+				}
+			}
+			data.Verified, err = gnv.Search(inp)
+			if err != nil {
+				log.Warn(err)
+			}
+			if len(data.Verified) == 0 {
+				data.Verified = []vlib.Name{
+					{
+						ID:   gnuuid.New(inp.Query).String(),
+						Name: inp.Query,
+					},
+				}
+			}
+		} else {
+			data.Verified = gnv.VerifyBatch(names)
+		}
 		if prefOnly {
 			for i := range data.Verified {
 				data.Verified[i].BestResult = nil

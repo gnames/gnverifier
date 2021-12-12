@@ -12,12 +12,12 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"unicode"
 
 	"github.com/dustin/go-humanize"
 	"github.com/gnames/gnfmt"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnquery"
+	"github.com/gnames/gnquery/ent/search"
 	"github.com/gnames/gnsys"
 	"github.com/gnames/gnverifier"
 	"github.com/gnames/gnverifier/config"
@@ -321,27 +321,11 @@ func verify(gnv gnverifier.GNverifier, str string) {
 		}
 		verifyFile(gnv, f)
 		f.Close()
-	} else if isQuery(str) {
+	} else if search.IsQuery(str) {
 		searchQuery(gnv, str)
 	} else {
 		verifyString(gnv, str)
 	}
-}
-
-func isQuery(s string) bool {
-	s = strings.TrimSpace(s)
-	idx := strings.Index(s, ":")
-	if idx == -1 {
-		return false
-	}
-
-	rs := []rune(s[0:idx])
-	for i := range rs {
-		if !unicode.IsLower(rs[i]) {
-			return false
-		}
-	}
-	return true
 }
 
 func verifyFile(gnv gnverifier.GNverifier, f io.Reader) {

@@ -104,11 +104,12 @@ func addFuncs(tmpl *template.Template) {
 		},
 		"scoreDetails": func(sd vlib.ScoreDetails) template.HTML {
 			curSrc := "Curated Source"
+			rank := "Rank Matched"
 			sds := []struct {
 				name string
 				val  float32
 			}{
-				{"Rank Matched", sd.InfraSpecificRankScore},
+				{rank, sd.InfraSpecificRankScore},
 				{"Not Fuzzy", sd.FuzzyLessScore},
 				{curSrc, sd.CuratedDataScore},
 				{"Authors/Year Match", sd.AuthorMatchScore},
@@ -120,7 +121,7 @@ func addFuncs(tmpl *template.Template) {
 			var res []string
 			for _, v := range sds {
 				switch {
-				case v.val < 0.3:
+				case (v.name == rank && v.val < 1.0) || v.val < 0.3:
 					color = "#aaa"
 				case (v.name == curSrc && v.val > 0.5) || v.val == 1:
 					color = "#080"
@@ -145,6 +146,8 @@ func addFuncs(tmpl *template.Template) {
 			switch mt {
 			case vlib.Exact:
 				res = fmt.Sprintf("<span style='color: %s'>✔</span> %s match by canonical form", clr["green"], mt)
+			case vlib.FacetedSearch:
+				res = fmt.Sprintf("<span style='color: %s'>✔</span> %s match", clr["green"], mt)
 			case vlib.NoMatch:
 				res = fmt.Sprintf("<span style='color: %s'>✕</span> %s", clr["red"], mt)
 			case vlib.Fuzzy, vlib.PartialFuzzy:
