@@ -53,7 +53,14 @@ var rootCmd = &cobra.Command{
 	Use:   "gnverifier",
 	Short: "Verifies scientific names agains many sources.",
 	Long: `gnverifier uses a remote service to verify scientific names against
-more than 100 biodiverisity data-sources.`,
+more than 100 biodiverisity data-sources. See more info at
+https://github.com/gnames/gnverifier
+
+  examples:
+    gnverifier "Pardosa moesta"
+    gnverifier file_with_names.txt
+    gnverifier "g:M. sp:galloprovincialis au:Oliv."
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		webOpts := make([]config.Option, len(opts))
 		copy(webOpts, opts)
