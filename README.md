@@ -399,10 +399,11 @@ It includes following operators:
 
 `n:`
 : A "name" setting, that allows to combine several query components together
-  for convenience. Note that it is not a 'real' scientific name, but a shortcut
-  to enter several settings at once (`n:B. bubo Linn. 1758`). This setting
-  is limited to [gnparser] functionality, so, for example, it does not
-  support abbreviated specific eptithets.
+for convenience. Note that it is not a 'real' scientific name, but a shortcut
+  to enter several settings at once loosely following rules of nomenclature
+  (`n:B. bubo Linn. 1758`). For example, in contrast with GNparser results, it
+  is possible to have abbreviated specific epithets or range in years: `n:Mono.
+  gall. Oliv. 1750-1800`.
 
 The query language is in `Beta` stage, and might change to some degree, to
 improve its functionality.
