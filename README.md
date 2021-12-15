@@ -26,12 +26,13 @@ search feature.
     * [help](#help)
     * [version](#version)
     * [port](#port)
+    * [all_matches](#all_matches)
     * [capitalize](#capitalize)
     * [format](#format)
-    * [sources](#sources)
-    * [only_preferred](#only_preferred)
-    * [all_matches](#all_matches)
     * [jobs](#jobs)
+    * [only_preferred](#only_preferred)
+    * [quiet](#quiet)
+    * [sources](#sources)
   * [Configuration file](#configuration-file)
   * [Advanced Search Query Language](#advanced-search-query-language)
     * [Examples of searches](#examples-of-searches)
@@ -226,6 +227,19 @@ gnverifier -p 8080
 This command will run user-interface accessible by a browser
 at ``http://localhost:8080``
 
+#### all_matches
+
+Sometimes data sources have more than one match to a name. To see all matches
+instead of the best one per source use --all_matches flag.
+
+WARNING: for some names the result will be excessively large.
+
+```bash
+gnverifier -s '1,12' -M file.txt
+```
+
+This flag is ignored by advanced search.
+
 #### capitalize
 
 If your names are co not have uninomials or genera capitalized according to
@@ -261,6 +275,55 @@ Note that a separate JSON "document" is returned for each separate record,
 instead of returning one big JSON document for all records. For large lists it
 significantly speeds up parsin of the JSON on the user side.
 
+#### jobs
+
+If the list of names if very large, it is possible to tell GNverifier to
+run requests in parallel. In this example GNverifier will run 8 processes
+simultaneously. The order of returned names will be somewhat randomized.
+
+```bash
+gnverifier -j 8 file.txt
+# or
+gnverifier --jobs=8 file.tsv
+```
+
+Sometimes it is important to return names in exactly same order. For such
+cases set `jobs` flag to 1.
+
+```bash
+gnverifier -j 1 file.txt
+```
+
+This option is ignored by advanced search.
+
+#### only_preferred
+
+Sometimes a users wants to map a list of names to a DataSource. They
+are not interested if name matched anywhere else. In such case you can use
+the ``only_preferred`` flag.
+
+```bash
+gnverifier -o -s '12' file.txt
+# or
+gnverifier --only_preferred --sources='1,12' file.tsv
+```
+
+In case of advanced search use `all:t` together with this flag.
+
+#### quiet
+
+Removes log messages from the output. Note that results of verification go
+to STDOUT, while log messages go to STDERR. So instead of using `-q` flag
+STDERR can be redirected to `/dev/null`:
+
+```
+gnverifier "Puma concolor" -q >verif-results.csv
+
+#or
+
+gnverifier "Puma concolor 2>/dev/null >verif-results.csv
+```
+
 #### sources
 
 By default ``GNverifier`` returns only one "best" result of a match. If a user
@@ -291,54 +354,6 @@ gnverifier "Bubo bubo" -s 0
 gnverifier "Bubo bubo" -s 0 -M
 ```
 The `sources` option would overwrite `ds:` settings in case of advanced search.
-
-#### only_preferred
-
-Sometimes a users wants to map a list of names to a DataSource. They
-are not interested if name matched anywhere else. In such case you can use
-the ``only_preferred`` flag.
-
-```bash
-gnverifier -o -s '12' file.txt
-# or
-gnverifier --only_preferred --sources='1,12' file.tsv
-```
-
-In case of advanced search use `all:t` together with this flag.
-
-#### all_matches
-
-Sometimes data sources have more than one match to a name. To see all matches
-instead of the best one per source use --all_matches flag.
-
-WARNING: for some names the result will be excessively large.
-
-```bash
-gnverifier -s '1,12' -M file.txt
-```
-
-This flag is ignored by advanced search.
-
-#### jobs
-
-If the list of names if very large, it is possible to tell GNverifier to
-run requests in parallel. In this example GNverifier will run 8 processes
-simultaneously. The order of returned names will be somewhat randomized.
-
-```bash
-gnverifier -j 8 file.txt
-# or
-gnverifier --jobs=8 file.tsv
-```
-
-Sometimes it is important to return names in exactly same order. For such
-cases set `jobs` flag to 1.
-
-```bash
-gnverifier -j 1 file.txt
-```
-
-This option is ignored by advanced search.
 
 ### Configuration file
 

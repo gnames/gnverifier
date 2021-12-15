@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.6.3]
+
+- Add [#70]: add a `-q` flag to suppress log output.
+- Add [#71]: Advanced Search `n:` field support abbreviated specific epithets,
+             year ranges.
+
 ## [v0.6.2]
 
 - Add [#69]: add faceted search to web UI.
@@ -104,6 +110,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.6.3]: https://github.com/gnames/gnverifier/compare/v0.6.2...v1.6.3
 [v0.6.2]: https://github.com/gnames/gnverifier/compare/v0.6.1...v1.6.2
 [v0.6.1]: https://github.com/gnames/gnverifier/compare/v0.6.0...v1.6.1
 [v0.6.0]: https://github.com/gnames/gnverifier/compare/v0.5.2...v1.6.0

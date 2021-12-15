@@ -33,7 +33,9 @@ import (
 var configText string
 
 var (
-	opts []config.Option
+	opts  []config.Option
+	quiet bool
+	msgs  []string
 )
 
 // cfgData purpose is to achieve automatic import of data from the
@@ -70,6 +72,13 @@ https://github.com/gnames/gnverifier
 			os.Exit(0)
 		}
 
+		quiet, _ = cmd.Flags().GetBool("quiet")
+		if !quiet {
+			for i := range msgs {
+				log.Print(msgs[i])
+			}
+		}
+
 		caps, _ := cmd.Flags().GetBool("capitalize")
 		if caps {
 			opts = append(opts, config.OptWithCapitalization(true))
@@ -82,7 +91,7 @@ https://github.com/gnames/gnverifier
 
 		formatString, _ := cmd.Flags().GetString("format")
 		frmt, _ := gnfmt.NewFormat(formatString)
-		if frmt == gnfmt.FormatNone {
+		if frmt == gnfmt.FormatNone && !quiet {
 			log.Warnf("Cannot set format from '%s', setting format to csv", formatString)
 			frmt = gnfmt.CSV
 		}
@@ -161,6 +170,7 @@ func init() {
 	rootCmd.Flags().IntP("jobs", "j", 4, "Number of jobs running in parallel.")
 	rootCmd.Flags().IntP("port", "p", 0, "Port to run web GUI.")
 	rootCmd.Flags().BoolP("all_matches", "M", false, "return all matched results per source, not just the best one.")
+	rootCmd.Flags().BoolP("quiet", "q", false, "supress logs output.")
 	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
   If sources are set and there are matches to their data,
   such matches are returned in "preferred_result" results.
@@ -205,7 +215,8 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		log.Printf("Using config file: %s.", viper.ConfigFileUsed())
+		msg := fmt.Sprintf("Using config file: %s.", viper.ConfigFileUsed())
+		msgs = append(msgs, msg)
 	}
 	getOpts()
 }
@@ -268,11 +279,11 @@ func parseDataSources(s string) []int {
 	for _, v := range dss {
 		v = strings.Trim(v, " ")
 		ds, err := strconv.Atoi(v)
-		if err != nil {
+		if err != nil && !quiet {
 			log.Warnf("Cannot convert data-source '%s' to list, skipping", v)
 			return nil
 		}
-		if ds < 0 {
+		if ds < 0 && !quiet {
 			log.Warnf("Data source ID %d is less than zero, skipping", ds)
 		} else {
 			res = append(res, int(ds))
@@ -301,7 +312,7 @@ func checkStdin() bool {
 	stdInFile := os.Stdin
 	stat, err := stdInFile.Stat()
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 	return (stat.Mode() & os.ModeCharDevice) == 0
 }
@@ -324,7 +335,6 @@ func verify(gnv gnverifier.GNverifier, str string) {
 		f, err := os.OpenFile(str, os.O_RDONLY, os.ModePerm)
 		if err != nil {
 			log.Fatal(err)
-			os.Exit(1)
 		}
 		verifyFile(gnv, f)
 		f.Close()
@@ -373,10 +383,12 @@ func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Name,
 		timeSpent := float64(time.Now().UnixNano()-timeStart) / 1_000_000_000
 		speed := int64(float64(total) / timeSpent)
 
-		log.Printf("Verified %s records, %s names/sec\n", humanize.Comma(total),
-			humanize.Comma(speed))
+		if !quiet {
+			log.Printf("Verified %s records, %s names/sec\n", humanize.Comma(total),
+				humanize.Comma(speed))
+		}
 		for _, r := range o {
-			if r.Error != "" {
+			if r.Error != "" && !quiet {
 				log.Println(r.Error)
 			}
 			fmt.Println(output.NameOutput(r, f, gnv.Config().PreferredOnly))
@@ -419,7 +431,7 @@ func searchQuery(gnv gnverifier.GNverifier, s string) {
 	}
 
 	for _, v := range res {
-		if v.Error != "" {
+		if v.Error != "" && !quiet {
 			log.Println(v.Error)
 		}
 		fmt.Println(output.NameOutput(v, f, gnv.Config().PreferredOnly))
@@ -432,8 +444,8 @@ func touchConfigFile(configPath string) {
 	if fileExists {
 		return
 	}
-
-	log.Printf("Creating config file: %s.", configPath)
+	msg := fmt.Sprintf("Creating config file: %s.", configPath)
+	msgs = append(msgs, msg)
 	createConfig(configPath)
 }
 
