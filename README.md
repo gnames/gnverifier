@@ -368,7 +368,7 @@ gnverifier file.txt
 
 ### Advanced Search Query Language
 
-Example: `g:M. sp:gallop. au:Oliv. y:1750-1799`
+Example: `g:M. sp:gallop. au:Oliv. y:1750-1799` or `n:M. gallop. Oliv. 1750-1799`
 
 Query language allows searching for scientific names using name components
 like genus name, specific epithet, infraspecific epithet, author, year.
