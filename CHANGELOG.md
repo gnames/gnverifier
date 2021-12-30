@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.6.5]
+
+- Add [#73]: World Checklist of Vascular Plants for web UI.
+
 ## [v0.6.4]
 
 - Add [#72]: World Flora Online for the web UI.
@@ -114,6 +118,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.6.5]: https://github.com/gnames/gnverifier/compare/v0.6.4...v1.6.5
 [v0.6.4]: https://github.com/gnames/gnverifier/compare/v0.6.3...v1.6.4
 [v0.6.3]: https://github.com/gnames/gnverifier/compare/v0.6.2...v1.6.3
 [v0.6.2]: https://github.com/gnames/gnverifier/compare/v0.6.1...v1.6.2
