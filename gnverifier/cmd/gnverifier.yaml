@@ -1,8 +1,10 @@
 # Format of the output. Can be 'csv', 'compact', 'pretty'.
+#
 # Format: csv
 
 # PreferredOnly if true, do not show BestResult, only Preferred Results.
 # Its valid values are 'true' and 'false'.
+#
 # PreferredOnly: false
 
 # DataSources is a list of data-source IDs that should always return
@@ -14,18 +16,24 @@
 # DataSources:
 #  - 1
 #  - 11
+#
+#  DataSources:
 
 # WithAllMatches if true, return all matched results per source.
+#
 # WithAllMatches: false
 
 # WithCapitalization is a boolean flag. If it is true, the first rune of a
 # name-string will be capitalized if it is appropriate. Use it if your input
 # for some reason does not follow capitalization rules of nomenclature.
+#
 # WithCapitalization false
 
 # VerifierURL is a URL to gnames REST API
+#
 # VerifierURL: "https://verifier.globalnames.org/api/v0/"
 
 # Jobs is number of jobs to run in parallel.
+#
 # Jobs: 4
 
