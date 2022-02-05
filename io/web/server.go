@@ -22,7 +22,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-const withLogs = false
+const withLogs = true
 
 type formInput struct {
 	Names         string `query:"names" form:"names"`

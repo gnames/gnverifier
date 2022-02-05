@@ -11,6 +11,12 @@
     </div>
   </div>
 
+  {{ if .OverloadDetected }}
+  <div class='warning'>
+    <span class='warning-sign'>⚠</span> {{ .OverloadDetected }}
+  </div>
+  {{ end }}
+
   <div class='results'>
     {{ $best := .BestResult }}
     {{ if $best }}

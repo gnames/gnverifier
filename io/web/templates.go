@@ -146,7 +146,7 @@ func addFuncs(tmpl *template.Template) {
 			switch mt {
 			case vlib.Exact:
 				res = fmt.Sprintf("<span style='color: %s'>✔</span> %s match by canonical form", clr["green"], mt)
-			case vlib.FacetedSearch:
+			case vlib.FacetedSearch, vlib.Virus:
 				res = fmt.Sprintf("<span style='color: %s'>✔</span> %s match", clr["green"], mt)
 			case vlib.NoMatch:
 				res = fmt.Sprintf("<span style='color: %s'>✕</span> %s", clr["red"], mt)

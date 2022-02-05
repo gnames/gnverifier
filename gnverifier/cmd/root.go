@@ -121,6 +121,7 @@ https://github.com/gnames/gnverifier
 
 		port, _ := cmd.Flags().GetInt("port")
 		if port > 0 {
+			log.SetFormatter(&log.JSONFormatter{})
 			cnf := config.New(webOpts...)
 			vfr := verifrest.New(cnf.VerifierURL)
 			gnv := gnverifier.New(cnf, vfr)

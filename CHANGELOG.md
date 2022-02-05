@@ -1,8 +1,13 @@
 # Changelog
 
+## [v0.7.0]
+
+- Add [#77]: optional log aggregation by an NSQ-messaging service.
+- Add [#76]: verification of viruses.
+
 ## [v0.6.6]
 
-- Fix [#76]: faceted search with one letter author without punctuation.
+- Fix [#75]: faceted search with one letter author without punctuation.
 
 ## [v0.6.5]
 
