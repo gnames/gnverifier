@@ -37,3 +37,18 @@
 #
 # Jobs: 4
 
+# WebLogsNsqdTCP provides an address to the NSQ messenger TCP service. If
+# this value is set and valid, the web logs will be published to the NSQ.
+# The option is ignored if `Port` is not set.
+#
+# If WithWebLogs option is set to `false`, but `WebLogsNsqdTCP` is set to a
+# valid URL, the logs will be sent to the NSQ messanging service, but they
+# wil not appear as STRERR output.
+# Example: `127.0.0.1:4150`
+#
+# WebLogsNsqdTCP:
+
+# WithWebLogs flag enables logs when running web-service. This flag is
+# ignored if `Port` value is not set.
+#
+# WithWebLogs: false

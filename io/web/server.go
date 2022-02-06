@@ -20,9 +20,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	nsqcfg "github.com/sfgrp/lognsq/config"
+	"github.com/sfgrp/lognsq/ent/nsq"
+	"github.com/sfgrp/lognsq/io/nsqio"
 )
-
-const withLogs = true
 
 type formInput struct {
 	Names         string `query:"names" form:"names"`
@@ -44,8 +45,10 @@ func Run(gnv gnverifier.GNverifier, port int) {
 	e := echo.New()
 
 	e.Use(middleware.Gzip())
-	if withLogs {
-		e.Use(middleware.Logger())
+
+	loggerNSQ := setLogger(e, gnv)
+	if loggerNSQ != nil {
+		defer loggerNSQ.Stop()
 	}
 
 	e.Renderer, err = NewTemplate()
@@ -307,4 +310,31 @@ func formatRows(data Data, prefOnly bool, f gnfmt.Format) []string {
 		res[i+1] = output.NameOutput(v, f, prefOnly)
 	}
 	return res
+}
+
+func setLogger(e *echo.Echo, m gnverifier.GNverifier) nsq.NSQ {
+	nsqAddr := m.WebLogsNsqdTCP()
+	withLogs := m.WithWebLogs()
+
+	if nsqAddr != "" {
+		cfg := nsqcfg.Config{
+			StderrLogs: withLogs,
+			Topic:      "gnverifier",
+			Address:    nsqAddr,
+		}
+		remote, err := nsqio.New(cfg)
+		logCfg := middleware.DefaultLoggerConfig
+		if err == nil {
+			logCfg.Output = remote
+		}
+		e.Use(middleware.LoggerWithConfig(logCfg))
+		if err != nil {
+			log.Warn(err)
+		}
+		return remote
+	} else if withLogs {
+		e.Use(middleware.Logger())
+		return nil
+	}
+	return nil
 }

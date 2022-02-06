@@ -42,12 +42,14 @@ var (
 // configuration file, if it exists.
 type cfgData struct {
 	Format             string
+	Jobs               int
 	PreferredOnly      bool
 	PreferredSources   []int
+	VerifierURL        string
+	WebLogsNsqdTCP     string
 	WithAllMatches     bool
 	WithCapitalization bool
-	VerifierURL        string
-	Jobs               int
+	WithWebLogs        bool
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -121,6 +123,15 @@ https://github.com/gnames/gnverifier
 
 		port, _ := cmd.Flags().GetInt("port")
 		if port > 0 {
+			weblogs, _ := cmd.Flags().GetBool("web-logs")
+			if weblogs {
+				webOpts = append(webOpts, config.OptWithWebLogs(true))
+			}
+			nsqAddr, _ := cmd.Flags().GetString("nsqd-tcp")
+			if nsqAddr != "" {
+				webOpts = append(webOpts, config.OptWebLogsNsqdTCP(nsqAddr))
+			}
+
 			log.SetFormatter(&log.JSONFormatter{})
 			cnf := config.New(webOpts...)
 			vfr := verifrest.New(cnf.VerifierURL)
@@ -193,6 +204,8 @@ func init() {
 	rootCmd.Flags().StringP("verifier_url", "v", "",
 		`URL for verification service.
   Default: https://verifier.globalnames.org/api/v0`)
+	rootCmd.Flags().BoolP("web-logs", "", false, "enable logs for the web service")
+	rootCmd.Flags().StringP("nsqd-tcp", "", "", "an addresss pointing to NSQ TCP service for logs redirection (e.g. 127.0.0.1:4150)")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -210,6 +223,20 @@ func initConfig() {
 	// Search config in home directory with name ".gnmatcher" (without extension).
 	viper.AddConfigPath(configDir)
 	viper.SetConfigName(configFile)
+
+	// Set environment variables to override
+	// config file settings
+	_ = viper.BindEnv("Format", "GNV_FORMAT")
+	_ = viper.BindEnv("PreferredOnly", "GNV_PREFERRED_ONLY")
+	_ = viper.BindEnv("DataSources", "GNV_DATA_SOURCES")
+	_ = viper.BindEnv("WithAllMatches", "GNV_WITH_ALL_MATCHES")
+	_ = viper.BindEnv("WithCapitalization", "GNV_WITH_CAPITALIZATION")
+	_ = viper.BindEnv("VerifierURL", "GNV_VERIFIER_URL")
+	_ = viper.BindEnv("Jobs", "GNV_JOBS")
+	_ = viper.BindEnv("WebLogsNsqdTCP", "GNV_WEB_LOGS_NSQD_TCP")
+	_ = viper.BindEnv("WithWebLogs", "GNV_WITH_WEB_LOGS")
+
+	viper.AutomaticEnv() // read in environment variables that match
 
 	configPath := filepath.Join(configDir, fmt.Sprintf("%s.yaml", configFile))
 	touchConfigFile(configPath)
@@ -254,6 +281,12 @@ func getOpts() {
 	}
 	if cfg.Jobs > 0 {
 		opts = append(opts, config.OptJobs(cfg.Jobs))
+	}
+	if cfg.WebLogsNsqdTCP != "" {
+		opts = append(opts, config.OptWebLogsNsqdTCP(cfg.WebLogsNsqdTCP))
+	}
+	if cfg.WithWebLogs {
+		opts = append(opts, config.OptWithWebLogs(true))
 	}
 }
 

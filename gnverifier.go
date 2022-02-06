@@ -15,18 +15,18 @@ import (
 )
 
 type gnverifier struct {
-	config   config.Config
+	cfg      config.Config
 	verifier verifier.Verifier
 }
 
 // New constructs an object that implements GNVerifier interface
 // and can be used for matching strings to scientfic names.
 func New(
-	cnf config.Config,
+	cfg config.Config,
 	vfr verifier.Verifier,
 ) GNverifier {
 	return gnverifier{
-		config:   cnf,
+		cfg:      cfg,
 		verifier: vfr,
 	}
 }
@@ -49,14 +49,14 @@ func (gnv gnverifier) DataSource(id int) (vlib.DataSource, error) {
 // ChangeConfig modifies configuration.
 func (gnv gnverifier) ChangeConfig(opts ...config.Option) GNverifier {
 	for i := range opts {
-		opts[i](&gnv.config)
+		opts[i](&gnv.cfg)
 	}
 	return gnv
 }
 
 // Config returns configuration data.
 func (gnv gnverifier) Config() config.Config {
-	return gnv.config
+	return gnv.cfg
 }
 
 // VerifyOne verifies one input string and returns results
@@ -88,14 +88,14 @@ func (gnv gnverifier) VerifyStream(
 	out chan []vlib.Name,
 ) {
 	var wg sync.WaitGroup
-	wg.Add(gnv.config.Jobs)
+	wg.Add(gnv.cfg.Jobs)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	vwChan := gnv.loadNames(ctx, in)
 
-	for i := 0; i < gnv.config.Jobs; i++ {
+	for i := 0; i < gnv.cfg.Jobs; i++ {
 		go gnv.VerifyWorker(ctx, vwChan, out, &wg)
 	}
 
@@ -155,9 +155,17 @@ func (gnv gnverifier) loadNames(
 func (gnv gnverifier) setParams(names []string) vlib.Input {
 	res := vlib.Input{
 		NameStrings:        names,
-		DataSources:        gnv.config.DataSources,
-		WithCapitalization: gnv.config.WithCapitalization,
-		WithAllMatches:     gnv.config.WithAllMatches,
+		DataSources:        gnv.cfg.DataSources,
+		WithCapitalization: gnv.cfg.WithCapitalization,
+		WithAllMatches:     gnv.cfg.WithAllMatches,
 	}
 	return res
+}
+
+func (gnv gnverifier) WithWebLogs() bool {
+	return gnv.cfg.WithWebLogs
+}
+
+func (gnv gnverifier) WebLogsNsqdTCP() string {
+	return gnv.cfg.WebLogsNsqdTCP
 }

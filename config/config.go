@@ -6,18 +6,43 @@ import (
 
 // Config collects and stores external configuration data.
 type Config struct {
-	// Format determins the output. It can be either JSON or CSV.
-	Format gnfmt.Format
-
-	// PreferredOnly hides BestResult if the user wants to see only
-	// preferred results.
-	PreferredOnly bool
+	// Batch is the size of the string slices fed into input channel for
+	// verification.
+	Batch int
 
 	// DataSources are IDs of DataSources that are important for
 	// user. Normally only one "the best" reusult returns. If user gives
 	// preferred sources, then matches from these sources are also
 	// returned.
 	DataSources []int
+
+	// Format determins the output. It can be either JSON or CSV.
+	Format gnfmt.Format
+
+	// Jobs is the number of verification jobs to run in parallel.
+	Jobs int
+
+	// NamesNumThreshold the number of names after which POST gets redirected
+	// to GET.
+	NamesNumThreshold int
+
+	// VerifierURL URL for gnames verification service. It only needs to
+	// be changed if user sets local version of gnames.
+	VerifierURL string
+
+	// PreferredOnly hides BestResult if the user wants to see only
+	// preferred results.
+	PreferredOnly bool
+
+	// WebLogsNsqdTCP provides an address to the NSQ messenger TCP service. If
+	// this value is set and valid, the web logs will be published to the NSQ.
+	// The option is ignored if `Port` is not set.
+	//
+	// If WithWebLogs option is set to `false`, but `WebLogsNsqdTCP` is set to a
+	// valid URL, the logs will be sent to the NSQ messanging service, but they
+	// wil not appear as STRERR output.
+	// Example: `127.0.0.1:4150`
+	WebLogsNsqdTCP string
 
 	// WithAllMatches flag; if true, results include all matches per source,
 	// not only the best match.
@@ -27,20 +52,9 @@ type Config struct {
 	// will be capitalized when appropriate.
 	WithCapitalization bool
 
-	// VerifierURL URL for gnames verification service. It only needs to
-	// be changed if user sets local version of gnames.
-	VerifierURL string
-
-	// Jobs is the number of verification jobs to run in parallel.
-	Jobs int
-
-	// Batch is the size of the string slices fed into input channel for
-	// verification.
-	Batch int
-
-	// NamesNumThreshold the number of names after which POST gets redirected
-	// to GET.
-	NamesNumThreshold int
+	// WithWebLogs flag enables logs when running web-service. This flag is
+	// ignored if `Port` value is not set.
+	WithWebLogs bool
 }
 
 // Option is a type of all options for Config.
@@ -101,6 +115,20 @@ func OptVerifierURL(s string) Option {
 func OptNamesNumThreshold(i int) Option {
 	return func(cnf *Config) {
 		cnf.NamesNumThreshold = i
+	}
+}
+
+// OptWebLogsNsqdTCP provides a URL to NSQ messanging service.
+func OptWebLogsNsqdTCP(s string) Option {
+	return func(cfg *Config) {
+		cfg.WebLogsNsqdTCP = s
+	}
+}
+
+// OptWithWebLogs sets the WithWebLogs field.
+func OptWithWebLogs(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithWebLogs = b
 	}
 }
 
