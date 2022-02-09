@@ -14,7 +14,7 @@ import (
 	"github.com/gnames/gnquery/ent/search"
 	"github.com/gnames/gnuuid"
 	"github.com/gnames/gnverifier/ent/verifier"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 type verifrest struct {
@@ -44,14 +44,14 @@ func (vr verifrest) Search(
 	var res search.Output
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, urlQ, nil)
 	if err != nil {
-		log.Warnf("Cannot create request: %v", err)
+		log.Warn().Err(err).Msg("Cannot create request")
 		return res, err
 	}
 	request.Header.Set("Content-Type", "application/json")
 
 	resp, err := vr.client.Do(request)
 	if err != nil {
-		log.Warn("Cannot get data-sources information.")
+		log.Warn().Msg("Cannot get data-sources information")
 		return res, err
 	}
 	defer resp.Body.Close()
@@ -59,12 +59,12 @@ func (vr verifrest) Search(
 	var respBytes []byte
 	respBytes, err = io.ReadAll(resp.Body)
 	if err != nil {
-		log.Warn("Body reading is failing for a search.")
+		log.Warn().Msg("Body reading is failing for a search")
 		return res, err
 	}
 	err = enc.Decode(respBytes, &res)
 	if err != nil {
-		log.Warnf("Cannot decode search result")
+		log.Warn().Msg("Cannot decode search result")
 		return res, err
 	}
 
@@ -79,27 +79,27 @@ func (vr verifrest) DataSources(
 	url := vr.verifierURL + "data_sources"
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		log.Warnf("Cannot create request: %v", err)
+		log.Warn().Err(err).Msg("Cannot create request")
 		return nil, err
 	}
 	request.Header.Set("Content-Type", "application/json")
 
 	resp, err := vr.client.Do(request)
 	if err != nil {
-		log.Warn("Cannot get data-sources information.")
+		log.Warn().Msg("Cannot get data-sources information")
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Warn("Body reading is failing for data-sources.")
+		log.Warn().Msg("Body reading is failing for data-sources")
 		return nil, err
 	}
 	response := make([]vlib.DataSource, 0)
 	err = enc.Decode(respBytes, &response)
 	if err != nil {
-		log.Warnf("Cannot decode data-sources")
+		log.Warn().Msg("Cannot decode data-sources")
 		return nil, err
 	}
 	return response, nil
@@ -115,26 +115,26 @@ func (vr verifrest) DataSource(
 	url := fmt.Sprintf("%sdata_sources/%d", vr.verifierURL, id)
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		log.Warnf("Cannot create request: %v", err)
+		log.Warn().Err(err).Msg("Cannot create request")
 		return response, err
 	}
 	request.Header.Set("Content-Type", "application/json")
 
 	resp, err := vr.client.Do(request)
 	if err != nil {
-		log.Warn("Cannot get data-sources information.")
+		log.Warn().Msg("Cannot get data-sources information")
 		return response, err
 	}
 	defer resp.Body.Close()
 
 	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Warn("Body reading is failing for data-sources.")
+		log.Warn().Msg("Body reading is failing for data-sources")
 		return response, err
 	}
 	err = enc.Decode(respBytes, &response)
 	if err != nil {
-		log.Warnf("Cannot decode data-sources")
+		log.Warn().Msg("Cannot decode data-sources")
 		return response, err
 	}
 	return response, nil
@@ -173,25 +173,25 @@ func (vr verifrest) Verify(
 		var respBytes []byte
 		request, err = http.NewRequestWithContext(ctx, http.MethodPost, url, d)
 		if err != nil {
-			log.Fatalf("Cannot create request: %v", err)
+			log.Fatal().Err(err).Msg("Cannot create request")
 		}
 		request.Header.Set("Content-Type", "application/json")
 
 		resp, err = vr.client.Do(request)
 		if err != nil {
-			log.Warnf("Request is failing for %s.", namesRange)
+			log.Warn().Msgf("Request is failing for %s", namesRange)
 			return true, err
 		}
 		defer resp.Body.Close()
 
 		respBytes, err = io.ReadAll(resp.Body)
 		if err != nil {
-			log.Warnf("Body reading is failing for %s.", namesRange)
+			log.Warn().Msgf("Body reading is failing for %s", namesRange)
 			return true, err
 		}
 		err = enc.Decode(respBytes, &response)
 		if err != nil {
-			log.Warnf("Response decoding is failing for %s.", namesRange)
+			log.Warn().Msgf("Response decoding is failing for %s", namesRange)
 			return true, err
 		}
 		return false, nil

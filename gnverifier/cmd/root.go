@@ -24,7 +24,8 @@ import (
 	"github.com/gnames/gnverifier/ent/output"
 	"github.com/gnames/gnverifier/io/verifrest"
 	"github.com/gnames/gnverifier/io/web"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -33,9 +34,7 @@ import (
 var configText string
 
 var (
-	opts  []config.Option
-	quiet bool
-	msgs  []string
+	opts []config.Option
 )
 
 // cfgData purpose is to achieve automatic import of data from the
@@ -74,11 +73,9 @@ https://github.com/gnames/gnverifier
 			os.Exit(0)
 		}
 
-		quiet, _ = cmd.Flags().GetBool("quiet")
-		if !quiet {
-			for i := range msgs {
-				log.Print(msgs[i])
-			}
+		quiet, _ := cmd.Flags().GetBool("quiet")
+		if quiet {
+			zerolog.SetGlobalLevel(zerolog.Disabled)
 		}
 
 		caps, _ := cmd.Flags().GetBool("capitalize")
@@ -93,8 +90,12 @@ https://github.com/gnames/gnverifier
 
 		formatString, _ := cmd.Flags().GetString("format")
 		frmt, _ := gnfmt.NewFormat(formatString)
-		if frmt == gnfmt.FormatNone && !quiet {
-			log.Warnf("Cannot set format from '%s', setting format to csv", formatString)
+		if frmt == gnfmt.FormatNone {
+			log.Warn().
+				Msgf(
+					"Cannot set format from '%s', setting format to csv",
+					formatString,
+				)
 			frmt = gnfmt.CSV
 		}
 		opts = append(opts, config.OptFormat(frmt))
@@ -132,7 +133,8 @@ https://github.com/gnames/gnverifier
 				webOpts = append(webOpts, config.OptWebLogsNsqdTCP(nsqAddr))
 			}
 
-			log.SetFormatter(&log.JSONFormatter{})
+			log.Logger = zerolog.New(os.Stderr).With().
+				Str("gnApp", "gnverifier").Logger()
 			cnf := config.New(webOpts...)
 			vfr := verifrest.New(cnf.VerifierURL)
 			gnv := gnverifier.New(cnf, vfr)
@@ -217,7 +219,7 @@ func initConfig() {
 	// Find config directory.
 	configDir, err = os.UserConfigDir()
 	if err != nil {
-		log.Fatalf("Cannot find config directory: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot find config directory")
 	}
 
 	// Search config in home directory with name ".gnmatcher" (without extension).
@@ -243,8 +245,7 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		msg := fmt.Sprintf("Using config file: %s.", viper.ConfigFileUsed())
-		msgs = append(msgs, msg)
+		log.Info().Msgf("Using config file: %s.", viper.ConfigFileUsed())
 	}
 	getOpts()
 }
@@ -255,7 +256,7 @@ func getOpts() {
 	cfg := &cfgData{}
 	err := viper.Unmarshal(cfg)
 	if err != nil {
-		log.Fatalf("Cannot deserialize config data: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot deserialize config data")
 	}
 
 	if cfg.Format != "" {
@@ -295,7 +296,7 @@ func getOpts() {
 func showVersionFlag(cmd *cobra.Command) bool {
 	hasVersionFlag, err := cmd.Flags().GetBool("version")
 	if err != nil {
-		log.Fatalf("Cannot get version flag: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot get version flag")
 	}
 
 	if hasVersionFlag {
@@ -313,12 +314,12 @@ func parseDataSources(s string) []int {
 	for _, v := range dss {
 		v = strings.Trim(v, " ")
 		ds, err := strconv.Atoi(v)
-		if err != nil && !quiet {
-			log.Warnf("Cannot convert data-source '%s' to list, skipping", v)
+		if err != nil {
+			log.Warn().Msgf("Cannot convert data-source '%s' to list, skipping", v)
 			return nil
 		}
-		if ds < 0 && !quiet {
-			log.Warnf("Data source ID %d is less than zero, skipping", ds)
+		if ds < 0 {
+			log.Warn().Msgf("Data source ID %d is less than zero, skipping", ds)
 		} else {
 			res = append(res, int(ds))
 		}
@@ -346,7 +347,7 @@ func checkStdin() bool {
 	stdInFile := os.Stdin
 	stat, err := stdInFile.Stat()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err)
 	}
 	return (stat.Mode() & os.ModeCharDevice) == 0
 }
@@ -368,7 +369,7 @@ func verify(gnv gnverifier.GNverifier, str string) {
 	if fileExists {
 		f, err := os.OpenFile(str, os.O_RDONLY, os.ModePerm)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err)
 		}
 		verifyFile(gnv, f)
 		f.Close()
@@ -417,13 +418,13 @@ func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Name,
 		timeSpent := float64(time.Now().UnixNano()-timeStart) / 1_000_000_000
 		speed := int64(float64(total) / timeSpent)
 
-		if !quiet {
-			log.Printf("Verified %s records, %s names/sec\n", humanize.Comma(total),
-				humanize.Comma(speed))
-		}
+		log.Info().
+			Str("names/sec", humanize.Comma(speed)).
+			Str("names", humanize.Comma(int64(total))).
+			Msg("Verified")
 		for _, r := range o {
-			if r.Error != "" && !quiet {
-				log.Println(r.Error)
+			if r.Error != "" {
+				log.Warn().Msg(r.Error)
 			}
 			fmt.Println(output.NameOutput(r, f, gnv.Config().PreferredOnly))
 		}
@@ -433,7 +434,7 @@ func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Name,
 func verifyString(gnv gnverifier.GNverifier, name string) {
 	res, err := gnv.VerifyOne(name)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err)
 	}
 
 	f := gnv.Config().Format
@@ -456,7 +457,7 @@ func searchQuery(gnv gnverifier.GNverifier, s string) {
 	}
 	res, err := gnv.Search(inp)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err)
 	}
 
 	f := gnv.Config().Format
@@ -465,8 +466,8 @@ func searchQuery(gnv gnverifier.GNverifier, s string) {
 	}
 
 	for _, v := range res {
-		if v.Error != "" && !quiet {
-			log.Println(v.Error)
+		if v.Error != "" {
+			log.Warn().Msg(v.Error)
 		}
 		fmt.Println(output.NameOutput(v, f, gnv.Config().PreferredOnly))
 	}
@@ -478,8 +479,7 @@ func touchConfigFile(configPath string) {
 	if fileExists {
 		return
 	}
-	msg := fmt.Sprintf("Creating config file: %s.", configPath)
-	msgs = append(msgs, msg)
+	log.Info().Msgf("Creating config file '%s'", configPath)
 	createConfig(configPath)
 }
 
@@ -487,11 +487,11 @@ func touchConfigFile(configPath string) {
 func createConfig(path string) {
 	err := gnsys.MakeDir(filepath.Dir(path))
 	if err != nil {
-		log.Fatalf("Cannot create dir %s: %s.", path, err)
+		log.Fatal().Err(err).Msgf("Cannot create dir %s", path)
 	}
 
 	err = os.WriteFile(path, []byte(configText), 0644)
 	if err != nil {
-		log.Fatalf("Cannot write to file %s: %s", path, err)
+		log.Fatal().Err(err).Msgf("Cannot write to file %s", path)
 	}
 }

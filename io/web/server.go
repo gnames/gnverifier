@@ -20,6 +20,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	zlog "github.com/rs/zerolog/log"
 	nsqcfg "github.com/sfgrp/lognsq/config"
 	"github.com/sfgrp/lognsq/ent/nsq"
 	"github.com/sfgrp/lognsq/io/nsqio"
@@ -144,7 +145,7 @@ func homeGET(gnv gnverifier.GNverifier) func(echo.Context) error {
 			return c.Render(http.StatusOK, "layout", data)
 		}
 
-		return verificationResults(c, gnv, inp, data)
+		return verificationResults(c, gnv, inp, data, "GET")
 	}
 }
 
@@ -171,7 +172,7 @@ func homePOST(gnv gnverifier.GNverifier) func(echo.Context) error {
 			return redirectToHomeGET(c, inp)
 		}
 
-		return verificationResults(c, gnv, inp, data)
+		return verificationResults(c, gnv, inp, data, "POST")
 	}
 }
 
@@ -217,6 +218,7 @@ func verificationResults(
 	gnv gnverifier.GNverifier,
 	inp *formInput,
 	data Data,
+	method string,
 ) error {
 	var names []string
 	prefOnly := inp.PreferredOnly == "on"
@@ -271,6 +273,11 @@ func verificationResults(
 			if err != nil {
 				log.Warn(err)
 			}
+			zlog.Info().
+				Str("query", names[0]).
+				Str("method", method).
+				Int("verified", len(data.Verified)).
+				Msg("Search")
 			if len(data.Verified) == 0 {
 				data.Verified = []vlib.Name{
 					{
@@ -281,6 +288,14 @@ func verificationResults(
 			}
 		} else {
 			data.Verified = gnv.VerifyBatch(names)
+
+			if l := len(names); l > 0 {
+				zlog.Info().
+					Int("namesNum", len(names)).
+					Str("example", names[0]).
+					Str("method", method).
+					Msg("Verification")
+			}
 		}
 		if prefOnly {
 			for i := range data.Verified {
@@ -321,11 +336,13 @@ func setLogger(e *echo.Echo, m gnverifier.GNverifier) nsq.NSQ {
 			StderrLogs: withLogs,
 			Topic:      "gnverifier",
 			Address:    nsqAddr,
+			Contains:   "!/static/",
 		}
 		remote, err := nsqio.New(cfg)
 		logCfg := middleware.DefaultLoggerConfig
 		if err == nil {
 			logCfg.Output = remote
+			zlog.Logger = zlog.Output(remote)
 		}
 		e.Use(middleware.LoggerWithConfig(logCfg))
 		if err != nil {

@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.7.1] - 2022-02-08 Tue
+
+- Add [#79]: better NSQ logs, switch to zerolog library.
+
 ## [v0.7.0]
 
 - Add [#77]: optional log aggregation by an NSQ-messaging service.
@@ -127,6 +131,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.7.1]: https://github.com/gnames/gnverifier/compare/v0.7.0...v1.7.1
+[v0.7.0]: https://github.com/gnames/gnverifier/compare/v0.6.6...v1.7.0
 [v0.6.6]: https://github.com/gnames/gnverifier/compare/v0.6.5...v1.6.6
 [v0.6.5]: https://github.com/gnames/gnverifier/compare/v0.6.4...v1.6.5
 [v0.6.4]: https://github.com/gnames/gnverifier/compare/v0.6.3...v1.6.4
@@ -151,6 +157,16 @@ This document follows [changelog guidelines]
 [v0.2.0]: https://github.com/gnames/gnverifier/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnverifier/tree/v0.1.0
 
+[#90]: https://github.com/gnames/gnverifier/issues/90
+[#89]: https://github.com/gnames/gnverifier/issues/89
+[#88]: https://github.com/gnames/gnverifier/issues/88
+[#87]: https://github.com/gnames/gnverifier/issues/87
+[#86]: https://github.com/gnames/gnverifier/issues/86
+[#85]: https://github.com/gnames/gnverifier/issues/85
+[#84]: https://github.com/gnames/gnverifier/issues/84
+[#83]: https://github.com/gnames/gnverifier/issues/83
+[#82]: https://github.com/gnames/gnverifier/issues/82
+[#81]: https://github.com/gnames/gnverifier/issues/81
 [#80]: https://github.com/gnames/gnverifier/issues/80
 [#79]: https://github.com/gnames/gnverifier/issues/79
 [#78]: https://github.com/gnames/gnverifier/issues/78
