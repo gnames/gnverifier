@@ -11,11 +11,6 @@ import (
 // methods needed to verify (reconcile/resolve) strings to scientific
 // names.
 type GNverifier interface {
-	NameVerifier
-	WebLogger
-}
-
-type NameVerifier interface {
 	// VerifyOne takes a name-string and returns the result of verification.
 	VerifyOne(name string) (vlib.Name, error)
 
@@ -45,15 +40,4 @@ type NameVerifier interface {
 
 	// GetVersion returns version of the gnverifier
 	GetVersion() gnvers.Version
-}
-
-// WebLogger contains methods for enabling and aggregating logs from the
-// GNverifier web-service.
-type WebLogger interface {
-	// WithWebLogs returns true if web logs are enabled.
-	WithWebLogs() bool
-
-	// WebLogsNsqdTCP returns an address to a NSQ messaging TCP service or
-	// an empty string.
-	WebLogsNsqdTCP() string
 }

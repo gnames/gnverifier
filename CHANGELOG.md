@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.7.2] - 2022-02-10 Thu
+
+- Add [#84]: set filters for NSQ logs via config file.
+
 ## [v0.7.1] - 2022-02-08 Tue
 
 - Add [#79]: better NSQ logs, switch to zerolog library.

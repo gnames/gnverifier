@@ -37,8 +37,8 @@
 #
 # Jobs: 4
 
-# WebLogsNsqdTCP provides an address to the NSQ messenger TCP service. If
-# this value is set and valid, the web logs will be published to the NSQ.
+# NsqdTCPAddress provides an address to the NSQ messenger TCP service. If
+# this value is set and valid, the logs will be published to the NSQ.
 # The option is ignored if `Port` is not set.
 #
 # If WithWebLogs option is set to `false`, but `WebLogsNsqdTCP` is set to a
@@ -46,7 +46,21 @@
 # wil not appear as STRERR output.
 # Example: `127.0.0.1:4150`
 #
-# WebLogsNsqdTCP:
+# NsqdTCPAddress:
+
+# NsqdContainsFilter logs should contain or not contain the value of this
+# filter to be sent to NSQ service.
+# Examples:
+# "api" - keep logs containing "api" substring.
+# "!api" - filter out logs containing "api" substtring.
+#
+# NsqdContainsFilter:
+
+# NsqdRegexFilter logs should match this filter to be sent to NSQ service.
+# Example:
+# "api\\/(v0|v1)"
+#
+# NsqdRegexFilter:
 
 # WithWebLogs flag enables logs when running web-service. This flag is
 # ignored if `Port` value is not set.

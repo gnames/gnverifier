@@ -1,6 +1,8 @@
 package config
 
 import (
+	"regexp"
+
 	"github.com/gnames/gnfmt"
 )
 
@@ -26,23 +28,35 @@ type Config struct {
 	// to GET.
 	NamesNumThreshold int
 
-	// VerifierURL URL for gnames verification service. It only needs to
-	// be changed if user sets local version of gnames.
-	VerifierURL string
+	// NsqdTCPAddress provides an address to the NSQ messenger TCP service. If
+	// this value is set and valid, the web logs will be published to the NSQ.
+	// The option is ignored if `Port` is not set.
+	//
+	// If WithWebLogs option is set to `false`, but `NsqdTCPAddress` is set to a
+	// valid URL, the logs will be sent to the NSQ messanging service, but they
+	// wil not appear as STRERR output.
+	// Example: `127.0.0.1:4150`
+	NsqdTCPAddress string
+
+	// NsqdContainsFilter logs should match the filter to be sent to NSQ
+	// service.
+	// Examples:
+	// "api" - logs should contain "api"
+	// "!api" - logs should not contain "api"
+	NsqdContainsFilter string
+
+	// NsqdRegexFilter logs should match the regular expression to be sent to
+	// NSQ service.
+	// Example: `api\/v(0|1)`
+	NsqdRegexFilter *regexp.Regexp
 
 	// PreferredOnly hides BestResult if the user wants to see only
 	// preferred results.
 	PreferredOnly bool
 
-	// WebLogsNsqdTCP provides an address to the NSQ messenger TCP service. If
-	// this value is set and valid, the web logs will be published to the NSQ.
-	// The option is ignored if `Port` is not set.
-	//
-	// If WithWebLogs option is set to `false`, but `WebLogsNsqdTCP` is set to a
-	// valid URL, the logs will be sent to the NSQ messanging service, but they
-	// wil not appear as STRERR output.
-	// Example: `127.0.0.1:4150`
-	WebLogsNsqdTCP string
+	// VerifierURL URL for gnames verification service. It only needs to
+	// be changed if user sets local version of gnames.
+	VerifierURL string
 
 	// WithAllMatches flag; if true, results include all matches per source,
 	// not only the best match.
@@ -60,10 +74,55 @@ type Config struct {
 // Option is a type of all options for Config.
 type Option func(cnf *Config)
 
+// OptDataSources set list of preferred sources.
+func OptDataSources(srs []int) Option {
+	return func(cnf *Config) {
+		cnf.DataSources = srs
+	}
+}
+
 // OptFormat sets output format
 func OptFormat(f gnfmt.Format) Option {
 	return func(cnf *Config) {
 		cnf.Format = f
+	}
+}
+
+//OptJobs sets number of jobs to run in parallel.
+func OptJobs(i int) Option {
+	return func(cnf *Config) {
+		cnf.Jobs = i
+	}
+}
+
+// OptNamesNumThreshold sets number of names after which there is no redirect
+// from POST to GET.
+func OptNamesNumThreshold(i int) Option {
+	return func(cnf *Config) {
+		cnf.NamesNumThreshold = i
+	}
+}
+
+// OptNsqdContainsFilter provides a filter for logs sent to NSQ service.
+func OptNsqdContainsFilter(s string) Option {
+	return func(cfg *Config) {
+		cfg.NsqdContainsFilter = s
+	}
+}
+
+// OptNsqdRegexFilter provides a regular expression filter for
+// logs sent to NSQ service.
+func OptNsqdRegexFilter(s string) Option {
+	return func(cfg *Config) {
+		r := regexp.MustCompile(s)
+		cfg.NsqdRegexFilter = r
+	}
+}
+
+// OptNsqdTCPAddress provides a URL to NSQ messanging service.
+func OptNsqdTCPAddress(s string) Option {
+	return func(cfg *Config) {
+		cfg.NsqdTCPAddress = s
 	}
 }
 
@@ -72,6 +131,13 @@ func OptFormat(f gnfmt.Format) Option {
 func OptPreferredOnly(b bool) Option {
 	return func(cnf *Config) {
 		cnf.PreferredOnly = b
+	}
+}
+
+// OptVerifierURL sets URL of the verification resource.
+func OptVerifierURL(s string) Option {
+	return func(cnf *Config) {
+		cnf.VerifierURL = s
 	}
 }
 
@@ -86,42 +152,6 @@ func OptWithAllMatches(b bool) Option {
 func OptWithCapitalization(b bool) Option {
 	return func(cnf *Config) {
 		cnf.WithCapitalization = b
-	}
-}
-
-//OptJobs sets number of jobs to run in parallel.
-func OptJobs(i int) Option {
-	return func(cnf *Config) {
-		cnf.Jobs = i
-	}
-}
-
-// OptDataSources set list of preferred sources.
-func OptDataSources(srs []int) Option {
-	return func(cnf *Config) {
-		cnf.DataSources = srs
-	}
-}
-
-// OptVerifierURL sets URL of the verification resource.
-func OptVerifierURL(s string) Option {
-	return func(cnf *Config) {
-		cnf.VerifierURL = s
-	}
-}
-
-// OptNamesNumThreshold sets number of names after which there is no redirect
-// from POST to GET.
-func OptNamesNumThreshold(i int) Option {
-	return func(cnf *Config) {
-		cnf.NamesNumThreshold = i
-	}
-}
-
-// OptWebLogsNsqdTCP provides a URL to NSQ messanging service.
-func OptWebLogsNsqdTCP(s string) Option {
-	return func(cfg *Config) {
-		cfg.WebLogsNsqdTCP = s
 	}
 }
 

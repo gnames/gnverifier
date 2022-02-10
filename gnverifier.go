@@ -161,11 +161,3 @@ func (gnv gnverifier) setParams(names []string) vlib.Input {
 	}
 	return res
 }
-
-func (gnv gnverifier) WithWebLogs() bool {
-	return gnv.cfg.WithWebLogs
-}
-
-func (gnv gnverifier) WebLogsNsqdTCP() string {
-	return gnv.cfg.WebLogsNsqdTCP
-}

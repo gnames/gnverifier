@@ -328,16 +328,21 @@ func formatRows(data Data, prefOnly bool, f gnfmt.Format) []string {
 }
 
 func setLogger(e *echo.Echo, m gnverifier.GNverifier) nsq.NSQ {
-	nsqAddr := m.WebLogsNsqdTCP()
-	withLogs := m.WithWebLogs()
+	cfg := m.Config()
+	nsqAddr := cfg.NsqdTCPAddress
+	withLogs := cfg.WithWebLogs
+	contains := cfg.NsqdContainsFilter
+	regex := cfg.NsqdRegexFilter
 
 	if nsqAddr != "" {
 		cfg := nsqcfg.Config{
 			StderrLogs: withLogs,
 			Topic:      "gnverifier",
 			Address:    nsqAddr,
-			Contains:   "!/static/",
+			Contains:   contains,
+			Regex:      regex,
 		}
+		fmt.Printf("NSQ: %#v\n\n", cfg)
 		remote, err := nsqio.New(cfg)
 		logCfg := middleware.DefaultLoggerConfig
 		if err == nil {

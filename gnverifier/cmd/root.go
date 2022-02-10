@@ -40,12 +40,14 @@ var (
 // cfgData purpose is to achieve automatic import of data from the
 // configuration file, if it exists.
 type cfgData struct {
+	DataSources        []int
 	Format             string
 	Jobs               int
+	NsqdContainsFilter string
+	NsqdRegexFilter    string
+	NsqdTCPAddress     string
 	PreferredOnly      bool
-	PreferredSources   []int
 	VerifierURL        string
-	WebLogsNsqdTCP     string
 	WithAllMatches     bool
 	WithCapitalization bool
 	WithWebLogs        bool
@@ -130,7 +132,7 @@ https://github.com/gnames/gnverifier
 			}
 			nsqAddr, _ := cmd.Flags().GetString("nsqd-tcp")
 			if nsqAddr != "" {
-				webOpts = append(webOpts, config.OptWebLogsNsqdTCP(nsqAddr))
+				webOpts = append(webOpts, config.OptNsqdTCPAddress(nsqAddr))
 			}
 
 			log.Logger = zerolog.New(os.Stderr).With().
@@ -228,14 +230,16 @@ func initConfig() {
 
 	// Set environment variables to override
 	// config file settings
-	_ = viper.BindEnv("Format", "GNV_FORMAT")
-	_ = viper.BindEnv("PreferredOnly", "GNV_PREFERRED_ONLY")
 	_ = viper.BindEnv("DataSources", "GNV_DATA_SOURCES")
+	_ = viper.BindEnv("Format", "GNV_FORMAT")
+	_ = viper.BindEnv("Jobs", "GNV_JOBS")
+	_ = viper.BindEnv("NsqdContainsFilter", "GNV_NSQD_CONTAINS_FILTER")
+	_ = viper.BindEnv("NsqdRegexFilter", "GNV_NSQD_REGEX_FILTER")
+	_ = viper.BindEnv("NsqdTCPAddress", "GNV_NSQD_TCP_ADDRESS")
+	_ = viper.BindEnv("PreferredOnly", "GNV_PREFERRED_ONLY")
+	_ = viper.BindEnv("VerifierURL", "GNV_VERIFIER_URL")
 	_ = viper.BindEnv("WithAllMatches", "GNV_WITH_ALL_MATCHES")
 	_ = viper.BindEnv("WithCapitalization", "GNV_WITH_CAPITALIZATION")
-	_ = viper.BindEnv("VerifierURL", "GNV_VERIFIER_URL")
-	_ = viper.BindEnv("Jobs", "GNV_JOBS")
-	_ = viper.BindEnv("WebLogsNsqdTCP", "GNV_WEB_LOGS_NSQD_TCP")
 	_ = viper.BindEnv("WithWebLogs", "GNV_WITH_WEB_LOGS")
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -259,6 +263,9 @@ func getOpts() {
 		log.Fatal().Err(err).Msg("Cannot deserialize config data")
 	}
 
+	if len(cfg.DataSources) > 0 {
+		opts = append(opts, config.OptDataSources(cfg.DataSources))
+	}
 	if cfg.Format != "" {
 		cfgFormat, err := gnfmt.NewFormat(cfg.Format)
 		if err != nil {
@@ -266,25 +273,29 @@ func getOpts() {
 		}
 		opts = append(opts, config.OptFormat(cfgFormat))
 	}
-	if cfg.PreferredOnly {
-		opts = append(opts, config.OptPreferredOnly(cfg.PreferredOnly))
-	}
-	if len(cfg.PreferredSources) > 0 {
-		opts = append(opts, config.OptDataSources(cfg.PreferredSources))
-	}
-
-	if cfg.WithAllMatches {
-		opts = append(opts, config.OptWithAllMatches(true))
-	}
-
-	if cfg.VerifierURL != "" {
-		opts = append(opts, config.OptVerifierURL(cfg.VerifierURL))
-	}
 	if cfg.Jobs > 0 {
 		opts = append(opts, config.OptJobs(cfg.Jobs))
 	}
-	if cfg.WebLogsNsqdTCP != "" {
-		opts = append(opts, config.OptWebLogsNsqdTCP(cfg.WebLogsNsqdTCP))
+	if cfg.NsqdContainsFilter != "" {
+		opts = append(opts, config.OptNsqdContainsFilter(cfg.NsqdContainsFilter))
+	}
+	if cfg.NsqdRegexFilter != "" {
+		opts = append(opts, config.OptNsqdRegexFilter(cfg.NsqdRegexFilter))
+	}
+	if cfg.NsqdTCPAddress != "" {
+		opts = append(opts, config.OptNsqdTCPAddress(cfg.NsqdTCPAddress))
+	}
+	if cfg.PreferredOnly {
+		opts = append(opts, config.OptPreferredOnly(cfg.PreferredOnly))
+	}
+	if cfg.VerifierURL != "" {
+		opts = append(opts, config.OptVerifierURL(cfg.VerifierURL))
+	}
+	if cfg.WithAllMatches {
+		opts = append(opts, config.OptWithAllMatches(true))
+	}
+	if cfg.WithCapitalization {
+		opts = append(opts, config.OptWithCapitalization(true))
 	}
 	if cfg.WithWebLogs {
 		opts = append(opts, config.OptWithWebLogs(true))
