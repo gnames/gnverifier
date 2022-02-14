@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.7.3] - 2022-02-14 Mon
+
+- Add: make gnverifier compatible with gnames v0.7.1
+
 ## [v0.7.2] - 2022-02-10 Thu
 
 - Add [#84]: set filters for NSQ logs via config file.
@@ -135,6 +139,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.7.3]: https://github.com/gnames/gnverifier/compare/v0.7.2...v1.7.3
+[v0.7.2]: https://github.com/gnames/gnverifier/compare/v0.7.1...v1.7.2
 [v0.7.1]: https://github.com/gnames/gnverifier/compare/v0.7.0...v1.7.1
 [v0.7.0]: https://github.com/gnames/gnverifier/compare/v0.6.6...v1.7.0
 [v0.6.6]: https://github.com/gnames/gnverifier/compare/v0.6.5...v1.6.6

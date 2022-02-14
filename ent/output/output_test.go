@@ -59,7 +59,7 @@ func TestOutput(t *testing.T) {
 				assert.Contains(t, res, "bestResult", "pretty 2")
 				assert.Contains(t, res, "results", "pretty 3")
 			},
-			linesNum: 103,
+			linesNum: 104,
 		},
 		{
 			msg:      "compact",
