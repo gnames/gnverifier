@@ -50,10 +50,6 @@ type Config struct {
 	// Example: `api\/v(0|1)`
 	NsqdRegexFilter *regexp.Regexp
 
-	// PreferredOnly hides BestResult if the user wants to see only
-	// preferred results.
-	PreferredOnly bool
-
 	// VerifierURL URL for gnames verification service. It only needs to
 	// be changed if user sets local version of gnames.
 	VerifierURL string
@@ -123,14 +119,6 @@ func OptNsqdRegexFilter(s string) Option {
 func OptNsqdTCPAddress(s string) Option {
 	return func(cfg *Config) {
 		cfg.NsqdTCPAddress = s
-	}
-}
-
-// OptPreferredOnly sets PreferredOnly field. If it is true output only
-// contains results from preferred data-sources.
-func OptPreferredOnly(b bool) Option {
-	return func(cnf *Config) {
-		cnf.PreferredOnly = b
 	}
 }
 

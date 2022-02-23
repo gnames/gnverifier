@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.8.0] - 2022-02-24 Thu
+
+- Add[#89]: compatibility with gnames v0.8.0
+
 ## [v0.7.3] - 2022-02-14 Mon
 
 - Add: make gnverifier compatible with gnames v0.7.1
@@ -139,17 +143,18 @@
 
 This document follows [changelog guidelines]
 
-[v0.7.3]: https://github.com/gnames/gnverifier/compare/v0.7.2...v1.7.3
-[v0.7.2]: https://github.com/gnames/gnverifier/compare/v0.7.1...v1.7.2
-[v0.7.1]: https://github.com/gnames/gnverifier/compare/v0.7.0...v1.7.1
-[v0.7.0]: https://github.com/gnames/gnverifier/compare/v0.6.6...v1.7.0
-[v0.6.6]: https://github.com/gnames/gnverifier/compare/v0.6.5...v1.6.6
-[v0.6.5]: https://github.com/gnames/gnverifier/compare/v0.6.4...v1.6.5
-[v0.6.4]: https://github.com/gnames/gnverifier/compare/v0.6.3...v1.6.4
-[v0.6.3]: https://github.com/gnames/gnverifier/compare/v0.6.2...v1.6.3
-[v0.6.2]: https://github.com/gnames/gnverifier/compare/v0.6.1...v1.6.2
-[v0.6.1]: https://github.com/gnames/gnverifier/compare/v0.6.0...v1.6.1
-[v0.6.0]: https://github.com/gnames/gnverifier/compare/v0.5.2...v1.6.0
+[v0.8.0]: https://github.com/gnames/gnverifier/compare/v0.7.3...v0.8.0
+[v0.7.3]: https://github.com/gnames/gnverifier/compare/v0.7.2...v0.7.3
+[v0.7.2]: https://github.com/gnames/gnverifier/compare/v0.7.1...v0.7.2
+[v0.7.1]: https://github.com/gnames/gnverifier/compare/v0.7.0...v0.7.1
+[v0.7.0]: https://github.com/gnames/gnverifier/compare/v0.6.6...v0.7.0
+[v0.6.6]: https://github.com/gnames/gnverifier/compare/v0.6.5...v0.6.6
+[v0.6.5]: https://github.com/gnames/gnverifier/compare/v0.6.4...v0.6.5
+[v0.6.4]: https://github.com/gnames/gnverifier/compare/v0.6.3...v0.6.4
+[v0.6.3]: https://github.com/gnames/gnverifier/compare/v0.6.2...v0.6.3
+[v0.6.2]: https://github.com/gnames/gnverifier/compare/v0.6.1...v0.6.2
+[v0.6.1]: https://github.com/gnames/gnverifier/compare/v0.6.0...v0.6.1
+[v0.6.0]: https://github.com/gnames/gnverifier/compare/v0.5.2...v0.6.0
 [v0.5.2]: https://github.com/gnames/gnverifier/compare/v0.5.1...v0.5.2
 [v0.5.1]: https://github.com/gnames/gnverifier/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnverifier/compare/v0.4.1...v0.5.0

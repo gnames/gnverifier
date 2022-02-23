@@ -16,23 +16,21 @@ func TestConfigDefault(t *testing.T) {
 		Format:      gnfmt.CSV,
 		VerifierURL: "https://verifier.globalnames.org/api/v0/",
 	}
-	assert.Equal(t, cnf.Format, deflt.Format)
-	assert.Equal(t, cnf.VerifierURL, deflt.VerifierURL)
+	assert.Equal(t, deflt.Format, cnf.Format)
+	assert.Equal(t, deflt.VerifierURL, cnf.VerifierURL)
 }
 
 func TestConfigOpts(t *testing.T) {
 	opts := opts()
 	cnf := config.New(opts...)
 	updt := config.Config{
-		Format:        gnfmt.PrettyJSON,
-		PreferredOnly: true,
-		DataSources:   []int{1, 2, 3},
-		VerifierURL:   url,
+		Format:      gnfmt.PrettyJSON,
+		DataSources: []int{1, 2, 3},
+		VerifierURL: url,
 	}
-	assert.Equal(t, cnf.Format, updt.Format)
-	assert.Equal(t, cnf.PreferredOnly, updt.PreferredOnly)
-	assert.Equal(t, cnf.DataSources, updt.DataSources)
-	assert.Equal(t, cnf.VerifierURL, updt.VerifierURL)
+	assert.Equal(t, updt.Format, cnf.Format)
+	assert.Equal(t, updt.DataSources, cnf.DataSources)
+	assert.Equal(t, updt.VerifierURL, cnf.VerifierURL)
 }
 
 type formatTest struct {
@@ -43,7 +41,6 @@ type formatTest struct {
 func opts() []config.Option {
 	return []config.Option{
 		config.OptFormat(gnfmt.PrettyJSON),
-		config.OptPreferredOnly(true),
 		config.OptDataSources([]int{1, 2, 3}),
 		config.OptVerifierURL(url),
 	}

@@ -30,7 +30,6 @@ search feature.
     * [capitalize](#capitalize)
     * [format](#format)
     * [jobs](#jobs)
-    * [only_preferred](#only_preferred)
     * [quiet](#quiet)
     * [sources](#sources)
   * [web-logs](#web-logs)
@@ -299,20 +298,6 @@ gnverifier -j 1 file.txt
 
 This option is ignored by advanced search.
 
-#### only_preferred
-
-Sometimes a users wants to map a list of names to a DataSource. They
-are not interested if name matched anywhere else. In such case you can use
-the ``only_preferred`` flag.
-
-```bash
-gnverifier -o -s '12' file.txt
-# or
-gnverifier --only_preferred --sources='1,12' file.tsv
-```
-
-In case of advanced search use `all:t` together with this flag.
-
 #### quiet
 
 Removes log messages from the output. Note that results of verification go
@@ -398,7 +383,6 @@ possible to use environment variables for configuration.
 | Env. Var.               | Configuration      |
 | :---------------------- | :----------------- |
 | GNV_FORMAT              | Format             |
-| GNV_PREFERRED_ONLY      | PreferredOnly      |
 | GNV_DATA_SOURCES        | DataSources        |
 | GNV_WITH_ALL_MATCHES    | WithAllMatches     |
 | GNV_WITH_CAPITALIZATION | WithCapitalization |

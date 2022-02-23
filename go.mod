@@ -6,8 +6,8 @@ require (
 	github.com/dnaeon/go-vcr v1.2.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gnames/gnfmt v0.2.0
-	github.com/gnames/gnlib v0.9.1
-	github.com/gnames/gnquery v0.2.3
+	github.com/gnames/gnlib v0.10.2
+	github.com/gnames/gnquery v0.3.3
 	github.com/gnames/gnsys v0.2.2
 	github.com/gnames/gnuuid v0.1.1
 	github.com/labstack/echo/v4 v4.6.3
@@ -49,10 +49,10 @@ require (
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
-	golang.org/x/crypto v0.0.0-20220213190939-1e6e3497d506 // indirect
+	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
 	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
-	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
+	golang.org/x/sys v0.0.0-20220222160653-b146bcec3beb // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
 	golang.org/x/tools v0.1.9 // indirect

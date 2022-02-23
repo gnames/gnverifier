@@ -19,53 +19,46 @@ func TestOutput(t *testing.T) {
 		msg      string
 		input    vlib.Name
 		format   gnfmt.Format
-		prefOnly bool
 		test     func(*testing.T, string)
 		linesNum int
 	}{
 		{
-			msg:      "csv_prefOnly_false",
-			input:    verifs[0],
-			format:   gnfmt.CSV,
-			prefOnly: false,
+			msg:    "csv",
+			input:  verifs[0],
+			format: gnfmt.CSV,
 			test: func(t *testing.T, res string) {
 				assert.NotContains(t, res, "inputID", "csv,false 1")
-				assert.Contains(t, res, "BestMatch", "csv, false 2")
-				assert.Contains(t, res, "PreferredMatch", "csv, false 3")
+				assert.Contains(t, res, "SortedMatch", "csv, false 3")
 				assert.True(t, strings.HasPrefix(res, "BestMatch"), "csv, false 4")
 			},
 			linesNum: 3,
 		},
 		{
-			msg:      "not_name_csv_prefOnly_true",
-			input:    verifs[2],
-			format:   gnfmt.CSV,
-			prefOnly: true,
+			msg:    "not_name_csv",
+			input:  verifs[2],
+			format: gnfmt.CSV,
 			test: func(t *testing.T, res string) {
 				assert.NotContains(t, res, "inputID", "noname, csv, true 1")
-				assert.NotContains(t, res, "BestMatch", "noname, csv, true 2")
-				assert.Contains(t, res, "PreferredMatch", "noname, csv, true 3")
+				assert.Contains(t, res, "SortedMatch", "noname, csv, true 3")
 				assert.Contains(t, res, "NoMatch", "noname, csv, true 4")
 			},
 			linesNum: 1,
 		},
 		{
-			msg:      "pretty",
-			input:    verifs[0],
-			format:   gnfmt.PrettyJSON,
-			prefOnly: false,
+			msg:    "pretty",
+			input:  verifs[0],
+			format: gnfmt.PrettyJSON,
 			test: func(t *testing.T, res string) {
 				assert.Contains(t, res, "id", "pretty 1")
 				assert.Contains(t, res, "bestResult", "pretty 2")
 				assert.Contains(t, res, "results", "pretty 3")
 			},
-			linesNum: 104,
+			linesNum: 107,
 		},
 		{
-			msg:      "compact",
-			input:    verifs[0],
-			format:   gnfmt.CompactJSON,
-			prefOnly: false,
+			msg:    "compact",
+			input:  verifs[0],
+			format: gnfmt.CompactJSON,
 			test: func(t *testing.T, res string) {
 				assert.Contains(t, res, "id", "compact 1")
 				assert.Contains(t, res, "bestResult", "compact 2")
@@ -77,9 +70,9 @@ func TestOutput(t *testing.T) {
 
 	for i := range tests {
 		t.Run(tests[i].msg, func(t *testing.T) {
-			res := output.NameOutput(tests[i].input, tests[i].format, tests[i].prefOnly)
+			res := output.NameOutput(tests[i].input, tests[i].format)
 			lines := strings.Split(res, "\n")
-			assert.Equal(t, len(lines), tests[i].linesNum)
+			assert.Equal(t, tests[i].linesNum, len(lines))
 			tests[i].test(t, res)
 		})
 	}

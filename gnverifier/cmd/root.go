@@ -35,6 +35,7 @@ var configText string
 
 var (
 	opts []config.Option
+	msg  []string
 )
 
 // cfgData purpose is to achieve automatic import of data from the
@@ -46,7 +47,6 @@ type cfgData struct {
 	NsqdContainsFilter string
 	NsqdRegexFilter    string
 	NsqdTCPAddress     string
-	PreferredOnly      bool
 	VerifierURL        string
 	WithAllMatches     bool
 	WithCapitalization bool
@@ -80,14 +80,13 @@ https://github.com/gnames/gnverifier
 			zerolog.SetGlobalLevel(zerolog.Disabled)
 		}
 
+		for i := range msg {
+			log.Info().Msg(msg[i])
+		}
+
 		caps, _ := cmd.Flags().GetBool("capitalize")
 		if caps {
 			opts = append(opts, config.OptWithCapitalization(true))
-		}
-
-		pref, _ := cmd.Flags().GetBool("only_preferred")
-		if pref {
-			opts = append(opts, config.OptPreferredOnly(true))
 		}
 
 		formatString, _ := cmd.Flags().GetString("format")
@@ -177,7 +176,6 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("version", "V", false, "Prints version information")
 	rootCmd.Flags().BoolP("capitalize", "c", false, "capitalizes first character")
-	rootCmd.Flags().BoolP("only_preferred", "o", false, "Ignores best match, returns only preferred results (if any).")
 	rootCmd.Flags().StringP("format", "f", "csv", `Format of the output: "compact", "pretty", "csv", "tsv".
   compact: compact JSON,
   pretty: pretty JSON,
@@ -186,7 +184,8 @@ func init() {
 	rootCmd.Flags().IntP("jobs", "j", 4, "Number of jobs running in parallel.")
 	rootCmd.Flags().IntP("port", "p", 0, "Port to run web GUI.")
 	rootCmd.Flags().BoolP("all_matches", "M", false, "return all matched results per source, not just the best one.")
-	rootCmd.Flags().BoolP("quiet", "q", false, "supress logs output.")
+	// rootCmd.Flags().BoolP("quiet", "q", false, "supress logs output.")
+	rootCmd.Flags().BoolP("quiet", "q", false, "do not show progress")
 	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
   If sources are set and there are matches to their data,
   such matches are returned in "preferred_result" results.
@@ -236,7 +235,6 @@ func initConfig() {
 	_ = viper.BindEnv("NsqdContainsFilter", "GNV_NSQD_CONTAINS_FILTER")
 	_ = viper.BindEnv("NsqdRegexFilter", "GNV_NSQD_REGEX_FILTER")
 	_ = viper.BindEnv("NsqdTCPAddress", "GNV_NSQD_TCP_ADDRESS")
-	_ = viper.BindEnv("PreferredOnly", "GNV_PREFERRED_ONLY")
 	_ = viper.BindEnv("VerifierURL", "GNV_VERIFIER_URL")
 	_ = viper.BindEnv("WithAllMatches", "GNV_WITH_ALL_MATCHES")
 	_ = viper.BindEnv("WithCapitalization", "GNV_WITH_CAPITALIZATION")
@@ -249,7 +247,8 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		log.Info().Msgf("Using config file: %s.", viper.ConfigFileUsed())
+		msg = append(msg,
+			fmt.Sprintf("Using config file: %s.", viper.ConfigFileUsed()))
 	}
 	getOpts()
 }
@@ -284,9 +283,6 @@ func getOpts() {
 	}
 	if cfg.NsqdTCPAddress != "" {
 		opts = append(opts, config.OptNsqdTCPAddress(cfg.NsqdTCPAddress))
-	}
-	if cfg.PreferredOnly {
-		opts = append(opts, config.OptPreferredOnly(cfg.PreferredOnly))
 	}
 	if cfg.VerifierURL != "" {
 		opts = append(opts, config.OptVerifierURL(cfg.VerifierURL))
@@ -437,7 +433,7 @@ func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Name,
 			if r.Error != "" {
 				log.Warn().Msg(r.Error)
 			}
-			fmt.Println(output.NameOutput(r, f, gnv.Config().PreferredOnly))
+			fmt.Println(output.NameOutput(r, f))
 		}
 	}
 }
@@ -452,19 +448,17 @@ func verifyString(gnv gnverifier.GNverifier, name string) {
 	if f == gnfmt.CSV || f == gnfmt.TSV {
 		fmt.Println(output.CSVHeader(f))
 	}
-	fmt.Println(output.NameOutput(res, f, gnv.Config().PreferredOnly))
+	fmt.Println(output.NameOutput(res, f))
 }
 
 func searchQuery(gnv gnverifier.GNverifier, s string) {
 	gnq := gnquery.New()
 	inp := gnq.Parse(s)
-	ds := gnv.Config().DataSources
-	if len(ds) > 0 {
-		if ds[0] == 0 {
-			inp.WithAllResults = true
-		} else {
-			inp.DataSourceIDs = ds
-		}
+	if ds := gnv.Config().DataSources; len(ds) > 0 {
+		inp.DataSources = ds
+	}
+	if all := gnv.Config().WithAllMatches; all {
+		inp.WithAllMatches = all
 	}
 	res, err := gnv.Search(inp)
 	if err != nil {
@@ -480,7 +474,7 @@ func searchQuery(gnv gnverifier.GNverifier, s string) {
 		if v.Error != "" {
 			log.Warn().Msg(v.Error)
 		}
-		fmt.Println(output.NameOutput(v, f, gnv.Config().PreferredOnly))
+		fmt.Println(output.NameOutput(v, f))
 	}
 }
 

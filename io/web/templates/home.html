@@ -20,13 +20,14 @@
   <div class='results'>
     {{ $best := .BestResult }}
     {{ if $best }}
+    <h3>Best Result Only:</h3>
     {{ template "results" $best}}
     {{ end }}
 
     {{ $res := .Results }}
 
     {{ if $res }}
-    <h5>From selected Data Sources:</h5>
+    <h3>All Results:</h3>
     {{ end }}
 
     {{ range $res }}
@@ -70,20 +71,12 @@
     </div>
     <div id='advanced_selections'>
       <fieldset>
-        <legend>Preferred Data Sources</legend>
+        <legend>Pick Data Sources</legend>
         <table class="nobg">
           <tr class="nobg">
             <td class="nobg">
-              <input id='all_sources' name='all_sources' type='checkbox'>
-              <label for='all_sources'>All Sources</label>
-            </td>
-            <td class="nobg">
               <input id='all_matches' name='all_matches' type='checkbox'>
-              <label for='all_matches'>All Matches per Source</label>
-            </td>
-            <td class="nobg">
-              <input id='preferred_only' name='preferred_only' type='checkbox'/>
-              <label for='preferred_only'>Only Preferred Results</label>
+              <label for='all_matches'>Show All Matches</label>
             </td>
           </tr>
         </table>

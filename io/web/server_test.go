@@ -40,7 +40,7 @@ func TestAbout(t *testing.T) {
 	gnv := gnverifier.New(cfg, vfr)
 
 	assert.Nil(t, about(gnv)(c))
-	assert.Equal(t, rec.Code, http.StatusOK)
+	assert.Equal(t, http.StatusOK, rec.Code)
 	assert.Contains(t, rec.Body.String(), "Matching Process")
 }
 
@@ -54,7 +54,7 @@ func TestAPI(t *testing.T) {
 	gnv := gnverifier.New(cfg, vfr)
 
 	assert.Nil(t, api(gnv)(c))
-	assert.Equal(t, rec.Code, http.StatusOK)
+	assert.Equal(t, http.StatusOK, rec.Code)
 	assert.Contains(t, rec.Body.String(), "OpenAPI Schema")
 }
 
@@ -68,7 +68,7 @@ func TestHomeGET(t *testing.T) {
 	gnv := gnverifier.New(cfg, vfr)
 
 	assert.Nil(t, homeGET(gnv)(c))
-	assert.Equal(t, rec.Code, http.StatusOK)
+	assert.Equal(t, http.StatusOK, rec.Code)
 	assert.Contains(t, rec.Body.String(), "Global Names Verifier")
 	assert.Contains(t, rec.Body.String(), "Advanced Options")
 }
@@ -98,7 +98,7 @@ func TestHomePOSTOnly(t *testing.T) {
 	gnv := gnverifier.New(cfg, vfr)
 	err = homePOST(gnv)(c)
 	assert.Nil(t, err)
-	assert.Equal(t, rec.Code, http.StatusOK)
+	assert.Equal(t, http.StatusOK, rec.Code)
 	assert.Contains(t, rec.Body.String(), "Bubo (genus)")
 }
 
@@ -127,7 +127,7 @@ func TestHomePostGet(t *testing.T) {
 	gnv := gnverifier.New(cfg, vfr)
 	assert.Nil(t, homePOST(gnv)(c))
 	// redirect to GET
-	assert.Equal(t, rec.Code, http.StatusFound)
+	assert.Equal(t, http.StatusFound, rec.Code)
 	assert.NotContains(t, rec.Body.String(), "Bubo (genus)")
 }
 

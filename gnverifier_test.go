@@ -25,7 +25,7 @@ func TestDataSources(t *testing.T) {
 	gnv := gnverifier.New(cfg, vfr)
 	res, err := gnv.DataSources()
 	assert.Nil(t, err)
-	assert.Equal(t, res, dss)
+	assert.Equal(t, dss, res)
 
 	vfr.DataSourcesReturns(nil, errors.New("fake error"))
 	res, err = gnv.DataSources()
@@ -41,22 +41,22 @@ func TestDataSource(t *testing.T) {
 	gnv := gnverifier.New(cfg, vfr)
 	res, err := gnv.DataSource(1)
 	assert.Nil(t, err)
-	assert.Equal(t, res.ID, 1)
-	assert.Equal(t, res.Title, "Catalogue of Life")
+	assert.Equal(t, 1, res.ID)
+	assert.Equal(t, "Catalogue of Life", res.Title)
 }
 
 func TestChangeConfig(t *testing.T) {
 	vfr := new(vtest.FakeVerifier)
 	cfg := config.New()
 	gnv := gnverifier.New(cfg, vfr)
-	assert.Equal(t, gnv.Config().Format, gnfmt.CSV)
-	assert.Equal(t, gnv.Config().Jobs, 4)
+	assert.Equal(t, gnfmt.CSV, gnv.Config().Format)
+	assert.Equal(t, 4, gnv.Config().Jobs)
 	gnv = gnv.ChangeConfig(
 		config.OptFormat(gnfmt.CompactJSON),
 		config.OptJobs(10),
 	)
-	assert.Equal(t, gnv.Config().Format, gnfmt.CompactJSON)
-	assert.Equal(t, gnv.Config().Jobs, 10)
+	assert.Equal(t, gnfmt.CompactJSON, gnv.Config().Format)
+	assert.Equal(t, 10, gnv.Config().Jobs)
 }
 
 func TestConfig(t *testing.T) {
@@ -64,7 +64,7 @@ func TestConfig(t *testing.T) {
 	cfg := config.New()
 	gnv := gnverifier.New(cfg, vfr)
 	res := gnv.Config()
-	assert.Equal(t, res, cfg)
+	assert.Equal(t, cfg, res)
 }
 
 func TestVerifyOne(t *testing.T) {
@@ -76,14 +76,14 @@ func TestVerifyOne(t *testing.T) {
 	vfr.VerifyReturns(verifs)
 	res, err := gnv.VerifyOne("Pomatomus saltatrix (Linnaeus, 1766)")
 	assert.Nil(t, err)
-	assert.Equal(t, res.Name, "Pomatomus saltatrix (Linnaeus, 1766)")
+	assert.Equal(t, "Pomatomus saltatrix (Linnaeus, 1766)", res.Name)
 	assert.NotNil(t, res.BestResult)
-	assert.Equal(t, vfr.VerifyCallCount(), 1)
+	assert.Equal(t, 1, vfr.VerifyCallCount())
 
 	vfr.VerifyReturns(vlib.Output{})
 	res, err = gnv.VerifyOne("something")
 	assert.NotNil(t, err)
-	assert.Equal(t, res.Name, "")
+	assert.Equal(t, "", res.Name)
 }
 
 func TestVerifyBatch(t *testing.T) {
@@ -99,8 +99,8 @@ func TestVerifyBatch(t *testing.T) {
 		"NotName",
 	}
 	res := gnv.VerifyBatch(batch)
-	assert.Equal(t, len(res), 3)
-	assert.Equal(t, vfr.VerifyCallCount(), 1)
+	assert.Equal(t, 3, len(res))
+	assert.Equal(t, 1, vfr.VerifyCallCount())
 }
 
 func TestVerifyStream(t *testing.T) {
@@ -125,7 +125,7 @@ func TestVerifyStream(t *testing.T) {
 	go func() {
 		defer wg.Done()
 		for res := range chOut {
-			assert.Equal(t, len(res), 3)
+			assert.Equal(t, 3, len(res))
 		}
 	}()
 
@@ -136,7 +136,7 @@ func TestVerifyStream(t *testing.T) {
 	}
 	close(chIn)
 	wg.Wait()
-	assert.Equal(t, vfr.VerifyCallCount(), 3)
+	assert.Equal(t, 3, vfr.VerifyCallCount())
 }
 
 func dataSources(t *testing.T) []vlib.DataSource {

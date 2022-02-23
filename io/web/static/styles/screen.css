@@ -567,8 +567,11 @@ form span {
   margin-bottom: 1.5em;
 }
 
-.results {
-  margin: 0.5em 0 0.5em;
+.results h3 {
+  color: #962825;
+  font-size: 1.15em;
+  line-height: 1.15em;
+  margin-bottom: 0.3em;
 }
 
 .searched-name {

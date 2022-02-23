@@ -27,13 +27,11 @@ import (
 )
 
 type formInput struct {
-	Names         string `query:"names" form:"names"`
-	Format        string `query:"format" form:"format"`
-	PreferredOnly string `query:"preferred_only" form:"preferred_only"`
-	AllSources    string `query:"all_sources" form:"all_sources"`
-	AllMatches    string `query:"all_matches" form:"all_matches"`
-	Capitalize    string `query:"capitalize" form:"capitalize"`
-	DS            []int  `query:"ds" form:"ds"`
+	Names       string `query:"names" form:"names"`
+	Format      string `query:"format" form:"format"`
+	AllMatches  string `query:"all_matches" form:"all_matches"`
+	Capitalize  string `query:"capitalize" form:"capitalize"`
+	DataSources []int  `query:"ds" form:"ds"`
 }
 
 //go:embed static
@@ -77,15 +75,15 @@ func Run(gnv gnverifier.GNverifier, port int) {
 }
 
 type Data struct {
-	Page        string
-	Input       string
-	Format      string
-	Preferred   []int
-	AllMatches  bool
-	Verified    []vlib.Name
-	DataSources []vlib.DataSource
-	DataSource  vlib.DataSource
-	Version     string
+	Page          string
+	Input         string
+	Format        string
+	DataSourceIDs []int
+	AllMatches    bool
+	Verified      []vlib.Name
+	DataSources   []vlib.DataSource
+	DataSource    vlib.DataSource
+	Version       string
 }
 
 func about(gnv gnverifier.GNverifier) func(echo.Context) error {
@@ -193,21 +191,16 @@ func getPreferredSources(ds []string) []int {
 }
 
 func redirectToHomeGET(c echo.Context, inp *formInput) error {
-	prefOnly := inp.PreferredOnly == "on"
 	caps := inp.Capitalize == "on"
 	q := make(url.Values)
 	q.Set("names", inp.Names)
 	q.Set("format", inp.Format)
-	q.Set("all_sources", inp.AllSources)
 	q.Set("all_matches", inp.AllMatches)
-	if prefOnly {
-		q.Set("preferred_only", inp.PreferredOnly)
-	}
 	if caps {
 		q.Set("capitalize", inp.Capitalize)
 	}
-	for i := range inp.DS {
-		q.Add("ds", strconv.Itoa(inp.DS[i]))
+	for i := range inp.DataSources {
+		q.Add("ds", strconv.Itoa(inp.DataSources[i]))
 	}
 	url := fmt.Sprintf("/?%s", q.Encode())
 	return c.Redirect(http.StatusFound, url)
@@ -221,16 +214,12 @@ func verificationResults(
 	method string,
 ) error {
 	var names []string
-	prefOnly := inp.PreferredOnly == "on"
 	caps := inp.Capitalize == "on"
 	data.AllMatches = inp.AllMatches == "on"
 
 	data.Input = inp.Names
 
-	data.Preferred = inp.DS
-	if inp.AllSources == "on" {
-		data.Preferred = []int{0}
-	}
+	data.DataSourceIDs = inp.DataSources
 
 	format := inp.Format
 	if format == "csv" || format == "json" || format == "tsv" {
@@ -252,7 +241,7 @@ func verificationResults(
 		}
 
 		opts := []config.Option{
-			config.OptDataSources(data.Preferred),
+			config.OptDataSources(data.DataSourceIDs),
 			config.OptWithCapitalization(caps),
 			config.OptWithAllMatches(data.AllMatches),
 		}
@@ -261,13 +250,11 @@ func verificationResults(
 		if search.IsQuery(names[0]) {
 			var err error
 			inp := gnquery.New().Parse(names[0])
-			ds := gnv.Config().DataSources
-			if len(ds) > 0 {
-				if ds[0] == 0 {
-					inp.WithAllResults = true
-				} else {
-					inp.DataSourceIDs = ds
-				}
+			if dss := gnv.Config().DataSources; len(dss) > 0 {
+				inp.DataSources = dss
+			}
+			if all := gnv.Config().WithAllMatches; all {
+				inp.WithAllMatches = all
 			}
 			data.Verified, err = gnv.Search(inp)
 			if err != nil {
@@ -297,32 +284,27 @@ func verificationResults(
 					Msg("Verification")
 			}
 		}
-		if prefOnly {
-			for i := range data.Verified {
-				data.Verified[i].BestResult = nil
-			}
-		}
 	}
 
 	switch data.Format {
 	case "json":
 		return c.JSON(http.StatusOK, data.Verified)
 	case "csv":
-		res := formatRows(data, prefOnly, gnfmt.CSV)
+		res := formatRows(data, gnfmt.CSV)
 		return c.String(http.StatusOK, strings.Join(res, "\n"))
 	case "tsv":
-		res := formatRows(data, prefOnly, gnfmt.TSV)
+		res := formatRows(data, gnfmt.TSV)
 		return c.String(http.StatusOK, strings.Join(res, "\n"))
 	default:
 		return c.Render(http.StatusOK, "layout", data)
 	}
 }
 
-func formatRows(data Data, prefOnly bool, f gnfmt.Format) []string {
+func formatRows(data Data, f gnfmt.Format) []string {
 	res := make([]string, len(data.Verified)+1)
 	res[0] = output.CSVHeader(f)
 	for i, v := range data.Verified {
-		res[i+1] = output.NameOutput(v, f, prefOnly)
+		res[i+1] = output.NameOutput(v, f)
 	}
 	return res
 }

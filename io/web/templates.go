@@ -102,7 +102,7 @@ func addFuncs(tmpl *template.Template) {
 			}
 			return strings.Join(res, " >> ")
 		},
-		"scoreDetails": func(sd vlib.ScoreDetails) template.HTML {
+		"scoreDetails": func(s float64, sd vlib.ScoreDetails) template.HTML {
 			curSrc := "Curated Source"
 			rank := "Rank Matched"
 			sds := []struct {
@@ -133,7 +133,8 @@ func addFuncs(tmpl *template.Template) {
 				res = append(res, s)
 				// }
 			}
-			str := "<div class='score-details'>Score Details:<br/>" + strings.Join(res, ",&nbsp;") + "</div>"
+			score := fmt.Sprintf("SortScore: %0.5f<br/>", s)
+			str := "<div class='score-details'>" + score + strings.Join(res, ",&nbsp;") + "</div>"
 			return template.HTML(str)
 		},
 		"matchType": func(mt vlib.MatchTypeValue, ed int) template.HTML {

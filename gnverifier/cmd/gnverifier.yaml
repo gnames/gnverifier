@@ -2,11 +2,6 @@
 #
 # Format: csv
 
-# PreferredOnly if true, do not show BestResult, only Preferred Results.
-# Its valid values are 'true' and 'false'.
-#
-# PreferredOnly: false
-
 # DataSources is a list of data-source IDs that should always return
 # matched records if they are found.
 # You can find list of all data-sources at
