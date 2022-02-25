@@ -354,7 +354,7 @@ gnverifier -p 8777 --web-logs
 
 ### nsqd-tcp
 
-Rrequires `--port`. Allows to redirect web-service log output to [NSQ]
+Requires `--port`. Allows to redirect web-service log output to [NSQ]
 messaging server's TCP-based endpoint. It is handy for aggregations of logs
 from [GNverifier] web-services running inside of Docker containers or in
 Kubernetes pods.
