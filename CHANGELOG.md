@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.8.2] - 2022-02-25 Fri
+
+- Fix: go.mod bug
+
 ## [v0.8.1] - 2022-02-25 Fri
 
 - Fix: bug in go.mod
