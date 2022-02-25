@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.8.1] - 2022-02-25 Fri
+
+- Fix: bug in go.mod
+
 ## [v0.8.0] - 2022-02-24 Thu
 
 - Add[#89]: compatibility with gnames v0.8.0
