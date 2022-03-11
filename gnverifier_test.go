@@ -1,6 +1,7 @@
 package gnverifier_test
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -98,7 +99,7 @@ func TestVerifyBatch(t *testing.T) {
 		"Bubo bubo (Linnaeus, 1782)",
 		"NotName",
 	}
-	res := gnv.VerifyBatch(batch)
+	res := gnv.VerifyBatch(context.Background(), batch)
 	assert.Equal(t, 3, len(res))
 	assert.Equal(t, 1, vfr.VerifyCallCount())
 }
@@ -120,7 +121,7 @@ func TestVerifyStream(t *testing.T) {
 	chOut := make(chan []vlib.Name)
 	var wg sync.WaitGroup
 	wg.Add(1)
-	go gnv.VerifyStream(chIn, chOut)
+	go gnv.VerifyStream(context.Background(), chIn, chOut)
 
 	go func() {
 		defer wg.Done()

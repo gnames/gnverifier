@@ -1,6 +1,7 @@
 package web
 
 import (
+	"context"
 	"embed"
 	"fmt"
 	"net/http"
@@ -256,7 +257,7 @@ func verificationResults(
 			if all := gnv.Config().WithAllMatches; all {
 				inp.WithAllMatches = all
 			}
-			data.Verified, err = gnv.Search(inp)
+			data.Verified, err = gnv.Search(context.Background(), inp)
 			if err != nil {
 				log.Warn(err)
 			}
@@ -274,7 +275,7 @@ func verificationResults(
 				}
 			}
 		} else {
-			data.Verified = gnv.VerifyBatch(names)
+			data.Verified = gnv.VerifyBatch(context.Background(), names)
 
 			if l := len(names); l > 0 {
 				zlog.Info().

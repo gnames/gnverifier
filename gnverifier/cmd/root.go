@@ -3,6 +3,7 @@ package cmd
 
 import (
 	"bufio"
+	"context"
 	_ "embed"
 	"fmt"
 	"io"
@@ -393,7 +394,7 @@ func verifyFile(gnv gnverifier.GNverifier, f io.Reader) {
 	out := make(chan []vlib.Name)
 	var wg sync.WaitGroup
 	wg.Add(1)
-	go gnv.VerifyStream(in, out)
+	go gnv.VerifyStream(context.Background(), in, out)
 	go processResults(gnv, out, &wg)
 	sc := bufio.NewScanner(f)
 	names := make([]string, 0, batch)
@@ -460,7 +461,7 @@ func searchQuery(gnv gnverifier.GNverifier, s string) {
 	if all := gnv.Config().WithAllMatches; all {
 		inp.WithAllMatches = all
 	}
-	res, err := gnv.Search(inp)
+	res, err := gnv.Search(context.Background(), inp)
 	if err != nil {
 		log.Fatal().Err(err)
 	}

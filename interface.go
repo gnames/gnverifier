@@ -1,6 +1,8 @@
 package gnverifier
 
 import (
+	"context"
+
 	"github.com/gnames/gnlib/ent/gnvers"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnquery/ent/search"
@@ -15,14 +17,14 @@ type GNverifier interface {
 	VerifyOne(name string) (vlib.Name, error)
 
 	// VerifyBatch takes a slice of names and verifies them all at once
-	VerifyBatch(names []string) []vlib.Name
+	VerifyBatch(ctx context.Context, names []string) []vlib.Name
 
 	// VerifyStream receves batches of strings via one channel, verifies
 	// the strings and sends results to another channel.
-	VerifyStream(in <-chan []string, out chan []vlib.Name)
+	VerifyStream(ctx context.Context, in <-chan []string, out chan []vlib.Name)
 
 	// Search provides faceted search functionality.
-	Search(search.Input) ([]vlib.Name, error)
+	Search(ctx context.Context, srch search.Input) ([]vlib.Name, error)
 
 	// ChangeConfig modifies configuration of GNverifier.
 	ChangeConfig(opts ...config.Option) GNverifier

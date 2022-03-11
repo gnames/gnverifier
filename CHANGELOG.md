@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.9.0] - 2022-03-13 Sun
+
+- Add [#91]: provide context to verification and searh methods.
+
 ## [v0.8.2] - 2022-02-25 Fri
 
 - Fix: go.mod bug

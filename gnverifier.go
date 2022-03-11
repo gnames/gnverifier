@@ -72,9 +72,12 @@ func (gnv gnverifier) VerifyOne(name string) (vlib.Name, error) {
 
 // VerifyBatch takes a list of name-strings, verifies them and returns
 // a batch of results back.
-func (gnv gnverifier) VerifyBatch(nameStrings []string) []vlib.Name {
+func (gnv gnverifier) VerifyBatch(
+	ctx context.Context,
+	nameStrings []string,
+) []vlib.Name {
 	params := gnv.setParams(nameStrings)
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 
 	return gnv.verifier.Verify(ctx, params).Names
@@ -84,26 +87,27 @@ func (gnv gnverifier) VerifyBatch(nameStrings []string) []vlib.Name {
 // channel and sends results of verification via output
 // channel.
 func (gnv gnverifier) VerifyStream(
+	ctx context.Context,
 	in <-chan []string,
 	out chan []vlib.Name,
 ) {
 	var wg sync.WaitGroup
 	wg.Add(gnv.cfg.Jobs)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	vwChan := gnv.loadNames(ctx, in)
 
 	for i := 0; i < gnv.cfg.Jobs; i++ {
-		go gnv.VerifyWorker(ctx, vwChan, out, &wg)
+		go gnv.verifyWorker(ctx, vwChan, out, &wg)
 	}
 
 	wg.Wait()
 	close(out)
 }
 
-func (gnv gnverifier) VerifyWorker(
+func (gnv gnverifier) verifyWorker(
 	ctx context.Context,
 	in <-chan vlib.Input,
 	out chan<- []vlib.Name,
@@ -126,9 +130,10 @@ func (gnv gnverifier) VerifyWorker(
 }
 
 func (gnv gnverifier) Search(
+	ctx context.Context,
 	inp search.Input,
 ) ([]vlib.Name, error) {
-	res, err := gnv.verifier.Search(context.Background(), inp)
+	res, err := gnv.verifier.Search(ctx, inp)
 	return res.Names, err
 }
 
