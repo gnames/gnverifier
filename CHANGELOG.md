@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.9.1] - 2022-03-22 Tue
+
+- Add: update Go (v1.18), modules
+
 ## [v0.9.0] - 2022-03-13 Sun
 
 - Add [#91]: provide context to verification and searh methods.
@@ -50,7 +54,7 @@
 
 - Add [#70]: add a `-q` flag to suppress log output.
 - Add [#71]: Advanced Search `n:` field support abbreviated specific epithets,
-             year ranges.
+  year ranges.
 
 ## [v0.6.2]
 
@@ -98,7 +102,7 @@
 ## [v0.3.1]
 
 - Add [#49]: avoid possible race conditions by reimplementing GNverifier
-             interface.
+  interface.
 
 ## [v0.3.0]
 
@@ -156,6 +160,10 @@
 
 This document follows [changelog guidelines]
 
+[v0.9.1]: https://github.com/gnames/gnverifier/compare/v0.9.0...v0.9.1
+[v0.9.0]: https://github.com/gnames/gnverifier/compare/v0.8.2...v0.9.0
+[v0.8.2]: https://github.com/gnames/gnverifier/compare/v0.8.1...v0.8.2
+[v0.8.1]: https://github.com/gnames/gnverifier/compare/v0.8.0...v0.8.1
 [v0.8.0]: https://github.com/gnames/gnverifier/compare/v0.7.3...v0.8.0
 [v0.7.3]: https://github.com/gnames/gnverifier/compare/v0.7.2...v0.7.3
 [v0.7.2]: https://github.com/gnames/gnverifier/compare/v0.7.1...v0.7.2
@@ -184,7 +192,16 @@ This document follows [changelog guidelines]
 [v0.2.1]: https://github.com/gnames/gnverifier/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/gnames/gnverifier/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnverifier/tree/v0.1.0
-
+[#100]: https://github.com/gnames/gnverifier/issues/100
+[#99]: https://github.com/gnames/gnverifier/issues/99
+[#98]: https://github.com/gnames/gnverifier/issues/98
+[#97]: https://github.com/gnames/gnverifier/issues/97
+[#96]: https://github.com/gnames/gnverifier/issues/96
+[#95]: https://github.com/gnames/gnverifier/issues/95
+[#94]: https://github.com/gnames/gnverifier/issues/94
+[#93]: https://github.com/gnames/gnverifier/issues/93
+[#92]: https://github.com/gnames/gnverifier/issues/92
+[#91]: https://github.com/gnames/gnverifier/issues/91
 [#90]: https://github.com/gnames/gnverifier/issues/90
 [#89]: https://github.com/gnames/gnverifier/issues/89
 [#88]: https://github.com/gnames/gnverifier/issues/88
@@ -275,5 +292,4 @@ This document follows [changelog guidelines]
 [#3]: https://github.com/gnames/gnverifier/issues/3
 [#2]: https://github.com/gnames/gnverifier/issues/2
 [#1]: https://github.com/gnames/gnverifier/issues/1
-
 [changelog guidelines]: https://github.com/olivierlacan/keep-a-changelog
