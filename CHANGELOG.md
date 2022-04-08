@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.9.2] - 2022-04-08 Fri
+
+- Add: update gnlib to v0.12.0
+- Add: IRMNG data-source to web UI
+
 ## [v0.9.1] - 2022-03-22 Tue
 
 - Add: update Go (v1.18), modules
