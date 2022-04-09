@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.9.3] - 2022-04-09 Sat
+
+- Add: update gnlib to v0.13.0
+
 ## [v0.9.2] - 2022-04-08 Fri
 
 - Add: update gnlib to v0.12.0
@@ -165,6 +169,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.9.3]: https://github.com/gnames/gnverifier/compare/v0.9.2...v0.9.3
+[v0.9.2]: https://github.com/gnames/gnverifier/compare/v0.9.1...v0.9.2
 [v0.9.1]: https://github.com/gnames/gnverifier/compare/v0.9.0...v0.9.1
 [v0.9.0]: https://github.com/gnames/gnverifier/compare/v0.8.2...v0.9.0
 [v0.8.2]: https://github.com/gnames/gnverifier/compare/v0.8.1...v0.8.2
