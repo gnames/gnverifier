@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.9.4] - 2022-04-28 Thu
+
+- Add: update gnlib to v0.13.2
+
 ## [v0.9.3] - 2022-04-09 Sat
 
 - Add: update gnlib to v0.13.0
