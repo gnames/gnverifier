@@ -3,7 +3,6 @@ package gnverifier_test
 import (
 	"context"
 	"errors"
-	"fmt"
 	"os"
 	"sync"
 	"testing"
@@ -31,7 +30,6 @@ func TestDataSources(t *testing.T) {
 	vfr.DataSourcesReturns(nil, errors.New("fake error"))
 	res, err = gnv.DataSources()
 	assert.NotNil(t, err)
-	fmt.Printf("\nDATSR: %#v\n", res)
 }
 
 func TestDataSource(t *testing.T) {

@@ -28,11 +28,12 @@ import (
 )
 
 type formInput struct {
-	Names       string `query:"names" form:"names"`
-	Format      string `query:"format" form:"format"`
-	AllMatches  string `query:"all_matches" form:"all_matches"`
-	Capitalize  string `query:"capitalize" form:"capitalize"`
-	DataSources []int  `query:"ds" form:"ds"`
+	Names        string `query:"names" form:"names"`
+	Format       string `query:"format" form:"format"`
+	AllMatches   string `query:"all_matches" form:"all_matches"`
+	Capitalize   string `query:"capitalize" form:"capitalize"`
+	SpeciesGroup string `query:"species_group" form:"species_group"`
+	DataSources  []int  `query:"ds" form:"ds"`
 }
 
 //go:embed static
@@ -193,12 +194,16 @@ func getPreferredSources(ds []string) []int {
 
 func redirectToHomeGET(c echo.Context, inp *formInput) error {
 	caps := inp.Capitalize == "on"
+	spGr := inp.SpeciesGroup == "on"
 	q := make(url.Values)
 	q.Set("names", inp.Names)
 	q.Set("format", inp.Format)
 	q.Set("all_matches", inp.AllMatches)
 	if caps {
 		q.Set("capitalize", inp.Capitalize)
+	}
+	if spGr {
+		q.Set("species_group", inp.SpeciesGroup)
 	}
 	for i := range inp.DataSources {
 		q.Add("ds", strconv.Itoa(inp.DataSources[i]))
@@ -216,6 +221,7 @@ func verificationResults(
 ) error {
 	var names []string
 	caps := inp.Capitalize == "on"
+	spGr := inp.SpeciesGroup == "on"
 	data.AllMatches = inp.AllMatches == "on"
 
 	data.Input = inp.Names
@@ -244,6 +250,7 @@ func verificationResults(
 		opts := []config.Option{
 			config.OptDataSources(data.DataSourceIDs),
 			config.OptWithCapitalization(caps),
+			config.OptWithSpeciesGroup(spGr),
 			config.OptWithAllMatches(data.AllMatches),
 		}
 		gnv = gnv.ChangeConfig(opts...)
@@ -325,7 +332,6 @@ func setLogger(e *echo.Echo, m gnverifier.GNverifier) nsq.NSQ {
 			Contains:   contains,
 			Regex:      regex,
 		}
-		fmt.Printf("NSQ: %#v\n\n", cfg)
 		remote, err := nsqio.New(cfg)
 		logCfg := middleware.DefaultLoggerConfig
 		if err == nil {

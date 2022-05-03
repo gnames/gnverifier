@@ -162,6 +162,7 @@ func (gnv gnverifier) setParams(names []string) vlib.Input {
 		NameStrings:        names,
 		DataSources:        gnv.cfg.DataSources,
 		WithCapitalization: gnv.cfg.WithCapitalization,
+		WithSpeciesGroup:   gnv.cfg.WithSpeciesGroup,
 		WithAllMatches:     gnv.cfg.WithAllMatches,
 	}
 	return res

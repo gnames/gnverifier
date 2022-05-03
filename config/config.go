@@ -62,6 +62,13 @@ type Config struct {
 	// will be capitalized when appropriate.
 	WithCapitalization bool
 
+	// WithSpeciesGroup flag; it is true, verification tries to search not only
+	// for the given species name, but also for its species group. It means that
+	// searching for "Aus bus" will also search for "Aus bus bus" and vice versa.
+	// This function reflects existence of autononyms in botanical code, and
+	// coordinated names in zoological code.
+	WithSpeciesGroup bool
+
 	// WithWebLogs flag enables logs when running web-service. This flag is
 	// ignored if `Port` value is not set.
 	WithWebLogs bool
@@ -140,6 +147,13 @@ func OptWithAllMatches(b bool) Option {
 func OptWithCapitalization(b bool) Option {
 	return func(cnf *Config) {
 		cnf.WithCapitalization = b
+	}
+}
+
+// OptWithSpeciesGroup sets WithSpeciesGroup field.
+func OptWithSpeciesGroup(b bool) Option {
+	return func(cnf *Config) {
+		cnf.WithSpeciesGroup = b
 	}
 }
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.9.5] - 2022-05-02 Mon
+
+- Add: update gnlib to v0.13.7, gnames to v0.13.3.
+- Add: species group option.
+- Add: cardinality score
+
 ## [v0.9.4] - 2022-04-28 Thu
 
 - Add: update gnlib to v0.13.2
@@ -173,6 +179,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.9.5]: https://github.com/gnames/gnverifier/compare/v0.9.4...v0.9.5
+[v0.9.4]: https://github.com/gnames/gnverifier/compare/v0.9.3...v0.9.4
 [v0.9.3]: https://github.com/gnames/gnverifier/compare/v0.9.2...v0.9.3
 [v0.9.2]: https://github.com/gnames/gnverifier/compare/v0.9.1...v0.9.2
 [v0.9.1]: https://github.com/gnames/gnverifier/compare/v0.9.0...v0.9.1

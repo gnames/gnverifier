@@ -103,12 +103,14 @@ func addFuncs(tmpl *template.Template) {
 			return strings.Join(res, " >> ")
 		},
 		"scoreDetails": func(s float64, sd vlib.ScoreDetails) template.HTML {
+			card := "Same Cardinality"
 			curSrc := "Curated Source"
 			rank := "Rank Matched"
 			sds := []struct {
 				name string
 				val  float32
 			}{
+				{card, sd.CardinalityScore},
 				{rank, sd.InfraSpecificRankScore},
 				{"Not Fuzzy", sd.FuzzyLessScore},
 				{curSrc, sd.CuratedDataScore},

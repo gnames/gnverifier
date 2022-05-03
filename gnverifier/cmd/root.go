@@ -51,6 +51,7 @@ type cfgData struct {
 	VerifierURL        string
 	WithAllMatches     bool
 	WithCapitalization bool
+	WithSpeciesGroup   bool
 	WithWebLogs        bool
 }
 
@@ -88,6 +89,11 @@ https://github.com/gnames/gnverifier
 		caps, _ := cmd.Flags().GetBool("capitalize")
 		if caps {
 			opts = append(opts, config.OptWithCapitalization(true))
+		}
+
+		spGr, _ := cmd.Flags().GetBool("species_group")
+		if spGr {
+			opts = append(opts, config.OptWithSpeciesGroup(true))
 		}
 
 		formatString, _ := cmd.Flags().GetString("format")
@@ -185,7 +191,7 @@ func init() {
 	rootCmd.Flags().IntP("jobs", "j", 4, "Number of jobs running in parallel.")
 	rootCmd.Flags().IntP("port", "p", 0, "Port to run web GUI.")
 	rootCmd.Flags().BoolP("all_matches", "M", false, "return all matched results per source, not just the best one.")
-	// rootCmd.Flags().BoolP("quiet", "q", false, "supress logs output.")
+	rootCmd.Flags().BoolP("species_group", "g", false, "searching for species names also searches their species groups.")
 	rootCmd.Flags().BoolP("quiet", "q", false, "do not show progress")
 	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
   If sources are set and there are matches to their data,
@@ -239,6 +245,7 @@ func initConfig() {
 	_ = viper.BindEnv("VerifierURL", "GNV_VERIFIER_URL")
 	_ = viper.BindEnv("WithAllMatches", "GNV_WITH_ALL_MATCHES")
 	_ = viper.BindEnv("WithCapitalization", "GNV_WITH_CAPITALIZATION")
+	_ = viper.BindEnv("WithSpeciesGroup", "GNV_WITH_SPECIES_GROUP")
 	_ = viper.BindEnv("WithWebLogs", "GNV_WITH_WEB_LOGS")
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -293,6 +300,9 @@ func getOpts() {
 	}
 	if cfg.WithCapitalization {
 		opts = append(opts, config.OptWithCapitalization(true))
+	}
+	if cfg.WithSpeciesGroup {
+		opts = append(opts, config.OptWithSpeciesGroup(true))
 	}
 	if cfg.WithWebLogs {
 		opts = append(opts, config.OptWithWebLogs(true))
