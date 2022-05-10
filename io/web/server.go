@@ -195,12 +195,15 @@ func getPreferredSources(ds []string) []int {
 func redirectToHomeGET(c echo.Context, inp *formInput) error {
 	caps := inp.Capitalize == "on"
 	spGr := inp.SpeciesGroup == "on"
+	all := inp.AllMatches == "on"
 	q := make(url.Values)
 	q.Set("names", inp.Names)
 	q.Set("format", inp.Format)
-	q.Set("all_matches", inp.AllMatches)
 	if caps {
 		q.Set("capitalize", inp.Capitalize)
+	}
+	if all {
+		q.Set("all_matches", inp.AllMatches)
 	}
 	if spGr {
 		q.Set("species_group", inp.SpeciesGroup)

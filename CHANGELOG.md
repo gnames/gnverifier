@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.0.0-RC1] - 2022-05-10 Tue
+
+- Add: update gnmatcher, gnames to v1.0.0-RC1
+
 ## [v0.9.5] - 2022-05-02 Mon
 
 - Add: update gnlib to v0.13.7, gnames to v0.13.3.
@@ -179,6 +183,9 @@
 
 This document follows [changelog guidelines]
 
+<!-- VERSIONS -->
+
+[v1.0.0-rc1]: https://github.com/gnames/gnverifier/compare/v0.9.5...v1.0.0-RC1
 [v0.9.5]: https://github.com/gnames/gnverifier/compare/v0.9.4...v0.9.5
 [v0.9.4]: https://github.com/gnames/gnverifier/compare/v0.9.3...v0.9.4
 [v0.9.3]: https://github.com/gnames/gnverifier/compare/v0.9.2...v0.9.3
@@ -215,6 +222,9 @@ This document follows [changelog guidelines]
 [v0.2.1]: https://github.com/gnames/gnverifier/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/gnames/gnverifier/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnverifier/tree/v0.1.0
+
+<!-- Issues -->
+
 [#100]: https://github.com/gnames/gnverifier/issues/100
 [#99]: https://github.com/gnames/gnverifier/issues/99
 [#98]: https://github.com/gnames/gnverifier/issues/98
