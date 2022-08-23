@@ -5,7 +5,7 @@
 # DataSources is a list of data-source IDs that should always return
 # matched records if they are found.
 # You can find list of all data-sources at
-# https://verifier.globalnames.org/api/v0/data_sources
+# https://verifier.globalnames.org/api/v1/data_sources
 #
 # If DataSources are set to 0, results are returned from all sources.
 # DataSources:
@@ -34,7 +34,7 @@
 
 # VerifierURL is a URL to gnames REST API
 #
-# VerifierURL: "https://verifier.globalnames.org/api/v0/"
+# VerifierURL: "https://verifier.globalnames.org/api/v1/"
 
 # Jobs is number of jobs to run in parallel.
 #

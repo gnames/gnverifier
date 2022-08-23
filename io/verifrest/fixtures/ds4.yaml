@@ -7,7 +7,7 @@ interactions:
     headers:
       Content-Type:
       - application/json
-    url: https://verifier.globalnames.org/api/v0/data_sources/4
+    url: https://verifier.globalnames.org/api/v1/data_sources/4
     method: GET
   response:
     body: |

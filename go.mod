@@ -1,6 +1,6 @@
 module github.com/gnames/gnverifier
 
-go 1.18
+go 1.19
 
 require (
 	github.com/dnaeon/go-vcr v1.2.0
