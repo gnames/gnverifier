@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.0.0] - 2022-08-24 Wed
+
+- Add: prepare for v1.0.0
+
 ## [v1.0.0-RC1] - 2022-05-10 Tue
 
 - Add: update gnmatcher, gnames to v1.0.0-RC1

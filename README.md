@@ -462,9 +462,6 @@ to enter several settings at once loosely following rules of nomenclature
 (`n:B. bubo Linn. 1758`). For example, in contrast with GNparser results, it
 is possible to have abbreviated specific epithets or range in years: `n:Mono. gall. Oliv. 1750-1800`.
 
-The query language is in `Beta` stage, and might change to some degree, to
-improve its functionality.
-
 Often there are errors in species eptithets gender. Because of that search
 will try to detect names in any gender that correspond to the epithet.
 
@@ -502,11 +499,11 @@ details.
 [default gnverifier.yaml]: https://github.com/gnames/gnverifier/blob/master/gnverifier/cmd/gnverifier.yaml
 [dimus]: https://github.com/dimus
 [latest release]: https://github.com/gnames/gnverifier/releases/latest
-[gnames]: https://apidoc.globalnames.org/gnames-beta
+[gnames]: https://apidoc.globalnames.org/gnames
 [go-install]: https://golang.org/doc/install
 [test directory]: https://github.com/gnames/gnverifier/tree/master/testdata
 [ubio]: https://ubio.org/
-[verifier api]: https://apidoc.globalnames.org/gnames-beta
+[verifier api]: https://apidoc.globalnames.org/gnames
 [web-service]: https://verifier.globalnames.org
 [win-pdf]: https://github.com/gnames/gnverifier/blob/master/use-gnverifier-windows.pdf
 [winpath]: https://www.computerhope.com/issues/ch000549.htm

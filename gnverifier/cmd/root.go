@@ -213,7 +213,7 @@ func init() {
   195 - AlgaeBase`)
 	rootCmd.Flags().StringP("verifier_url", "v", "",
 		`URL for verification service.
-  Default: https://verifier.globalnames.org/api/v0`)
+  Default: https://verifier.globalnames.org/api/v1`)
 	rootCmd.Flags().BoolP("web-logs", "", false, "enable logs for the web service")
 	rootCmd.Flags().StringP("nsqd-tcp", "", "", "an addresss pointing to NSQ TCP service for logs redirection (e.g. 127.0.0.1:4150)")
 }

@@ -14,7 +14,7 @@ func TestConfigDefault(t *testing.T) {
 	cnf := config.New()
 	deflt := config.Config{
 		Format:      gnfmt.CSV,
-		VerifierURL: "https://verifier.globalnames.org/api/v0/",
+		VerifierURL: "https://verifier.globalnames.org/api/v1/",
 	}
 	assert.Equal(t, deflt.Format, cnf.Format)
 	assert.Equal(t, deflt.VerifierURL, cnf.VerifierURL)

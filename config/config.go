@@ -91,7 +91,7 @@ func OptFormat(f gnfmt.Format) Option {
 	}
 }
 
-//OptJobs sets number of jobs to run in parallel.
+// OptJobs sets number of jobs to run in parallel.
 func OptJobs(i int) Option {
 	return func(cnf *Config) {
 		cnf.Jobs = i
@@ -169,7 +169,7 @@ func OptWithWebLogs(b bool) Option {
 func New(opts ...Option) Config {
 	cnf := Config{
 		Format:            gnfmt.CSV,
-		VerifierURL:       "https://verifier.globalnames.org/api/v0/",
+		VerifierURL:       "https://verifier.globalnames.org/api/v1/",
 		Batch:             5000,
 		Jobs:              4,
 		NamesNumThreshold: 20,

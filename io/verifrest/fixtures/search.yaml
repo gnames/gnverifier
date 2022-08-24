@@ -7,7 +7,7 @@ interactions:
     headers:
       Content-Type:
       - application/json
-    url: https://verifier.globalnames.org/api/v0/search/n:Bubo%20bubo%20all:true
+    url: https://verifier.globalnames.org/api/v1/search/n:Bubo%20bubo%20all:true
     method: GET
   response:
     body: |

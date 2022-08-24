@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var urlAPI = "https://verifier.globalnames.org/api/v0/"
+var urlAPI = "https://verifier.globalnames.org/api/v1/"
 
 func TestDataSources(t *testing.T) {
 	r, err := recorder.New("fixtures/dss")
