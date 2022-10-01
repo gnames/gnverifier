@@ -365,7 +365,7 @@ func checkStdin() bool {
 	stdInFile := os.Stdin
 	stat, err := stdInFile.Stat()
 	if err != nil {
-		log.Fatal().Err(err)
+		log.Fatal().Err(err).Msg("checkStdin")
 	}
 	return (stat.Mode() & os.ModeCharDevice) == 0
 }
@@ -387,7 +387,7 @@ func verify(gnv gnverifier.GNverifier, str string) {
 	if fileExists {
 		f, err := os.OpenFile(str, os.O_RDONLY, os.ModePerm)
 		if err != nil {
-			log.Fatal().Err(err)
+			log.Fatal().Err(err).Msg("verify")
 		}
 		verifyFile(gnv, f)
 		f.Close()
@@ -452,7 +452,7 @@ func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Name,
 func verifyString(gnv gnverifier.GNverifier, name string) {
 	res, err := gnv.VerifyOne(name)
 	if err != nil {
-		log.Fatal().Err(err)
+		log.Fatal().Err(err).Msg("verifyString")
 	}
 
 	f := gnv.Config().Format
@@ -473,7 +473,7 @@ func searchQuery(gnv gnverifier.GNverifier, s string) {
 	}
 	res, err := gnv.Search(context.Background(), inp)
 	if err != nil {
-		log.Fatal().Err(err)
+		log.Fatal().Err(err).Msg("searchQuery")
 	}
 
 	f := gnv.Config().Format

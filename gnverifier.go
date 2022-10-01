@@ -3,7 +3,6 @@ package gnverifier
 import (
 	"context"
 	"errors"
-	"log"
 	"sync"
 	"time"
 
@@ -12,6 +11,7 @@ import (
 	"github.com/gnames/gnquery/ent/search"
 	"github.com/gnames/gnverifier/config"
 	"github.com/gnames/gnverifier/ent/verifier"
+	"github.com/rs/zerolog/log"
 )
 
 type gnverifier struct {
@@ -123,7 +123,7 @@ func (gnv gnverifier) verifyWorker(
 		}
 		verif := gnv.verifier.Verify(ctx, params)
 		if len(verif.Names) < 1 {
-			log.Fatalf("Did not get results from verifier")
+			log.Fatal().Msgf("Did not get results from verifier")
 		}
 		out <- verif.Names
 	}

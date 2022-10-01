@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.0.1] - 2022-09-30 Fri
+
+- Add: update all modules
+
 ## [v1.0.0] - 2022-08-24 Wed
 
 - Add: prepare for v1.0.0
