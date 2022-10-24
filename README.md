@@ -456,7 +456,7 @@ The setting can be `true` or `false` (`all:t`, `all:f`). This setting
 will also become true if `sources` command line option is set to `0`.
 
 `n:`
-: A "name" setting, that allows to combine several query components together
+: A "name" setting. It allows to combine several query components together
 for convenience. Note that it is not a 'real' scientific name, but a shortcut
 to enter several settings at once loosely following rules of nomenclature
 (`n:B. bubo Linn. 1758`). For example, in contrast with GNparser results, it
