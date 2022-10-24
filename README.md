@@ -444,8 +444,8 @@ It includes following operators:
 option, if given, will overwrite this setting (`ds:1,2,172`).
 
 `tx:`
-: Parent taxon. Limits results to names that contain a particular clade in
-their classification. If `ds:` is given, uses the classification of the
+: Parent taxon. Limits results to names that contain a particular higher taxon
+in their classification. If `ds:` is given, uses the classification of the
 first data-source in the setting. If `ds:` is not given, uses managerial
 classification of the Catalogue of Life (`tx:Hemiptera`, `tx:Animalia`,
 `tx:Magnoliopsida`).
@@ -453,14 +453,15 @@ classification of the Catalogue of Life (`tx:Hemiptera`, `tx:Animalia`,
 `all:`
 : If true, [GNverifier] will show all results, not only the best ones.
 The setting can be `true` or `false` (`all:t`, `all:f`). This setting
-will become true if `sources` command line option is set to `0`.
+will also become true if `sources` command line option is set to `0`.
 
 `n:`
 : A "name" setting, that allows to combine several query components together
 for convenience. Note that it is not a 'real' scientific name, but a shortcut
 to enter several settings at once loosely following rules of nomenclature
 (`n:B. bubo Linn. 1758`). For example, in contrast with GNparser results, it
-is possible to have abbreviated specific epithets or range in years: `n:Mono. gall. Oliv. 1750-1800`.
+is possible to have abbreviated specific epithets or range in
+years: `n:Mono. gall. Oliv. 1750-1800`.
 
 Often there are errors in species eptithets gender. Because of that search
 will try to detect names in any gender that correspond to the epithet.
