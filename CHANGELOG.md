@@ -2,6 +2,7 @@
 
 ## [v1.0.2] - 2023-03-09 Thu
 
+- Add [#101]: more data-sources for web-UI.
 - Add [#100]: refactor to a better file organization.
 
 ## [v1.0.1] - 2022-09-30 Fri
