@@ -1,5 +1,6 @@
-gnverifier/gnverifier
+gnverifier
 debug.test
+coverage.txt
 t
 t.json
 .env

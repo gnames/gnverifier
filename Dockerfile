@@ -1,12 +1,10 @@
-FROM alpine:3.14
+FROM alpine:3.17
 
 LABEL maintainer="Dmitry Mozzherin"
 
-ENV LAST_FULL_REBUILD 2021-04-09
-
 WORKDIR /bin
 
-COPY ./gnverifier/gnverifier /bin
+COPY ./gnverifier /bin
 
 ENTRYPOINT [ "gnverifier" ]
 

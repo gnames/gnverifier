@@ -6,7 +6,7 @@ import (
 	"github.com/gnames/gnlib/ent/gnvers"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnquery/ent/search"
-	"github.com/gnames/gnverifier/config"
+	"github.com/gnames/gnverifier/pkg/config"
 )
 
 // GNverifier is the use-case interface of the gnverifier app. It determines

@@ -13,7 +13,7 @@ import (
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnquery/ent/search"
 	"github.com/gnames/gnuuid"
-	"github.com/gnames/gnverifier/ent/verifier"
+	"github.com/gnames/gnverifier/internal/ent/verifier"
 	"github.com/rs/zerolog/log"
 )
 

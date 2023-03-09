@@ -1,14 +1,21 @@
+PROJ_NAME = gnverifier
+
 VERSION = $(shell git describe --tags)
 VER = $(shell git describe --tags --abbrev=0)
 DATE = $(shell date -u '+%Y-%m-%d_%H:%M:%S%Z')
-FLAG_MODULE = GO111MODULE=on
-FLAGS_SHARED = $(FLAG_MODULE) CGO_ENABLED=0 GOARCH=amd64
+
+NO_C = CGO_ENABLED=0
+FLAGS_SHARED = $(NO_C) GOARCH=amd64
 FLAGS_LD=-ldflags "-w -s \
-                  -X github.com/gnames/gnverifier.Build=${DATE} \
-                  -X github.com/gnames/gnverifier.Version=${VERSION}"
+                  -X github.com/gnames/$(PROJ_NAME)/pkg.Build=$(DATE) \
+                  -X github.com/gnames/$(PROJ_NAME)/pkg.Version=$(VERSION)"
+FLAGS_REL = -trimpath -ldflags "-s -w \
+						-X github.com/gnames/$(PROJ_NAME)/pkg.Build=$(DATE)"
+
 GOCMD=go
 GOINSTALL=$(GOCMD) install $(FLAGS_LD)
 GOBUILD=$(GOCMD) build $(FLAGS_LD)
+GORELEASE = $(GOCMD) build $(FLAGS_REL)
 GOCLEAN=$(GOCMD) clean
 GOGENERATE=$(GOCMD) generate
 GOGET = $(GOCMD) get
@@ -17,48 +24,57 @@ all: install
 
 test: deps install
 	@echo Run tests
-	$(FLAG_MODULE) go test -race ./...
+	$(GOCMD) test -shuffle=on -count=1 -race -coverprofile=coverage.txt ./...
+
+tools: deps
+	@echo Installing tools from tools.go
+	@cat tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
 
 deps:
 	@echo Download go.mod dependencies
 	$(GOCMD) mod download; \
 	$(GOGENERATE)
 
-tools: deps
-	@echo Installing tools from tools.go
-	@cat gnverifier/tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
-
 build:
+	@echo Building
 	$(GOGENERATE)
-	cd gnverifier; \
 	$(GOCLEAN); \
-	$(FLAGS_SHARED) $(GOBUILD);
+	$(NO_C) $(GOBUILD);
+
+buildrel:
+	@echo Building release binary
+	$(GOGENERATE)
+	$(GOCLEAN); \
+	$(NO_C) $(GORELEASE);
+
+install:
+	@echo Build and install locally
+	$(GOGENERATE)
+	$(NO_C) $(GOINSTALL);
 
 release: dockerhub
 	@echo Building releases for Linux, Mac, Windows
-	cd gnverifier; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD); \
-	tar zcvf /tmp/gnverifier-${VER}-linux.tar.gz gnverifier; \
+	tar zcvf /tmp/$(PROJ_NAME)-${VER}-linux.tar.gz $(PROJ_NAME); \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=darwin $(GOBUILD); \
-	tar zcvf /tmp/gnverifier-${VER}-mac.tar.gz gnverifier; \
+	tar zcvf /tmp/$(PROJ_NAME)-${VER}-mac.tar.gz $(PROJ_NAME); \
+	$(GOCLEAN); \
+	$(NO_C) GOOS=darwin GOARCH=arm64 $(GOBUILD); \
+	tar zcvf /tmp/$(PROJ_NAME)-${VER}-mac-arm64.tar.gz $(PROJ_NAME); \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=windows $(GOBUILD); \
-	zip -9 /tmp/gnverifier-${VER}-win-64.zip gnverifier.exe; \
+	zip -9 /tmp/$(PROJ_NAME)-${VER}-win-64.zip $(PROJ_NAME).exe; \
 	$(GOCLEAN);
 
-install:
-	$(GOGENERATE)
-	cd gnverifier; \
-	$(FLAGS_SHARED) $(GOINSTALL);
-
 docker: build
-	docker build -t gnames/gnverifier:latest -t gnames/gnverifier:$(VERSION) .; \
-	cd gnverifier; \
+	@echo Build Docker images
+	docker buildx build -t gnames/$(PROJ_NAME):latest -t gnames/$(PROJ_NAME):$(VERSION) .; \
 	$(GOCLEAN);
 
 dockerhub: docker
-	docker push gnames/gnverifier; \
-	docker push gnames/gnverifier:$(VERSION)
+	@echo Push Docker images to DockerHub
+	docker push gnames/$(PROJ_NAME); \
+	docker push gnames/$(PROJ_NAME):$(VERSION)
 

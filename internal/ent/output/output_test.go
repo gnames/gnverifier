@@ -8,7 +8,7 @@ import (
 	"github.com/dnaeon/go-vcr/cassette"
 	"github.com/gnames/gnfmt"
 	vlib "github.com/gnames/gnlib/ent/verifier"
-	"github.com/gnames/gnverifier/ent/output"
+	"github.com/gnames/gnverifier/internal/ent/output"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 )

@@ -10,9 +10,9 @@ import (
 	"github.com/dnaeon/go-vcr/cassette"
 	"github.com/gnames/gnfmt"
 	vlib "github.com/gnames/gnlib/ent/verifier"
-	"github.com/gnames/gnverifier"
-	"github.com/gnames/gnverifier/config"
-	vtest "github.com/gnames/gnverifier/ent/verifier/verifiertesting"
+	vtest "github.com/gnames/gnverifier/internal/ent/verifier/verifiertesting"
+	gnverifier "github.com/gnames/gnverifier/pkg"
+	"github.com/gnames/gnverifier/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 )
@@ -28,7 +28,7 @@ func TestDataSources(t *testing.T) {
 	assert.Equal(t, dss, res)
 
 	vfr.DataSourcesReturns(nil, errors.New("fake error"))
-	res, err = gnv.DataSources()
+	_, err = gnv.DataSources()
 	assert.NotNil(t, err)
 }
 
@@ -140,7 +140,7 @@ func TestVerifyStream(t *testing.T) {
 
 func dataSources(t *testing.T) []vlib.DataSource {
 	c := cassette.New("dss")
-	data, err := os.ReadFile("io/verifrest/fixtures/dss.yaml")
+	data, err := os.ReadFile("../internal/io/verifrest/fixtures/dss.yaml")
 	assert.Nil(t, err)
 	err = yaml.Unmarshal(data, c)
 	assert.Nil(t, err)
@@ -154,7 +154,7 @@ func dataSources(t *testing.T) []vlib.DataSource {
 
 func verifications(t *testing.T) vlib.Output {
 	c := cassette.New("dss")
-	data, err := os.ReadFile("io/verifrest/fixtures/names.yaml")
+	data, err := os.ReadFile("../internal/io/verifrest/fixtures/names.yaml")
 	assert.Nil(t, err)
 	err = yaml.Unmarshal(data, c)
 	assert.Nil(t, err)

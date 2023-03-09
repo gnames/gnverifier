@@ -1,16 +1,20 @@
 # Changelog
 
+## [v1.0.2] - 2023-03-09 Thu
+
+- Add [#100]: refactor to a better file organization.
+
 ## [v1.0.1] - 2022-09-30 Fri
 
-- Add: update all modules
+- Add: update all modules.
 
 ## [v1.0.0] - 2022-08-24 Wed
 
-- Add: prepare for v1.0.0
+- Add: prepare for v1.0.0.
 
 ## [v1.0.0-RC1] - 2022-05-10 Tue
 
-- Add: update gnmatcher, gnames to v1.0.0-RC1
+- Add: update gnmatcher, gnames to v1.0.0-RC1.
 
 ## [v0.9.5] - 2022-05-02 Mon
 
@@ -193,6 +197,9 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.0.2]: https://github.com/gnames/gnverifier/compare/v1.0.1...v1.0.2
+[v1.0.1]: https://github.com/gnames/gnverifier/compare/v1.0.0...v1.0.1
+[v1.0.0]: https://github.com/gnames/gnverifier/compare/v1.0.0-RC1...v1.0.0
 [v1.0.0-rc1]: https://github.com/gnames/gnverifier/compare/v0.9.5...v1.0.0-RC1
 [v0.9.5]: https://github.com/gnames/gnverifier/compare/v0.9.4...v0.9.5
 [v0.9.4]: https://github.com/gnames/gnverifier/compare/v0.9.3...v0.9.4
@@ -233,6 +240,16 @@ This document follows [changelog guidelines]
 
 <!-- Issues -->
 
+[#110]: https://github.com/gnames/gnverifier/issues/110
+[#109]: https://github.com/gnames/gnverifier/issues/109
+[#108]: https://github.com/gnames/gnverifier/issues/108
+[#107]: https://github.com/gnames/gnverifier/issues/107
+[#106]: https://github.com/gnames/gnverifier/issues/106
+[#105]: https://github.com/gnames/gnverifier/issues/105
+[#104]: https://github.com/gnames/gnverifier/issues/104
+[#103]: https://github.com/gnames/gnverifier/issues/103
+[#102]: https://github.com/gnames/gnverifier/issues/102
+[#101]: https://github.com/gnames/gnverifier/issues/101
 [#100]: https://github.com/gnames/gnverifier/issues/100
 [#99]: https://github.com/gnames/gnverifier/issues/99
 [#98]: https://github.com/gnames/gnverifier/issues/98

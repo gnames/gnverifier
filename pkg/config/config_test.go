@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/gnames/gnfmt"
-	"github.com/gnames/gnverifier/config"
+	"github.com/gnames/gnverifier/pkg/config"
 	"github.com/stretchr/testify/assert"
 )
 
