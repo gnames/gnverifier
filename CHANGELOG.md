@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.0.3] - 2023-05-01 Mon
+
+- Add: Nomenclator Zoologicus data-source.
+
 ## [v1.0.2] - 2023-03-09 Thu
 
 - Add [#101]: more data-sources for web-UI.
@@ -198,6 +202,7 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.0.3]: https://github.com/gnames/gnverifier/compare/v1.0.2...v1.0.3
 [v1.0.2]: https://github.com/gnames/gnverifier/compare/v1.0.1...v1.0.2
 [v1.0.1]: https://github.com/gnames/gnverifier/compare/v1.0.0...v1.0.1
 [v1.0.0]: https://github.com/gnames/gnverifier/compare/v1.0.0-RC1...v1.0.0
