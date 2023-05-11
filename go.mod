@@ -2,13 +2,11 @@ module github.com/gnames/gnverifier
 
 go 1.20
 
-replace github.com/gnames/gnlib => ../gnlib
-
 require (
 	github.com/dnaeon/go-vcr v1.2.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/gnames/gnfmt v0.4.1
-	github.com/gnames/gnlib v0.14.0
+	github.com/gnames/gnlib v0.15.0
 	github.com/gnames/gnquery v0.3.3
 	github.com/gnames/gnsys v0.2.2
 	github.com/gnames/gnuuid v0.1.1

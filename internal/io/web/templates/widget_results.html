@@ -1,8 +1,8 @@
-{{ define "results" }}
+{{ define "widget_results" }}
 <div class='source-match'>
   <div class='source-names-score'>
+    <img src='/static/images/favicon.ico' />
     <span class='source-name-string'>{{ .MatchedName }}</span>
-    [ {{ matchType .MatchType .EditDistance }} ]
   </div>
   {{ if .CurrentName }}
   {{ if ne .MatchedName .CurrentName }}
@@ -26,6 +26,8 @@
   <div class='source-classification-path'>{{ classification .ClassificationPath .ClassificationRanks }}</div>
   {{ end }}
 
-  {{ scoreDetails .SortScore .ScoreDetails }}
+  <div class='score'>
+  SortScore: {{ printf "%.3f" .SortScore }}
+  </div>
 </div>
 {{ end }}

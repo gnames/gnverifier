@@ -55,7 +55,7 @@ func TestAPI(t *testing.T) {
 
 	assert.Nil(t, api(gnv)(c))
 	assert.Equal(t, http.StatusOK, rec.Code)
-	assert.Contains(t, rec.Body.String(), "OpenAPI Schema")
+	assert.Contains(t, rec.Body.String(), "API Documentation")
 }
 
 func TestHomeGET(t *testing.T) {

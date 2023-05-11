@@ -1,5 +1,7 @@
 # Changelog
 
+## [v1.1.0] - 2023-05-12 Fri
+
 - Add [#104]: name-string widget.
 - Add [#103]: name-string endpoint.
 
