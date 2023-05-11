@@ -1,5 +1,8 @@
 # Changelog
 
+- Add [#104]: name-string widget.
+- Add [#103]: name-string endpoint.
+
 ## [v1.0.3] - 2023-05-01 Mon
 
 - Add: Nomenclator Zoologicus data-source.

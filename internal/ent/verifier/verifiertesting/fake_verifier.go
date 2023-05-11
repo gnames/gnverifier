@@ -38,6 +38,20 @@ type FakeVerifier struct {
 		result1 []verifiera.DataSource
 		result2 error
 	}
+	NameStringStub        func(context.Context, verifiera.NameStringInput) (verifiera.NameStringOutput, error)
+	nameStringMutex       sync.RWMutex
+	nameStringArgsForCall []struct {
+		arg1 context.Context
+		arg2 verifiera.NameStringInput
+	}
+	nameStringReturns struct {
+		result1 verifiera.NameStringOutput
+		result2 error
+	}
+	nameStringReturnsOnCall map[int]struct {
+		result1 verifiera.NameStringOutput
+		result2 error
+	}
 	SearchStub        func(context.Context, search.Input) (search.Output, error)
 	searchMutex       sync.RWMutex
 	searchArgsForCall []struct {
@@ -197,6 +211,71 @@ func (fake *FakeVerifier) DataSourcesReturnsOnCall(i int, result1 []verifiera.Da
 	}{result1, result2}
 }
 
+func (fake *FakeVerifier) NameString(arg1 context.Context, arg2 verifiera.NameStringInput) (verifiera.NameStringOutput, error) {
+	fake.nameStringMutex.Lock()
+	ret, specificReturn := fake.nameStringReturnsOnCall[len(fake.nameStringArgsForCall)]
+	fake.nameStringArgsForCall = append(fake.nameStringArgsForCall, struct {
+		arg1 context.Context
+		arg2 verifiera.NameStringInput
+	}{arg1, arg2})
+	stub := fake.NameStringStub
+	fakeReturns := fake.nameStringReturns
+	fake.recordInvocation("NameString", []interface{}{arg1, arg2})
+	fake.nameStringMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeVerifier) NameStringCallCount() int {
+	fake.nameStringMutex.RLock()
+	defer fake.nameStringMutex.RUnlock()
+	return len(fake.nameStringArgsForCall)
+}
+
+func (fake *FakeVerifier) NameStringCalls(stub func(context.Context, verifiera.NameStringInput) (verifiera.NameStringOutput, error)) {
+	fake.nameStringMutex.Lock()
+	defer fake.nameStringMutex.Unlock()
+	fake.NameStringStub = stub
+}
+
+func (fake *FakeVerifier) NameStringArgsForCall(i int) (context.Context, verifiera.NameStringInput) {
+	fake.nameStringMutex.RLock()
+	defer fake.nameStringMutex.RUnlock()
+	argsForCall := fake.nameStringArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeVerifier) NameStringReturns(result1 verifiera.NameStringOutput, result2 error) {
+	fake.nameStringMutex.Lock()
+	defer fake.nameStringMutex.Unlock()
+	fake.NameStringStub = nil
+	fake.nameStringReturns = struct {
+		result1 verifiera.NameStringOutput
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeVerifier) NameStringReturnsOnCall(i int, result1 verifiera.NameStringOutput, result2 error) {
+	fake.nameStringMutex.Lock()
+	defer fake.nameStringMutex.Unlock()
+	fake.NameStringStub = nil
+	if fake.nameStringReturnsOnCall == nil {
+		fake.nameStringReturnsOnCall = make(map[int]struct {
+			result1 verifiera.NameStringOutput
+			result2 error
+		})
+	}
+	fake.nameStringReturnsOnCall[i] = struct {
+		result1 verifiera.NameStringOutput
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeVerifier) Search(arg1 context.Context, arg2 search.Input) (search.Output, error) {
 	fake.searchMutex.Lock()
 	ret, specificReturn := fake.searchReturnsOnCall[len(fake.searchArgsForCall)]
@@ -331,6 +410,8 @@ func (fake *FakeVerifier) Invocations() map[string][][]interface{} {
 	defer fake.dataSourceMutex.RUnlock()
 	fake.dataSourcesMutex.RLock()
 	defer fake.dataSourcesMutex.RUnlock()
+	fake.nameStringMutex.RLock()
+	defer fake.nameStringMutex.RUnlock()
 	fake.searchMutex.RLock()
 	defer fake.searchMutex.RUnlock()
 	fake.verifyMutex.RLock()

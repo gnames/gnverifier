@@ -1,6 +1,7 @@
 package output_test
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -53,7 +54,7 @@ func TestOutput(t *testing.T) {
 				assert.Contains(t, res, "bestResult", "pretty 2")
 				assert.Contains(t, res, "results", "pretty 3")
 			},
-			linesNum: 110,
+			linesNum: 116,
 		},
 		{
 			msg:    "compact",
@@ -72,7 +73,10 @@ func TestOutput(t *testing.T) {
 		t.Run(tests[i].msg, func(t *testing.T) {
 			res := output.NameOutput(tests[i].input, tests[i].format)
 			lines := strings.Split(res, "\n")
-			assert.Equal(t, tests[i].linesNum, len(lines))
+			assert.Equal(t, tests[i].linesNum, len(lines), tests[i].msg)
+			if tests[i].msg == "pretty" {
+				fmt.Println(res)
+			}
 			tests[i].test(t, res)
 		})
 	}

@@ -46,6 +46,12 @@ func (gnv gnverifier) DataSource(id int) (vlib.DataSource, error) {
 	return gnv.verifier.DataSource(context.Background(), id)
 }
 
+func (gnv gnverifier) NameString(
+	inp vlib.NameStringInput,
+) (vlib.NameStringOutput, error) {
+	return gnv.verifier.NameString(context.Background(), inp)
+}
+
 // ChangeConfig modifies configuration.
 func (gnv gnverifier) ChangeConfig(opts ...config.Option) GNverifier {
 	for i := range opts {

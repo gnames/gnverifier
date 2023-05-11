@@ -61,6 +61,7 @@ func Run(gnv gnverifier.GNverifier, port int) {
 	e.POST("/", homePOST(gnv))
 	e.GET("/data_sources", dataSources(gnv))
 	e.GET("/data_sources/:id", dataSource(gnv))
+	e.GET("/name_strings/:id", nameString(gnv))
 	e.GET("/about", about(gnv))
 	e.GET("/api", api(gnv))
 
@@ -99,6 +100,66 @@ func api(gnv gnverifier.GNverifier) func(echo.Context) error {
 	return func(c echo.Context) error {
 		data := Data{Page: "api", Version: gnv.GetVersion().Version}
 		return c.Render(http.StatusOK, "layout", data)
+	}
+}
+
+func nameString(gnv gnverifier.GNverifier) func(echo.Context) error {
+	return func(c echo.Context) error {
+		id, _ := url.QueryUnescape(c.Param("id"))
+		var ds []int
+		var allMatches bool
+		dsStr := c.QueryParam("data_sources")
+		if dsStr != "" {
+			dss := strings.Split(dsStr, ",")
+			for i := range dss {
+				num, err := strconv.Atoi(dss[i])
+				if err == nil {
+					ds = append(ds, num)
+				}
+			}
+		}
+		allMatches = c.QueryParam("all_matches") == "true"
+		inp := vlib.NameStringInput{
+			ID:             id,
+			DataSources:    ds,
+			WithAllMatches: allMatches,
+		}
+		res, err := gnv.NameString(inp)
+		if err != nil {
+			return err
+		}
+		var names []vlib.Name
+		if res.Name != nil {
+			names = []vlib.Name{*res.Name}
+		}
+
+		data := Data{
+			Input:         inp.ID,
+			Format:        "html",
+			DataSourceIDs: inp.DataSources,
+			AllMatches:    inp.WithAllMatches,
+			Page:          "home",
+			Verified:      names,
+			Version:       gnv.GetVersion().Version,
+		}
+		format := c.QueryParam("format")
+		if format == "csv" || format == "json" || format == "tsv" {
+			data.Format = format
+		}
+
+		fmt.Printf("NAME: %#v\n\n", data)
+		switch data.Format {
+		case "json":
+			return c.JSON(http.StatusOK, data.Verified)
+		case "csv":
+			res := formatRows(data, gnfmt.CSV)
+			return c.String(http.StatusOK, strings.Join(res, "\n"))
+		case "tsv":
+			res := formatRows(data, gnfmt.TSV)
+			return c.String(http.StatusOK, strings.Join(res, "\n"))
+		default:
+			return c.Render(http.StatusOK, "layout", data)
+		}
 	}
 }
 

@@ -40,6 +40,10 @@ type GNverifier interface {
 	// data-source.
 	DataSource(id int) (vlib.DataSource, error)
 
+	// NameString finds verification data by either name-string itself, or
+	// its UUID.
+	NameString(vlib.NameStringInput) (vlib.NameStringOutput, error)
+
 	// GetVersion returns version of the gnverifier
 	GetVersion() gnvers.Version
 }

@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gnames/gnfmt"
@@ -122,7 +124,7 @@ func (vr verifrest) DataSource(
 
 	resp, err := vr.client.Do(request)
 	if err != nil {
-		log.Warn().Msg("Cannot get data-sources information")
+		log.Warn().Err(err).Msg("Cannot get data-sources information")
 		return response, err
 	}
 	defer resp.Body.Close()
@@ -138,6 +140,54 @@ func (vr verifrest) DataSource(
 		return response, err
 	}
 	return response, nil
+}
+
+func (vr verifrest) NameString(
+	ctx context.Context,
+	input vlib.NameStringInput,
+) (vlib.NameStringOutput, error) {
+	var res vlib.NameStringOutput
+	enc := gnfmt.GNjson{}
+	url := fmt.Sprintf("%sname_strings/%s", vr.verifierURL, input.ID)
+	var params []string
+	if len(input.DataSources) > 0 {
+		nums := make([]string, len(input.DataSources))
+		for i, v := range input.DataSources {
+			nums[i] = strconv.Itoa(v)
+		}
+		ds := "data_sources=" + strings.Join(nums, ",")
+		params = []string{ds}
+	}
+	if input.WithAllMatches {
+		params = append(params, "all_matches=true")
+	}
+	if len(params) > 0 {
+		url = url + "?" + strings.Join(params, "&")
+	}
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		log.Warn().Err(err).Msg("Cannot create request")
+		return res, err
+	}
+	request.Header.Set("Content-Type", "application/json")
+	resp, err := vr.client.Do(request)
+	if err != nil {
+		log.Warn().Err(err).Msg("Cannot get name-string information")
+		return res, err
+	}
+	defer resp.Body.Close()
+
+	respBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Warn().Err(err).Msg("Body reading is failing for a name-string response")
+		return res, err
+	}
+	err = enc.Decode(respBytes, &res)
+	if err != nil {
+		log.Warn().Err(err).Msg("Cannot decode name-string response")
+		return res, err
+	}
+	return res, nil
 }
 
 // Verify takes names-strings and options and returns verification result.

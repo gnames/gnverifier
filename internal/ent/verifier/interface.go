@@ -10,12 +10,20 @@ import (
 //go:generate counterfeiter -o verifiertesting/fake_verifier.go . Verifier
 
 // Verifier takes verification parameters and returns back results
-//  of verification of name-strings.
+//
+//	of verification of name-strings.
 type Verifier interface {
 	// Verify takes a slice of strings to verify, optional preferred data-sources
 	// and returns results of verification of the strings against known
 	// scientific names.
 	Verify(ctx context.Context, params vlib.Input) vlib.Output
+
+	// NameString takes a name-string or its ID, as well as query parameters.
+	// It returns results for this particular name-string.
+	NameString(
+		ctx context.Context,
+		inp vlib.NameStringInput,
+	) (vlib.NameStringOutput, error)
 
 	DataSourcer
 	Searcher
