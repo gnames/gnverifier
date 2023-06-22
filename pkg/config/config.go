@@ -69,6 +69,11 @@ type Config struct {
 	// coordinated names in zoological code.
 	WithSpeciesGroup bool
 
+	// WithUninomialFuzzyMatch flag; when true, uninomial names are not
+	// restricted from fuzzy matching. Normally it creates too many false
+	// positives and is switched off.
+	WithUninomialFuzzyMatch bool
+
 	// WithWebLogs flag enables logs when running web-service. This flag is
 	// ignored if `Port` value is not set.
 	WithWebLogs bool
@@ -154,6 +159,12 @@ func OptWithCapitalization(b bool) Option {
 func OptWithSpeciesGroup(b bool) Option {
 	return func(cnf *Config) {
 		cnf.WithSpeciesGroup = b
+	}
+}
+
+func OptWithUninomialFuzzyMatch(b bool) Option {
+	return func(cnf *Config) {
+		cnf.WithUninomialFuzzyMatch = b
 	}
 }
 

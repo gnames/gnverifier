@@ -25,9 +25,5 @@
   {{ if .ClassificationPath }}
   <div class='source-classification-path'>{{ classification .ClassificationPath .ClassificationRanks }}</div>
   {{ end }}
-
-  <div class='score'>
-  SortScore: {{ printf "%.3f" .SortScore }}
-  </div>
 </div>
 {{ end }}

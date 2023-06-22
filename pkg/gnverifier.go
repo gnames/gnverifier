@@ -165,11 +165,12 @@ func (gnv gnverifier) loadNames(
 
 func (gnv gnverifier) setParams(names []string) vlib.Input {
 	res := vlib.Input{
-		NameStrings:        names,
-		DataSources:        gnv.cfg.DataSources,
-		WithCapitalization: gnv.cfg.WithCapitalization,
-		WithSpeciesGroup:   gnv.cfg.WithSpeciesGroup,
-		WithAllMatches:     gnv.cfg.WithAllMatches,
+		NameStrings:             names,
+		DataSources:             gnv.cfg.DataSources,
+		WithCapitalization:      gnv.cfg.WithCapitalization,
+		WithSpeciesGroup:        gnv.cfg.WithSpeciesGroup,
+		WithUninomialFuzzyMatch: gnv.cfg.WithUninomialFuzzyMatch,
+		WithAllMatches:          gnv.cfg.WithAllMatches,
 	}
 	return res
 }

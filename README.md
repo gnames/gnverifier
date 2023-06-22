@@ -13,32 +13,33 @@ search feature.
 * [Citing](#citing)
 * [Features](#features)
 * [Installation](#installation)
-  * [Using Homebrew on Mac OS X, Linux, and Linux on Windows ([WSL2])](#using-homebrew-on-mac-os-x-linux-and-linux-on-windows-wsl2)
-  * [MS Windows](#ms-windows)
-  * [Linux and Mac (without Homebrew)](#linux-and-mac-without-homebrew)
-  * [Compile from source](#compile-from-source)
+    * [Using Homebrew on Mac OS X, Linux, and Linux on Windows ([WSL2])](#using-homebrew-on-mac-os-x-linux-and-linux-on-windows-wsl2)
+    * [MS Windows](#ms-windows)
+    * [Linux and Mac (without Homebrew)](#linux-and-mac-without-homebrew)
+    * [Compile from source](#compile-from-source)
 * [Usage](#usage)
-  * [As a web service](#as-a-web-service)
-  * [As a RESTful API](#as-a-restful-api)
-  * [One name-string](#one-name-string)
-  * [Many name-strings in a file](#many-name-strings-in-a-file)
-  * [Advanced search](#advanced-search)
-  * [Options and flags](#options-and-flags)
-    * [help](#help)
-    * [version](#version)
-    * [port](#port)
-    * [all_matches](#all_matches)
-    * [capitalize](#capitalize)
-    * [species group](#species-group)
-    * [format](#format)
-    * [jobs](#jobs)
-    * [quiet](#quiet)
-    * [sources](#sources)
-  * [web-logs](#web-logs)
-  * [nsqd-tcp](#nsqd-tcp)
-  * [Configuration file](#configuration-file)
-  * [Advanced Search Query Language](#advanced-search-query-language)
-    * [Examples of searches](#examples-of-searches)
+    * [As a web service](#as-a-web-service)
+    * [As a RESTful API](#as-a-restful-api)
+    * [One name-string](#one-name-string)
+    * [Many name-strings in a file](#many-name-strings-in-a-file)
+    * [Advanced search](#advanced-search)
+    * [Options and flags](#options-and-flags)
+        * [help](#help)
+        * [version](#version)
+        * [port](#port)
+        * [all_matches](#all_matches)
+        * [capitalize](#capitalize)
+        * [species group](#species-group)
+        * [fuzzy-match of uninomial names](#fuzzy-match-of-uninomial-names)
+        * [format](#format)
+        * [jobs](#jobs)
+        * [quiet](#quiet)
+        * [sources](#sources)
+    * [web-logs](#web-logs)
+    * [nsqd-tcp](#nsqd-tcp)
+    * [Configuration file](#configuration-file)
+    * [Advanced Search Query Language](#advanced-search-query-language)
+        * [Examples of searches](#examples-of-searches)
 * [Copyright](#copyright)
 
 <!-- vim-markdown-toc -->
@@ -271,6 +272,17 @@ coordinated names in zoology.
 ```bash
 gnverifier -g "Bubo bubo"
 gnverifier  --species_group "Bubo bubo"
+```
+
+#### fuzzy-match of uninomial names
+
+When `fuzzy_uninomial` flag is on, uninomials are allowed to go through
+fuzzy matching, if needed. Normally this flag is off because fuzzy-matched
+uninomials create a significant amount of false positives.
+
+```bash
+gnverifier -z "Pomatmus"
+gnverifier --fuzzy_uninomial "Pomatmus"
 ```
 
 #### format

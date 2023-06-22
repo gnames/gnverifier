@@ -28,12 +28,13 @@ import (
 )
 
 type formInput struct {
-	Names        string `query:"names" form:"names"`
-	Format       string `query:"format" form:"format"`
-	AllMatches   string `query:"all_matches" form:"all_matches"`
-	Capitalize   string `query:"capitalize" form:"capitalize"`
-	SpeciesGroup string `query:"species_group" form:"species_group"`
-	DataSources  []int  `query:"ds" form:"ds"`
+	Names          string `query:"names" form:"names"`
+	Format         string `query:"format" form:"format"`
+	AllMatches     string `query:"all_matches" form:"all_matches"`
+	Capitalize     string `query:"capitalize" form:"capitalize"`
+	SpeciesGroup   string `query:"species_group" form:"species_group"`
+	FuzzyUninomial string `query:"fuzzy_uninomial" form:"fuzzy_uninomial"`
+	DataSources    []int  `query:"ds" form:"ds"`
 }
 
 //go:embed static
@@ -279,12 +280,16 @@ func getPreferredSources(ds []string) []int {
 func redirectToHomeGET(c echo.Context, inp *formInput) error {
 	caps := inp.Capitalize == "on"
 	spGr := inp.SpeciesGroup == "on"
+	fuzzyUni := inp.FuzzyUninomial == "on"
 	all := inp.AllMatches == "on"
 	q := make(url.Values)
 	q.Set("names", inp.Names)
 	q.Set("format", inp.Format)
 	if caps {
 		q.Set("capitalize", inp.Capitalize)
+	}
+	if fuzzyUni {
+		q.Set("fuzzy_uninomial", inp.FuzzyUninomial)
 	}
 	if all {
 		q.Set("all_matches", inp.AllMatches)
@@ -309,6 +314,7 @@ func verificationResults(
 	var names []string
 	caps := inp.Capitalize == "on"
 	spGr := inp.SpeciesGroup == "on"
+	fuzzyUni := inp.FuzzyUninomial == "on"
 	data.AllMatches = inp.AllMatches == "on"
 
 	data.Input = inp.Names
@@ -338,6 +344,7 @@ func verificationResults(
 			config.OptDataSources(data.DataSourceIDs),
 			config.OptWithCapitalization(caps),
 			config.OptWithSpeciesGroup(spGr),
+			config.OptWithUninomialFuzzyMatch(fuzzyUni),
 			config.OptWithAllMatches(data.AllMatches),
 		}
 		gnv = gnv.ChangeConfig(opts...)
