@@ -4,6 +4,12 @@
 
 Try `GNverifier` [online][web-service].
 
+[GNverifier with OpenRefine]
+
+[GNverifier API]
+
+[Feedback]
+
 Takes a scientific name or a list of scientific names and verifies them against
 a variety of biodiversity [Data Sources][data_source_ids]. Includes an advanced
 search feature.
@@ -495,7 +501,7 @@ gnverifier "g:Cara. isp:daurica ds:1,12"
 
 Authors: [Dmitry Mozzherin][dimus]
 
-Copyright © 2020-2022 Dmitry Mozzherin. See [LICENSE] for further
+Copyright © 2020-2023 Dmitry Mozzherin. See [LICENSE] for further
 details.
 
 [catalogue of life]: https://catalogueoflife.org/
@@ -520,3 +526,6 @@ details.
 [web-service]: https://verifier.globalnames.org
 [win-pdf]: https://github.com/gnames/gnverifier/blob/master/use-gnverifier-windows.pdf
 [winpath]: https://www.computerhope.com/issues/ch000549.htm
+[GNverifier with OpenRefine]: https://github.com/gnames/gnverifier/wiki/OpenRefine-readme
+[GNverifier API]: https://apidoc.globalnames.org/gnames
+[Feedback]: https://github.com/gnames/gnverifier/issues
