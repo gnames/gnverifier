@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add: update modules and Go.
+
 ## [v1.1.2] - 2023-09-27 Wed
 
 - Add: ent and io are in pkg, so they can be used by other projects.
