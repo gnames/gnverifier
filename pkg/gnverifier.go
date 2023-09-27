@@ -9,8 +9,8 @@ import (
 	"github.com/gnames/gnlib/ent/gnvers"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnquery/ent/search"
-	"github.com/gnames/gnverifier/internal/ent/verifier"
 	"github.com/gnames/gnverifier/pkg/config"
+	"github.com/gnames/gnverifier/pkg/ent/verifier"
 	"github.com/rs/zerolog/log"
 )
 

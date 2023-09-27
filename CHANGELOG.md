@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.1.2] - 2023-09-27 Wed
+
+- Add: ent and io are in pkg, so they can be used by other projects.
+
 ## [v1.1.1] - 2023-06-22 Thu
 
 - Add [#105]: option for uninomials fuzzy-matching.

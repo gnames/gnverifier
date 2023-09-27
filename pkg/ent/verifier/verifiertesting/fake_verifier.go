@@ -7,7 +7,7 @@ import (
 
 	verifiera "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnquery/ent/search"
-	"github.com/gnames/gnverifier/internal/ent/verifier"
+	"github.com/gnames/gnverifier/pkg/ent/verifier"
 )
 
 type FakeVerifier struct {
