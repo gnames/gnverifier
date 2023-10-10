@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## [v1.1.3]
+
+- Add: Wikidata link for the web interface.
 - Add: update modules and Go.
 
 ## [v1.1.2] - 2023-09-27 Wed
