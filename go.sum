@@ -68,12 +68,12 @@ github.com/fsnotify/fsnotify v1.6.0 h1:n+5WquG0fcWoWp6xPWfHdbskMCQaFnG6PfBrh1Ky4
 github.com/fsnotify/fsnotify v1.6.0/go.mod h1:sl3t1tCWJFWoRz9R8WJCbQihKKwmorjAbSClcnxKAGw=
 github.com/gnames/gnfmt v0.4.3 h1:TUbqT+2KsC7qdo2lUICw9vOx2tBDF80ehvBrLZaMMR0=
 github.com/gnames/gnfmt v0.4.3/go.mod h1:Nnxb1w0jh+8cit4gVkfSKqH2lA2chImkvSiDvAFhJes=
-github.com/gnames/gnlib v0.24.0 h1:hXORe9+3yZNM9JjL10E80E3NxXBClCkeif78yQkTQxc=
-github.com/gnames/gnlib v0.24.0/go.mod h1:Tz3QsaUzL97cUPqO/QQ7wVGJYmEP7IlYq0jpZtRn3M0=
+github.com/gnames/gnlib v0.25.0 h1:mMmNlzsNeX3hf6akJASGwGUU2H5VP9o+dKowQNQeodE=
+github.com/gnames/gnlib v0.25.0/go.mod h1:NpOFjiabjkMM/S/C8semOLlMwH5qc/hqyIGBg5Ty+vA=
 github.com/gnames/gnquery v0.3.4 h1:vXvlBWa6rQVGQq5/Hie4TTT4/AhKEwjgYoAX90iak70=
 github.com/gnames/gnquery v0.3.4/go.mod h1:vhPRDxkyBUwEgwlFFbULyi0ZuNcfy2uPSYWqUPU92bY=
-github.com/gnames/gnstats v0.1.0 h1:qycaVt1ot3MtAZFnguSPXtND/BrKmw5Zhd1vfwcKxOs=
-github.com/gnames/gnstats v0.1.0/go.mod h1:wWqpQiTICJRiFpP4jhsraMXdX4SRnRCo+AWkw1jiVvE=
+github.com/gnames/gnstats v0.2.1 h1:JAzDwcws6L9xTsHD9uMr1OaUNh9vN+Ghnn2CFRd3Ilo=
+github.com/gnames/gnstats v0.2.1/go.mod h1:wWqpQiTICJRiFpP4jhsraMXdX4SRnRCo+AWkw1jiVvE=
 github.com/gnames/gnsys v0.2.3 h1:4Qb6jhJJMfLeyhKkela1V2R0cd/Vf8Qn6tqOWOPy/lY=
 github.com/gnames/gnsys v0.2.3/go.mod h1:NTE1nKitxH/eJf8f386zqayaUHC6DnqmVODb7XXCsBk=
 github.com/gnames/gnuuid v0.1.2 h1:VAaZqggCUaLys86z6bZhDjWn60iVIgX/1vstKgCW0q8=

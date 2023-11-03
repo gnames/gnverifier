@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.5] - 2023-11-03 Fri
+
+- Fix: wrong match type.
+
 ## [v1.1.4] - 2023-11-03 Fri
 
 - Add: iNaturalist, VASCAN to the web interface.
