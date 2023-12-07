@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.6] - 2023-11-07 Thu
+
+- Add: LPSN link to web GUI
+
 ## [v1.1.5] - 2023-11-03 Fri
 
 - Fix: wrong match type.
