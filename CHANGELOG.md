@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.8] - 2023-12-23 Sat
+
+- Add: NZOR link to web GUI.
+
 ## [v1.1.7] - 2023-11-07 Thu
 
 - Fix: formatting of data-sources in web UI.
@@ -239,6 +243,10 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.1.8]: https://github.com/gnames/gnverifier/compare/v1.1.7...v1.1.8
+[v1.1.7]: https://github.com/gnames/gnverifier/compare/v1.1.6...v1.1.7
+[v1.1.6]: https://github.com/gnames/gnverifier/compare/v1.1.5...v1.1.6
+[v1.1.5]: https://github.com/gnames/gnverifier/compare/v1.1.4...v1.1.5
 [v1.1.4]: https://github.com/gnames/gnverifier/compare/v1.1.3...v1.1.4
 [v1.1.3]: https://github.com/gnames/gnverifier/compare/v1.1.2...v1.1.3
 [v1.1.2]: https://github.com/gnames/gnverifier/compare/v1.1.1...v1.1.2

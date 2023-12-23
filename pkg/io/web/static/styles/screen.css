@@ -160,6 +160,18 @@ label {
   background-color: #eee;
 }
 
+#version img {
+   vertical-align: middle;
+  height: 25px;
+  margin-right: 7px;
+}
+
+#version a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #BodyContent {
   border: 1px solid #ccc;
   -webkit-border-radius: 8px;

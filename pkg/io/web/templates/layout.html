@@ -35,6 +35,10 @@
             <li><a href="/data_sources">Sources</a></li>
             {{ end }}
 
+            <li>
+            <a href="https://github.com/gnames/gnverifier/issues">Issues</a>
+            </li>
+
             {{ if eq .Page "about" }}
             <li class="active"><a href="/about">About</a></li>
             {{ else }}
@@ -66,8 +70,9 @@
               {{ template "api" . }}
               {{ end }}
 
-              <p>
+              <p id="version">
                 <a href='https://github.com/gnames/gnverifier'>
+                <img src="/static/images/github-mark.svg" alt="GitHub link"/>
                   Version {{ .Version }}
                 </a>
               </p>
