@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add [#110]: add TaxonomicStatus to results.
+
 ## [v1.1.8] - 2023-12-23 Sat
 
 - Add: NZOR link to web GUI.
@@ -296,6 +298,16 @@ This document follows [changelog guidelines]
 
 <!-- Issues -->
 
+[#120]: https://github.com/gnames/gnverifier/issues/120
+[#119]: https://github.com/gnames/gnverifier/issues/119
+[#118]: https://github.com/gnames/gnverifier/issues/118
+[#117]: https://github.com/gnames/gnverifier/issues/117
+[#116]: https://github.com/gnames/gnverifier/issues/116
+[#115]: https://github.com/gnames/gnverifier/issues/115
+[#114]: https://github.com/gnames/gnverifier/issues/114
+[#113]: https://github.com/gnames/gnverifier/issues/113
+[#112]: https://github.com/gnames/gnverifier/issues/112
+[#111]: https://github.com/gnames/gnverifier/issues/111
 [#110]: https://github.com/gnames/gnverifier/issues/110
 [#109]: https://github.com/gnames/gnverifier/issues/109
 [#108]: https://github.com/gnames/gnverifier/issues/108

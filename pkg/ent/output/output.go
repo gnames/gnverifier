@@ -21,7 +21,7 @@ const (
 	matchedCanonical
 	taxonID
 	currentName
-	synonym
+	taxonomicStatus
 	dataSourceID
 	dataSourceTitle
 	classificationPath
@@ -49,7 +49,7 @@ func NameOutput(ver vlib.Name, f gnfmt.Format) string {
 // CSVHeader returns the header string for CSV output format.
 func CSVHeader(f gnfmt.Format) string {
 	header := []string{"Kind", "SortScore", "MatchType", "EditDistance", "ScientificName",
-		"MatchedName", "MatchedCanonical", "TaxonId", "CurrentName", "Synonym",
+		"MatchedName", "MatchedCanonical", "TaxonId", "CurrentName", "TaxonomicStatus",
 		"DataSourceId", "DataSourceTitle", "ClassificationPath", "Error"}
 	switch f {
 	case gnfmt.CSV:
@@ -109,7 +109,7 @@ func csvRow(ver vlib.Name, prefIndex int, sep rune) string {
 		s[matchedCanonical] = res.MatchedCanonicalFull
 		s[taxonID] = res.RecordID
 		s[currentName] = res.CurrentName
-		s[synonym] = strconv.FormatBool(res.IsSynonym)
+		s[taxonomicStatus] = res.TaxonomicStatus
 		s[dataSourceID] = strconv.Itoa(res.DataSourceID)
 		s[dataSourceTitle] = res.DataSourceTitleShort
 		s[classificationPath] = res.ClassificationPath
