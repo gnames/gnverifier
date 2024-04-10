@@ -1,8 +1,6 @@
 package config
 
 import (
-	"regexp"
-
 	"github.com/gnames/gnfmt"
 )
 
@@ -28,28 +26,6 @@ type Config struct {
 	// to GET.
 	NamesNumThreshold int
 
-	// NsqdTCPAddress provides an address to the NSQ messenger TCP service. If
-	// this value is set and valid, the web logs will be published to the NSQ.
-	// The option is ignored if `Port` is not set.
-	//
-	// If WithWebLogs option is set to `false`, but `NsqdTCPAddress` is set to a
-	// valid URL, the logs will be sent to the NSQ messanging service, but they
-	// wil not appear as STRERR output.
-	// Example: `127.0.0.1:4150`
-	NsqdTCPAddress string
-
-	// NsqdContainsFilter logs should match the filter to be sent to NSQ
-	// service.
-	// Examples:
-	// "api" - logs should contain "api"
-	// "!api" - logs should not contain "api"
-	NsqdContainsFilter string
-
-	// NsqdRegexFilter logs should match the regular expression to be sent to
-	// NSQ service.
-	// Example: `api\/v(0|1)`
-	NsqdRegexFilter *regexp.Regexp
-
 	// VerifierURL URL for gnames verification service. It only needs to
 	// be changed if user sets local version of gnames.
 	VerifierURL string
@@ -69,14 +45,18 @@ type Config struct {
 	// coordinated names in zoological code.
 	WithSpeciesGroup bool
 
+	// WithRelaxedFuzzyMatch flag; when true, relaxes fuzzy matching rules.
+	// This increases recall and decreases precision. It also changes the
+	// maximum number of names sent to fuzzy match from 10,000 to 50, because
+	// it is assumed that uses has to check every name in the result.
+	// It changes fuzzy match edit distance from 1 to 2 and it makes fuzzy
+	// matching match slower.
+	WithRelaxedFuzzyMatch bool
+
 	// WithUninomialFuzzyMatch flag; when true, uninomial names are not
 	// restricted from fuzzy matching. Normally it creates too many false
 	// positives and is switched off.
 	WithUninomialFuzzyMatch bool
-
-	// WithWebLogs flag enables logs when running web-service. This flag is
-	// ignored if `Port` value is not set.
-	WithWebLogs bool
 }
 
 // Option is a type of all options for Config.
@@ -111,29 +91,6 @@ func OptNamesNumThreshold(i int) Option {
 	}
 }
 
-// OptNsqdContainsFilter provides a filter for logs sent to NSQ service.
-func OptNsqdContainsFilter(s string) Option {
-	return func(cfg *Config) {
-		cfg.NsqdContainsFilter = s
-	}
-}
-
-// OptNsqdRegexFilter provides a regular expression filter for
-// logs sent to NSQ service.
-func OptNsqdRegexFilter(s string) Option {
-	return func(cfg *Config) {
-		r := regexp.MustCompile(s)
-		cfg.NsqdRegexFilter = r
-	}
-}
-
-// OptNsqdTCPAddress provides a URL to NSQ messanging service.
-func OptNsqdTCPAddress(s string) Option {
-	return func(cfg *Config) {
-		cfg.NsqdTCPAddress = s
-	}
-}
-
 // OptVerifierURL sets URL of the verification resource.
 func OptVerifierURL(s string) Option {
 	return func(cnf *Config) {
@@ -162,16 +119,15 @@ func OptWithSpeciesGroup(b bool) Option {
 	}
 }
 
-func OptWithUninomialFuzzyMatch(b bool) Option {
+func OptWithRelaxedFuzzyMatch(b bool) Option {
 	return func(cnf *Config) {
-		cnf.WithUninomialFuzzyMatch = b
+		cnf.WithRelaxedFuzzyMatch = b
 	}
 }
 
-// OptWithWebLogs sets the WithWebLogs field.
-func OptWithWebLogs(b bool) Option {
-	return func(cfg *Config) {
-		cfg.WithWebLogs = b
+func OptWithUninomialFuzzyMatch(b bool) Option {
+	return func(cnf *Config) {
+		cnf.WithUninomialFuzzyMatch = b
 	}
 }
 

@@ -41,8 +41,6 @@ search feature.
         * [jobs](#jobs)
         * [quiet](#quiet)
         * [sources](#sources)
-    * [web-logs](#web-logs)
-    * [nsqd-tcp](#nsqd-tcp)
     * [Configuration file](#configuration-file)
     * [Advanced Search Query Language](#advanced-search-query-language)
         * [Examples of searches](#examples-of-searches)
@@ -380,27 +378,6 @@ gnverifier "Bubo bubo" -s 0 -M
 
 The `sources` option would overwrite `ds:` settings in case of advanced search.
 
-### web-logs
-
-Requires `--port`. Enables output of logs for web-services.
-
-```bash
-gnverifier -p 8777 --web-logs
-```
-
-### nsqd-tcp
-
-Requires `--port`. Allows redirecting web-service log output to [NSQ]
-messaging server's TCP-based endpoint. It is handy for aggregations of logs
-from [GNverifier] web-services running inside of Docker containers or in
-Kubernetes pods.
-
-```bash
-gnverifier -p 8777 --nsqd-tcp=localhost:4150
-# with logs printed out
-gnverifier -p 8777 --nsqd-tcp=localhost:4150 --with-logs
-```
-
 ### Configuration file
 
 If you find yourself using the same flags over and over again, it makes sense
@@ -424,8 +401,6 @@ possible to use environment variables for configuration.
 | GNV_WITH_CAPITALIZATION | WithCapitalization |
 | GNV_VERIFIER_URL        | VerifierURL        |
 | GNV_JOBS                | Jobs               |
-| GNV_WEB_LOGS_NSQD_TCP   | WebLogsNsqdTCP     |
-| GNV_WITH_WEB_LOGS       | WithWebLogs        |
 
 ### Advanced Search Query Language
 
@@ -509,7 +484,6 @@ details.
 [gnverifier]: https://github.com/gnames/gnverifier
 [homebrew]: https://brew.sh/
 [license]: https://github.com/gnames/gnverifier/blob/master/LICENSE
-[nsq]: https://nsq.io/overview/quick_start.html
 [wsl install]: https://docs.microsoft.com/en-us/windows/wsl/install-win10
 [wsl2]: https://docs.microsoft.com/en-us/windows/wsl/install
 [worms]: https://marinespecies.org/

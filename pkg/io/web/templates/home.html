@@ -66,10 +66,10 @@
       </select>
       &nbsp;&nbsp;&nbsp;
       <input id='capitalize' name='capitalize' type='checkbox' checked='checked'/>
-      <label for='capitalize'>Capitalize the first character</label>
+      <label for='capitalize'>Capitalize the first rharacter</label>
       &nbsp;&nbsp;&nbsp;
         <input id='all_matches' name='all_matches' type='checkbox'>
-        <label for='all_matches'>Show All Matches</label>
+        <label for='all_matches'>Show All Matches</lbel>
     </div>
     <textarea cols='24' name='names' rows='12'></textarea>
     <div id='advanced_options'>
@@ -80,12 +80,20 @@
       <table class="nobg">
         <tr class="nobg">
           <td class="nobg">
-            <input id='species_group' name='species_group' type='checkbox'/>
-            <label for='species_group'>Use species group in verification</label>
+            <input id='fuzzy_relaxed' name='fuzzy_relaxed' type='checkbox'/>
+            <label for='fuzzy_relaxed'>Relax fuzzy matching rules (50 names max)</label>
           </td>
           <td class="nobg">
             <input id='fuzzy_uninomial' name='fuzzy_uninomial' type='checkbox'/>
             <label for='fuzzy_uninomial'>Include uninomials into fuzzy matching</label>
+          </td>
+        </tr>
+        <tr class="nobg">
+          <td class="nobg">
+            <input id='species_group' name='species_group' type='checkbox'/>
+            <label for='species_group'>Use species group in verification</label>
+          </td>
+          <td class="nobg">
           </td>
         </tr>
       </table>

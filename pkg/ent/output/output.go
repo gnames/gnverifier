@@ -109,7 +109,7 @@ func csvRow(ver vlib.Name, prefIndex int, sep rune) string {
 		s[matchedCanonical] = res.MatchedCanonicalFull
 		s[taxonID] = res.RecordID
 		s[currentName] = res.CurrentName
-		s[taxonomicStatus] = res.TaxonomicStatus
+		s[taxonomicStatus] = res.TaxonomicStatus.String()
 		s[dataSourceID] = strconv.Itoa(res.DataSourceID)
 		s[dataSourceTitle] = res.DataSourceTitleShort
 		s[classificationPath] = res.ClassificationPath

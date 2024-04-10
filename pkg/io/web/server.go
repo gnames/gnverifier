@@ -4,8 +4,10 @@ import (
 	"context"
 	"embed"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -21,10 +23,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
-	zlog "github.com/rs/zerolog/log"
-	nsqcfg "github.com/sfgrp/lognsq/config"
-	"github.com/sfgrp/lognsq/ent/nsq"
-	"github.com/sfgrp/lognsq/io/nsqio"
 )
 
 type formInput struct {
@@ -34,6 +32,7 @@ type formInput struct {
 	Capitalize     string `query:"capitalize" form:"capitalize"`
 	SpeciesGroup   string `query:"species_group" form:"species_group"`
 	FuzzyUninomial string `query:"fuzzy_uninomial" form:"fuzzy_uninomial"`
+	FuzzyRelaxed   string `query:"fuzzy_relaxed" form:"fuzzy_relaxed"`
 	DataSources    []int  `query:"ds" form:"ds"`
 }
 
@@ -48,15 +47,15 @@ func Run(gnv gnverifier.GNverifier, port int) {
 
 	e.Use(middleware.Gzip())
 
-	loggerNSQ := setLogger(e, gnv)
-	if loggerNSQ != nil {
-		defer loggerNSQ.Stop()
-	}
-
 	e.Renderer, err = NewTemplate()
 	if err != nil {
 		e.Logger.Fatal(err)
 	}
+
+	handle := slog.New(slog.NewJSONHandler(os.Stderr, nil))
+	slog.SetDefault(handle.With(
+		slog.String("gnApp", "gnmatcher"),
+	))
 
 	e.GET("/", homeGET(gnv))
 	e.POST("/", homePOST(gnv))
@@ -280,6 +279,7 @@ func getPreferredSources(ds []string) []int {
 func redirectToHomeGET(c echo.Context, inp *formInput) error {
 	caps := inp.Capitalize == "on"
 	spGr := inp.SpeciesGroup == "on"
+	fuzzyRel := inp.FuzzyRelaxed == "on"
 	fuzzyUni := inp.FuzzyUninomial == "on"
 	all := inp.AllMatches == "on"
 	q := make(url.Values)
@@ -287,6 +287,9 @@ func redirectToHomeGET(c echo.Context, inp *formInput) error {
 	q.Set("format", inp.Format)
 	if caps {
 		q.Set("capitalize", inp.Capitalize)
+	}
+	if fuzzyRel {
+		q.Set("fuzzy_relaxed", inp.FuzzyRelaxed)
 	}
 	if fuzzyUni {
 		q.Set("fuzzy_uninomial", inp.FuzzyUninomial)
@@ -315,6 +318,7 @@ func verificationResults(
 	caps := inp.Capitalize == "on"
 	spGr := inp.SpeciesGroup == "on"
 	fuzzyUni := inp.FuzzyUninomial == "on"
+	fuzzyRel := inp.FuzzyRelaxed == "on"
 	data.AllMatches = inp.AllMatches == "on"
 
 	data.Input = inp.Names
@@ -344,6 +348,7 @@ func verificationResults(
 			config.OptDataSources(data.DataSourceIDs),
 			config.OptWithCapitalization(caps),
 			config.OptWithSpeciesGroup(spGr),
+			config.OptWithRelaxedFuzzyMatch(fuzzyRel),
 			config.OptWithUninomialFuzzyMatch(fuzzyUni),
 			config.OptWithAllMatches(data.AllMatches),
 		}
@@ -362,11 +367,12 @@ func verificationResults(
 			if err != nil {
 				log.Warn(err)
 			}
-			zlog.Info().
-				Str("query", names[0]).
-				Str("method", method).
-				Int("verified", len(data.Verified)).
-				Msg("Search")
+			slog.Info(
+				"Search",
+				"query", names[0],
+				"method", method,
+				"verified", len(data.Verified),
+			)
 			if len(data.Verified) == 0 {
 				data.Verified = []vlib.Name{
 					{
@@ -379,11 +385,12 @@ func verificationResults(
 			data.Verified = gnv.VerifyBatch(context.Background(), names)
 
 			if l := len(names); l > 0 {
-				zlog.Info().
-					Int("namesNum", len(names)).
-					Str("example", names[0]).
-					Str("method", method).
-					Msg("Verification")
+				slog.Info(
+					"Verification",
+					"namesNum", len(names),
+					"example", names[0],
+					"method", method,
+				)
 			}
 		}
 	}
@@ -409,37 +416,4 @@ func formatRows(data Data, f gnfmt.Format) []string {
 		res[i+1] = output.NameOutput(v, f)
 	}
 	return res
-}
-
-func setLogger(e *echo.Echo, m gnverifier.GNverifier) nsq.NSQ {
-	cfg := m.Config()
-	nsqAddr := cfg.NsqdTCPAddress
-	withLogs := cfg.WithWebLogs
-	contains := cfg.NsqdContainsFilter
-	regex := cfg.NsqdRegexFilter
-
-	if nsqAddr != "" {
-		cfg := nsqcfg.Config{
-			StderrLogs: withLogs,
-			Topic:      "gnverifier",
-			Address:    nsqAddr,
-			Contains:   contains,
-			Regex:      regex,
-		}
-		remote, err := nsqio.New(cfg)
-		logCfg := middleware.DefaultLoggerConfig
-		if err == nil {
-			logCfg.Output = remote
-			zlog.Logger = zlog.Output(remote)
-		}
-		e.Use(middleware.LoggerWithConfig(logCfg))
-		if err != nil {
-			log.Warn(err)
-		}
-		return remote
-	} else if withLogs {
-		e.Use(middleware.Logger())
-		return nil
-	}
-	return nil
 }

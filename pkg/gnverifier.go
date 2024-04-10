@@ -3,6 +3,7 @@ package gnverifier
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"sync"
 	"time"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/gnames/gnquery/ent/search"
 	"github.com/gnames/gnverifier/pkg/config"
 	"github.com/gnames/gnverifier/pkg/ent/verifier"
-	"github.com/rs/zerolog/log"
 )
 
 type gnverifier struct {
@@ -129,7 +129,7 @@ func (gnv gnverifier) verifyWorker(
 		}
 		verif := gnv.verifier.Verify(ctx, params)
 		if len(verif.Names) < 1 {
-			log.Fatal().Msgf("Did not get results from verifier")
+			slog.Warn("Did not get results from verifier")
 		}
 		out <- verif.Names
 	}
@@ -169,6 +169,7 @@ func (gnv gnverifier) setParams(names []string) vlib.Input {
 		DataSources:             gnv.cfg.DataSources,
 		WithCapitalization:      gnv.cfg.WithCapitalization,
 		WithSpeciesGroup:        gnv.cfg.WithSpeciesGroup,
+		WithRelaxedFuzzyMatch:   gnv.cfg.WithRelaxedFuzzyMatch,
 		WithUninomialFuzzyMatch: gnv.cfg.WithUninomialFuzzyMatch,
 		WithAllMatches:          gnv.cfg.WithAllMatches,
 	}

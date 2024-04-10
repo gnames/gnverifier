@@ -7,6 +7,7 @@ import (
 	_ "embed"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -25,8 +26,6 @@ import (
 	"github.com/gnames/gnverifier/pkg/ent/output"
 	"github.com/gnames/gnverifier/pkg/io/verifrest"
 	"github.com/gnames/gnverifier/pkg/io/web"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -45,15 +44,11 @@ type cfgData struct {
 	DataSources             []int
 	Format                  string
 	Jobs                    int
-	NsqdContainsFilter      string
-	NsqdRegexFilter         string
-	NsqdTCPAddress          string
 	VerifierURL             string
 	WithAllMatches          bool
 	WithCapitalization      bool
 	WithSpeciesGroup        bool
 	WithUninomialFuzzyMatch bool
-	WithWebLogs             bool
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -80,11 +75,11 @@ https://github.com/gnames/gnverifier
 
 		quiet, _ := cmd.Flags().GetBool("quiet")
 		if quiet {
-			zerolog.SetGlobalLevel(zerolog.Disabled)
+			slog.SetLogLoggerLevel(10)
 		}
 
 		for i := range msg {
-			log.Info().Msg(msg[i])
+			slog.Info(msg[i])
 		}
 
 		caps, _ := cmd.Flags().GetBool("capitalize")
@@ -97,6 +92,11 @@ https://github.com/gnames/gnverifier
 			opts = append(opts, config.OptWithSpeciesGroup(true))
 		}
 
+		fuzzyRelaxed, _ := cmd.Flags().GetBool("fuzzy_relaxed")
+		if fuzzyRelaxed {
+			opts = append(opts, config.OptWithRelaxedFuzzyMatch(true))
+		}
+
 		fuzzyUni, _ := cmd.Flags().GetBool("fuzzy_uninomial")
 		if fuzzyUni {
 			opts = append(opts, config.OptWithUninomialFuzzyMatch(true))
@@ -105,11 +105,9 @@ https://github.com/gnames/gnverifier
 		formatString, _ := cmd.Flags().GetString("format")
 		frmt, _ := gnfmt.NewFormat(formatString)
 		if frmt == gnfmt.FormatNone {
-			log.Warn().
-				Msgf(
-					"Cannot set format from '%s', setting format to csv",
-					formatString,
-				)
+			slog.Warn("Cannot set format with user inoput, setting format to csv",
+				"input", formatString,
+			)
 			frmt = gnfmt.CSV
 		}
 		opts = append(opts, config.OptFormat(frmt))
@@ -138,17 +136,6 @@ https://github.com/gnames/gnverifier
 
 		port, _ := cmd.Flags().GetInt("port")
 		if port > 0 {
-			weblogs, _ := cmd.Flags().GetBool("web-logs")
-			if weblogs {
-				webOpts = append(webOpts, config.OptWithWebLogs(true))
-			}
-			nsqAddr, _ := cmd.Flags().GetString("nsqd-tcp")
-			if nsqAddr != "" {
-				webOpts = append(webOpts, config.OptNsqdTCPAddress(nsqAddr))
-			}
-
-			log.Logger = zerolog.New(os.Stderr).With().
-				Str("gnApp", "gnverifier").Logger()
 			cnf := config.New(webOpts...)
 			vfr := verifrest.New(cnf.VerifierURL)
 			gnv := gnverifier.New(cnf, vfr)
@@ -197,8 +184,10 @@ func init() {
 	rootCmd.Flags().IntP("jobs", "j", 4, "Number of jobs running in parallel.")
 	rootCmd.Flags().IntP("port", "p", 0, "Port to run web GUI.")
 	rootCmd.Flags().BoolP("all_matches", "M", false, "return all matched results per source, not just the best one.")
-	rootCmd.Flags().BoolP("species_group", "g", false, "searching for species names also searches their species groups.")
-	rootCmd.Flags().BoolP("fuzzy_uninomial", "z", false,
+	rootCmd.Flags().BoolP("species_group", "G", false, "searching for species names also searches their species groups.")
+	rootCmd.Flags().BoolP("fuzzy_relaxed", "R", false,
+		"relaxes fuzzy matching rules, decreses max names to 50.")
+	rootCmd.Flags().BoolP("fuzzy_uninomial", "U", false,
 		"allows fuzzy matching for uninomial names.")
 	rootCmd.Flags().BoolP("quiet", "q", false, "do not show progress")
 	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
@@ -222,8 +211,6 @@ func init() {
 	rootCmd.Flags().StringP("verifier_url", "v", "",
 		`URL for verification service.
   Default: https://verifier.globalnames.org/api/v1`)
-	rootCmd.Flags().BoolP("web-logs", "", false, "enable logs for the web service")
-	rootCmd.Flags().StringP("nsqd-tcp", "", "", "an addresss pointing to NSQ TCP service for logs redirection (e.g. 127.0.0.1:4150)")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -235,7 +222,8 @@ func initConfig() {
 	// Find config directory.
 	configDir, err = os.UserConfigDir()
 	if err != nil {
-		log.Fatal().Err(err).Msg("Cannot find config directory")
+		slog.Error("Cannot find config directory", "error", err)
+		os.Exit(1)
 	}
 
 	// Search config in home directory with name ".gnmatcher" (without extension).
@@ -247,18 +235,10 @@ func initConfig() {
 	_ = viper.BindEnv("DataSources", "GNV_DATA_SOURCES")
 	_ = viper.BindEnv("Format", "GNV_FORMAT")
 	_ = viper.BindEnv("Jobs", "GNV_JOBS")
-	_ = viper.BindEnv("NsqdContainsFilter", "GNV_NSQD_CONTAINS_FILTER")
-	_ = viper.BindEnv("NsqdRegexFilter", "GNV_NSQD_REGEX_FILTER")
-	_ = viper.BindEnv("NsqdTCPAddress", "GNV_NSQD_TCP_ADDRESS")
 	_ = viper.BindEnv("VerifierURL", "GNV_VERIFIER_URL")
 	_ = viper.BindEnv("WithAllMatches", "GNV_WITH_ALL_MATCHES")
 	_ = viper.BindEnv("WithCapitalization", "GNV_WITH_CAPITALIZATION")
 	_ = viper.BindEnv("WithSpeciesGroup", "GNV_WITH_SPECIES_GROUP")
-	_ = viper.BindEnv(
-		"WithUninomialFuzzyMatch",
-		"GNV_WITH_UNINOMIAL_FUZZY_MATCH",
-	)
-	_ = viper.BindEnv("WithWebLogs", "GNV_WITH_WEB_LOGS")
 
 	viper.AutomaticEnv() // read in environment variables that match
 
@@ -279,7 +259,7 @@ func getOpts() {
 	cfg := &cfgData{}
 	err := viper.Unmarshal(cfg)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Cannot deserialize config data")
+		slog.Error("Cannot deserialize config data", "error", err)
 	}
 
 	if len(cfg.DataSources) > 0 {
@@ -294,15 +274,6 @@ func getOpts() {
 	}
 	if cfg.Jobs > 0 {
 		opts = append(opts, config.OptJobs(cfg.Jobs))
-	}
-	if cfg.NsqdContainsFilter != "" {
-		opts = append(opts, config.OptNsqdContainsFilter(cfg.NsqdContainsFilter))
-	}
-	if cfg.NsqdRegexFilter != "" {
-		opts = append(opts, config.OptNsqdRegexFilter(cfg.NsqdRegexFilter))
-	}
-	if cfg.NsqdTCPAddress != "" {
-		opts = append(opts, config.OptNsqdTCPAddress(cfg.NsqdTCPAddress))
 	}
 	if cfg.VerifierURL != "" {
 		opts = append(opts, config.OptVerifierURL(cfg.VerifierURL))
@@ -319,9 +290,6 @@ func getOpts() {
 	if cfg.WithUninomialFuzzyMatch {
 		opts = append(opts, config.OptWithUninomialFuzzyMatch(true))
 	}
-	if cfg.WithWebLogs {
-		opts = append(opts, config.OptWithWebLogs(true))
-	}
 }
 
 // showVersionFlag provides version and the build timestamp. If it returns
@@ -329,7 +297,7 @@ func getOpts() {
 func showVersionFlag(cmd *cobra.Command) bool {
 	hasVersionFlag, err := cmd.Flags().GetBool("version")
 	if err != nil {
-		log.Fatal().Err(err).Msg("Cannot get version flag")
+		slog.Error("Cannot get version flag", "error", err)
 	}
 
 	if hasVersionFlag {
@@ -348,11 +316,11 @@ func parseDataSources(s string) []int {
 		v = strings.Trim(v, " ")
 		ds, err := strconv.Atoi(v)
 		if err != nil {
-			log.Warn().Msgf("Cannot convert data-source '%s' to list, skipping", v)
+			slog.Warn("Cannot convert data-sources to list, skipping", "input", v)
 			return nil
 		}
 		if ds < 0 {
-			log.Warn().Msgf("Data source ID %d is less than zero, skipping", ds)
+			slog.Warn("Data source ID is less than zero, skipping", "input", ds)
 		} else {
 			res = append(res, int(ds))
 		}
@@ -380,7 +348,7 @@ func checkStdin() bool {
 	stdInFile := os.Stdin
 	stat, err := stdInFile.Stat()
 	if err != nil {
-		log.Fatal().Err(err).Msg("checkStdin")
+		slog.Error("Cannot get Stdin info", "error", err)
 	}
 	return (stat.Mode() & os.ModeCharDevice) == 0
 }
@@ -402,7 +370,7 @@ func verify(gnv gnverifier.GNverifier, str string) {
 	if fileExists {
 		f, err := os.OpenFile(str, os.O_RDONLY, os.ModePerm)
 		if err != nil {
-			log.Fatal().Err(err).Msg("verify")
+			slog.Error("Cannot open file", "error", err, "file", str)
 		}
 		verifyFile(gnv, f)
 		f.Close()
@@ -451,13 +419,13 @@ func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Name,
 		timeSpent := float64(time.Now().UnixNano()-timeStart) / 1_000_000_000
 		speed := int64(float64(total) / timeSpent)
 
-		log.Info().
-			Str("names/sec", humanize.Comma(speed)).
-			Str("names", humanize.Comma(int64(total))).
-			Msg("Verified")
+		slog.Info("Verified.",
+			"names/sec", humanize.Comma(speed),
+			"names", humanize.Comma(int64(total)),
+		)
 		for _, r := range o {
 			if r.Error != "" {
-				log.Warn().Msg(r.Error)
+				slog.Error("Error during verification", "error", r.Error)
 			}
 			fmt.Println(output.NameOutput(r, f))
 		}
@@ -467,7 +435,7 @@ func processResults(gnv gnverifier.GNverifier, out <-chan []vlib.Name,
 func verifyString(gnv gnverifier.GNverifier, name string) {
 	res, err := gnv.VerifyOne(name)
 	if err != nil {
-		log.Fatal().Err(err).Msg("verifyString")
+		slog.Error("Cannot verify name", "error", err, "name", name)
 	}
 
 	f := gnv.Config().Format
@@ -488,7 +456,7 @@ func searchQuery(gnv gnverifier.GNverifier, s string) {
 	}
 	res, err := gnv.Search(context.Background(), inp)
 	if err != nil {
-		log.Fatal().Err(err).Msg("searchQuery")
+		slog.Error("Cannot run search query", "error", err, "input", inp)
 	}
 
 	f := gnv.Config().Format
@@ -498,7 +466,7 @@ func searchQuery(gnv gnverifier.GNverifier, s string) {
 
 	for _, v := range res {
 		if v.Error != "" {
-			log.Warn().Msg(v.Error)
+			slog.Error("Error during search", "error", v.Error)
 		}
 		fmt.Println(output.NameOutput(v, f))
 	}
@@ -510,7 +478,7 @@ func touchConfigFile(configPath string) {
 	if fileExists {
 		return
 	}
-	log.Info().Msgf("Creating config file '%s'", configPath)
+	slog.Info("Creating config file", "file", configPath)
 	createConfig(configPath)
 }
 
@@ -518,11 +486,13 @@ func touchConfigFile(configPath string) {
 func createConfig(path string) {
 	err := gnsys.MakeDir(filepath.Dir(path))
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Cannot create dir %s", path)
+		slog.Error("Cannot create dir", "dir", path, "error", err)
+		os.Exit(1)
 	}
 
 	err = os.WriteFile(path, []byte(configText), 0644)
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Cannot write to file %s", path)
+		slog.Error("Cannot write to file", "path", path, "error", err)
+		os.Exit(1)
 	}
 }

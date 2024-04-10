@@ -2,7 +2,10 @@
 
 ## Unreleased
 
-- Add [#110]: add TaxonomicStatus to results.
+## [v1.2.0] - 2024-04-12 Fri
+
+- Add [#111]: option to relax fuzzy matching rules. 
+- Add [#110]: TaxonomicStatus to results.
 
 ## [v1.1.8] - 2023-12-23 Sat
 
@@ -245,6 +248,7 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.2.0]: https://github.com/gnames/gnverifier/compare/v1.1.8...v1.2.0
 [v1.1.8]: https://github.com/gnames/gnverifier/compare/v1.1.7...v1.1.8
 [v1.1.7]: https://github.com/gnames/gnverifier/compare/v1.1.6...v1.1.7
 [v1.1.6]: https://github.com/gnames/gnverifier/compare/v1.1.5...v1.1.6

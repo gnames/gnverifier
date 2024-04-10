@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -16,7 +17,6 @@ import (
 	"github.com/gnames/gnquery/ent/search"
 	"github.com/gnames/gnuuid"
 	"github.com/gnames/gnverifier/pkg/ent/verifier"
-	"github.com/rs/zerolog/log"
 )
 
 type verifrest struct {
@@ -46,14 +46,14 @@ func (vr verifrest) Search(
 	var res search.Output
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, urlQ, nil)
 	if err != nil {
-		log.Warn().Err(err).Msg("Cannot create request")
+		slog.Error("Cannot create request", "error", err)
 		return res, err
 	}
 	request.Header.Set("Content-Type", "application/json")
 
 	resp, err := vr.client.Do(request)
 	if err != nil {
-		log.Warn().Msg("Cannot get data-sources information")
+		slog.Error("Cannot get data-sources information", "error", err)
 		return res, err
 	}
 	defer resp.Body.Close()
@@ -61,12 +61,12 @@ func (vr verifrest) Search(
 	var respBytes []byte
 	respBytes, err = io.ReadAll(resp.Body)
 	if err != nil {
-		log.Warn().Msg("Body reading is failing for a search")
+		slog.Error("Body reading is failing for a search", "error", err)
 		return res, err
 	}
 	err = enc.Decode(respBytes, &res)
 	if err != nil {
-		log.Warn().Msg("Cannot decode search result")
+		slog.Error("Cannot decode search result", "error", err)
 		return res, err
 	}
 
@@ -81,27 +81,27 @@ func (vr verifrest) DataSources(
 	url := vr.verifierURL + "data_sources"
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		log.Warn().Err(err).Msg("Cannot create request")
+		slog.Error("Cannot create request", "error", err)
 		return nil, err
 	}
 	request.Header.Set("Content-Type", "application/json")
 
 	resp, err := vr.client.Do(request)
 	if err != nil {
-		log.Warn().Msg("Cannot get data-sources information")
+		slog.Error("Cannot get data-sources information", "error", err)
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Warn().Msg("Body reading is failing for data-sources")
+		slog.Error("Body reading is failing for data-sources", "error", err)
 		return nil, err
 	}
 	response := make([]vlib.DataSource, 0)
 	err = enc.Decode(respBytes, &response)
 	if err != nil {
-		log.Warn().Msg("Cannot decode data-sources")
+		slog.Error("Cannot decode data-sources", "error", err)
 		return nil, err
 	}
 	return response, nil
@@ -117,26 +117,26 @@ func (vr verifrest) DataSource(
 	url := fmt.Sprintf("%sdata_sources/%d", vr.verifierURL, id)
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		log.Warn().Err(err).Msg("Cannot create request")
+		slog.Error("Cannot create request", "error", err)
 		return response, err
 	}
 	request.Header.Set("Content-Type", "application/json")
 
 	resp, err := vr.client.Do(request)
 	if err != nil {
-		log.Warn().Err(err).Msg("Cannot get data-sources information")
+		slog.Error("Cannot get data-sources information", "error", err)
 		return response, err
 	}
 	defer resp.Body.Close()
 
 	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Warn().Msg("Body reading is failing for data-sources")
+		slog.Error("Body reading is failing for data-sources", "error", err)
 		return response, err
 	}
 	err = enc.Decode(respBytes, &response)
 	if err != nil {
-		log.Warn().Msg("Cannot decode data-sources")
+		slog.Error("Cannot decode data-sources", "error", err)
 		return response, err
 	}
 	return response, nil
@@ -166,25 +166,28 @@ func (vr verifrest) NameString(
 	}
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		log.Warn().Err(err).Msg("Cannot create request")
+		slog.Error("Cannot create request", "error", err)
 		return res, err
 	}
 	request.Header.Set("Content-Type", "application/json")
 	resp, err := vr.client.Do(request)
 	if err != nil {
-		log.Warn().Err(err).Msg("Cannot get name-string information")
+		slog.Error("Cannot get name-string information", "error", err)
 		return res, err
 	}
 	defer resp.Body.Close()
 
 	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Warn().Err(err).Msg("Body reading is failing for a name-string response")
+		slog.Error(
+			"Body reading is failing for a name-string response",
+			"error", err,
+		)
 		return res, err
 	}
 	err = enc.Decode(respBytes, &res)
 	if err != nil {
-		log.Warn().Err(err).Msg("Cannot decode name-string response")
+		slog.Error("Cannot decode name-string response", "error", err)
 		return res, err
 	}
 	return res, nil
@@ -200,7 +203,7 @@ func (vr verifrest) Verify(
 	enc := gnfmt.GNjson{}
 	paramsData, err := enc.Encode(input)
 	if err != nil {
-		log.Printf("Cannot encode names for verification: %s.", err)
+		slog.Error("Cannot encode names for verification", "error", err)
 	}
 
 	attempts, err = try(func(int) (bool, error) {
@@ -223,33 +226,53 @@ func (vr verifrest) Verify(
 		var respBytes []byte
 		request, err = http.NewRequestWithContext(ctx, http.MethodPost, url, d)
 		if err != nil {
-			log.Fatal().Err(err).Msg("Cannot create request")
+			slog.Error("Cannot create request", "error", err)
 		}
 		request.Header.Set("Content-Type", "application/json")
 
 		resp, err = vr.client.Do(request)
 		if err != nil {
-			log.Warn().Msgf("Request is failing for %s", namesRange)
+			slog.Error(
+				"Request is failing for %s",
+				"names-range", namesRange,
+				"error", err,
+			)
 			return true, err
 		}
 		defer resp.Body.Close()
 
 		respBytes, err = io.ReadAll(resp.Body)
 		if err != nil {
-			log.Warn().Msgf("Body reading is failing for %s", namesRange)
+			slog.Error(
+				"Body reading is failing for",
+				"names-range", namesRange,
+				"error", err,
+			)
 			return true, err
 		}
 		err = enc.Decode(respBytes, &response)
 		if err != nil {
-			log.Warn().Msgf("Response decoding is failing for %s", namesRange)
+			slog.Error(
+				"Response decoding is failing for",
+				"names-range", namesRange,
+				"error", err,
+			)
 			return true, err
 		}
 		return false, nil
 	})
 
 	if err != nil {
-		log.Printf("Verification failed for %s-%s after %d attempts.", input.NameStrings[0],
-			input.NameStrings[len(input.NameStrings)-1], attempts)
+		rng := fmt.Sprintf(
+			"%s-%s",
+			input.NameStrings[0],
+			input.NameStrings[len(input.NameStrings)-1])
+		slog.Warn(
+			"Verification failed.",
+			"names-range", rng,
+			"attempts", attempts,
+			"error", err,
+		)
 		res := vlib.Output{Names: make([]vlib.Name, len(input.NameStrings))}
 		for i := range input.NameStrings {
 			name := input.NameStrings[i]
