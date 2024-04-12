@@ -63,6 +63,4 @@ Enables fuzzy-matching for uninomial names.
 
 2. **Relaxing Fuzzy-Matching Rules**
 
-Increases the maximum allowed edit distance to 2 and removes restrictions on
-word length. Due to increased computation and potential for false positives,
-this option limits the maximum number of input names to 50 (instead of 5000).
+This option removes restrictions on a word length. 
