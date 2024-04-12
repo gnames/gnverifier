@@ -2,6 +2,10 @@
 
 [![DOI](https://zenodo.org/badge/297323648.svg)](https://zenodo.org/badge/latestdoi/297323648)
 
+**Warning**: Version v1.2.0 introduces some backward incompatible features:
+Some flags for command line application are changed, CSV output now returns
+`TaxonomicStatus` instead of `IsSynonym`.
+
 Try `GNverifier` [online][web-service].
 
 [GNverifier with OpenRefine]
@@ -507,7 +511,7 @@ details.
 [data_source_ids]: https://verifier.globalnames.org/data_sources
 [default gnverifier.yaml]: https://github.com/gnames/gnverifier/blob/master/gnverifier/cmd/gnverifier.yaml
 [dimus]: https://github.com/dimus
-[fuzzy-matching]: https://github.com/gnames/gnverifier/fuzzy-matching.md
+[fuzzy-matching]: https://github.com/gnames/gnverifier/blob/master/fuzzy-matching.md
 [gbif]: https://www.gbif.org/
 [gnames]: https://apidoc.globalnames.org/gnames
 [gnverifier]: https://github.com/gnames/gnverifier

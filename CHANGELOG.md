@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add [#112]: documentation describing fuzzy-matching rules.
+
 ## [v1.2.0] - 2024-04-12 Fri
 
 - Add [#111]: option to relax fuzzy matching rules. 
