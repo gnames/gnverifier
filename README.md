@@ -4,7 +4,8 @@
 
 **Warning**: Version v1.2.0 introduces some backward incompatible features:
 Some flags for command line application are changed, CSV output now returns
-`TaxonomicStatus` instead of `IsSynonym`.
+`TaxonomicStatus` instead of `IsSynonym`. The term `isSynonym` stays in JSON
+format for backward compatibility, but is deprecated.
 
 Try `GNverifier` [online][web-service].
 
