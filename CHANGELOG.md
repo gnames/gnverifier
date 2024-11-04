@@ -2,11 +2,18 @@
 
 ## Unreleased
 
+## [v1.2.2] - 2024-11-04 Mon
+
+- Add: Changelog, version.
+
+## [v1.2.1] - 2024-11-04 Mon
+
+- Add: modules update.
 - Add [#112]: documentation describing fuzzy-matching rules.
 
 ## [v1.2.0] - 2024-04-12 Fri
 
-- Add [#111]: option to relax fuzzy matching rules. 
+- Add [#111]: option to relax fuzzy matching rules.
 - Add [#110]: TaxonomicStatus to results.
 
 ## [v1.1.8] - 2023-12-23 Sat
@@ -250,6 +257,8 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.2.2]: https://github.com/gnames/gnverifier/compare/v1.2.1...v1.2.2
+[v1.2.1]: https://github.com/gnames/gnverifier/compare/v1.2.0...v1.2.1
 [v1.2.0]: https://github.com/gnames/gnverifier/compare/v1.1.8...v1.2.0
 [v1.1.8]: https://github.com/gnames/gnverifier/compare/v1.1.7...v1.1.8
 [v1.1.7]: https://github.com/gnames/gnverifier/compare/v1.1.6...v1.1.7
