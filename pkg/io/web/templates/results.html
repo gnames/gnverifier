@@ -1,31 +1,32 @@
 {{ define "results" }}
-<div class='source-match'>
-  <div class='source-names-score'>
-    <span class='source-name-string'>{{ .MatchedName }}</span>
+<div class="source-match">
+  <div class="source-names-score">
+    <span class="source-name-string">{{ .MatchedName }}</span>
     [ {{ matchType .MatchType .EditDistance }} ]
   </div>
-  {{ if .CurrentName }}
-  {{ if ne .MatchedName .CurrentName }}
-  <div class='source-names-score'>
+  {{ if .CurrentName }} {{ if ne .MatchedName .CurrentName }}
+  <div class="source-names-score">
     Current name:
-    <span class='source-current-name-string'>{{ .CurrentName }}</span>
+    <span class="source-current-name-string">{{ .CurrentName }}</span>
   </div>
-  {{ end }}
-  {{ end }}
+  {{ end }} {{ end }}
 
-  <div class='source-title'>
+  <div class="source-title">
     {{ if .Outlink }}
-    <span class='source-name-string'><a href="{{ .Outlink }}">{{ .DataSourceTitleShort }} (updated on {{ .EntryDate }})</a></span>
-    {{ else }}
-      {{ .DataSourceTitleShort }} (updated on {{ .EntryDate }})
-    {{ end }}
-    <a href='/data_sources/{{ .DataSourceID }}'>🛈 </a>
+    <span class="source-name-string"
+      ><a href="{{ .Outlink }}"
+        >{{ .DataSourceTitleShort }} (updated on {{ .EntryDate }})</a
+      ></span
+    >
+    {{ else }} {{ .DataSourceTitleShort }} (updated on {{ .EntryDate }}) {{ end
+    }}
+    <a href="/data_sources/{{ .DataSourceID }}">ℹ️ </a>
   </div>
 
   {{ if .ClassificationPath }}
-  <div class='source-classification-path'>{{ classification .ClassificationPath .ClassificationRanks }}</div>
-  {{ end }}
-
-  {{ scoreDetails .SortScore .ScoreDetails }}
+  <div class="source-classification-path">
+    {{ classification .ClassificationPath .ClassificationRanks }}
+  </div>
+  {{ end }} {{ scoreDetails .SortScore .ScoreDetails }}
 </div>
 {{ end }}
