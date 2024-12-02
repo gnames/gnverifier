@@ -1,6 +1,6 @@
 # Global Names Verifier
 
-[![DOI](https://zenodo.org/badge/297323648.svg)](https://zenodo.org/badge/latestdoi/297323648)
+[![DOI](https://zenodo.org/badge/297323648.svg)](https://doi.org/10.5281/zenodo.5111542)
 
 **Warning**: Version v1.2.0 introduces some backward incompatible features:
 Some flags for command line application are changed, CSV output now returns
@@ -530,4 +530,3 @@ details.
 [wsl install]: https://docs.microsoft.com/en-us/windows/wsl/install-win10
 [wsl2]: https://docs.microsoft.com/en-us/windows/wsl/install
 [zenodo doi]: https://zenodo.org/badge/latestdoi/297323648
-
