@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [v1.2.3] - 2025-01-29 Wed
+
+- Add: update modules.
+- Add: citation metadata.
+
 ## [v1.2.2] - 2024-11-04 Mon
 
 - Add: Changelog, version.
@@ -257,6 +262,7 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.2.3]: https://github.com/gnames/gnverifier/compare/v1.2.2...v1.2.3
 [v1.2.2]: https://github.com/gnames/gnverifier/compare/v1.2.1...v1.2.2
 [v1.2.1]: https://github.com/gnames/gnverifier/compare/v1.2.0...v1.2.1
 [v1.2.0]: https://github.com/gnames/gnverifier/compare/v1.1.8...v1.2.0
