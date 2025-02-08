@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.2.4] - 2025-02-08 Sat
+
+- Add: remove HTTP2 protocol from the http client.
+
 ## [v1.2.3] - 2025-01-29 Wed
 
 - Add: update modules.
@@ -262,6 +266,7 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.2.4]: https://github.com/gnames/gnverifier/compare/v1.2.3...v1.2.4
 [v1.2.3]: https://github.com/gnames/gnverifier/compare/v1.2.2...v1.2.3
 [v1.2.2]: https://github.com/gnames/gnverifier/compare/v1.2.1...v1.2.2
 [v1.2.1]: https://github.com/gnames/gnverifier/compare/v1.2.0...v1.2.1

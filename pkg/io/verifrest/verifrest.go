@@ -3,6 +3,7 @@ package verifrest
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"log/slog"
@@ -30,8 +31,13 @@ func New(url string) verifier.Verifier {
 		url = url + "/"
 	}
 	tr := &http.Transport{
-		MaxIdleConns:    10,
-		IdleConnTimeout: 30 * time.Second,
+		MaxIdleConns:      10,
+		IdleConnTimeout:   30 * time.Second,
+		ForceAttemptHTTP2: false,
+		// do not support HTTP2 by providing empty NextProtos
+		TLSClientConfig: &tls.Config{
+			NextProtos: nil,
+		},
 	}
 	client := &http.Client{Timeout: 4 * time.Minute, Transport: tr}
 	return &verifrest{verifierURL: url, client: client}
