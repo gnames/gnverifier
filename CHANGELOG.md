@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [v1.2.5] - 2025-04-02 Wed
+
+- Add: update modules.
+- Add: TAXREF to web UI.
+- Add: GRIN Plants data to web UI.
+
 ## [v1.2.4] - 2025-02-08 Sat
 
 - Add: remove HTTP2 protocol from the http client.
@@ -266,6 +272,7 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.2.5]: https://github.com/gnames/gnverifier/compare/v1.2.4...v1.2.5
 [v1.2.4]: https://github.com/gnames/gnverifier/compare/v1.2.3...v1.2.4
 [v1.2.3]: https://github.com/gnames/gnverifier/compare/v1.2.2...v1.2.3
 [v1.2.2]: https://github.com/gnames/gnverifier/compare/v1.2.1...v1.2.2
