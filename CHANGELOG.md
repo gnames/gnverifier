@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## [v1.2.7] - 2025-08-25 Mon
+
+- Fix: version number
+
+## [v1.2.6] - 2025-08-25 Mon
+
+- Add: Brasilian Flora and Founa in UI
+
 ## [v1.2.5] - 2025-04-02 Wed
 
 - Add: update modules.
@@ -272,6 +280,8 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.2.7]: https://github.com/gnames/gnverifier/compare/v1.2.6...v1.2.7
+[v1.2.6]: https://github.com/gnames/gnverifier/compare/v1.2.5...v1.2.6
 [v1.2.5]: https://github.com/gnames/gnverifier/compare/v1.2.4...v1.2.5
 [v1.2.4]: https://github.com/gnames/gnverifier/compare/v1.2.3...v1.2.4
 [v1.2.3]: https://github.com/gnames/gnverifier/compare/v1.2.2...v1.2.3
