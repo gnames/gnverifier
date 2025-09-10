@@ -16,6 +16,10 @@ type Config struct {
 	// returned.
 	DataSources []int
 
+	// Vernaculars contains a list of languages in ISO 639-3 (3 letter) format
+	// to use for finding vernacular names for results.
+	Vernaculars []string
+
 	// Format determins the output. It can be either JSON or CSV.
 	Format gnfmt.Format
 
@@ -62,14 +66,21 @@ type Config struct {
 // Option is a type of all options for Config.
 type Option func(cnf *Config)
 
-// OptDataSources set list of preferred sources.
+// OptDataSources sets list of preferred sources.
 func OptDataSources(srs []int) Option {
 	return func(cnf *Config) {
 		cnf.DataSources = srs
 	}
 }
 
-// OptFormat sets output format
+// OptVernaculars sets list of preferred languages of vernacular names.
+func OptVernaculars(ss []string) Option {
+	return func(cnf *Config) {
+		cnf.Vernaculars = ss
+	}
+}
+
+// OptFormat sets output format.
 func OptFormat(f gnfmt.Format) Option {
 	return func(cnf *Config) {
 		cnf.Format = f

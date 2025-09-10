@@ -166,6 +166,7 @@ func (gnv gnverifier) loadNames(
 func (gnv gnverifier) setParams(names []string) vlib.Input {
 	res := vlib.Input{
 		NameStrings:             names,
+		Vernaculars:             gnv.cfg.Vernaculars,
 		DataSources:             gnv.cfg.DataSources,
 		WithCapitalization:      gnv.cfg.WithCapitalization,
 		WithSpeciesGroup:        gnv.cfg.WithSpeciesGroup,

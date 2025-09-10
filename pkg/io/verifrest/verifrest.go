@@ -79,7 +79,7 @@ func (vr verifrest) Search(
 	return res, nil
 }
 
-// DataSources returns meta-data about aggregated data-sources.
+// DataSources returns metadata about aggregated data-sources.
 func (vr verifrest) DataSources(
 	ctx context.Context,
 ) ([]vlib.DataSource, error) {

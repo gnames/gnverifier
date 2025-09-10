@@ -27,6 +27,7 @@ import (
 
 type formInput struct {
 	Names          string `query:"names" form:"names"`
+	Vernaculars    string `query:"vernaculars" form:"vernaculars"`
 	Format         string `query:"format" form:"format"`
 	AllMatches     string `query:"all_matches" form:"all_matches"`
 	Capitalize     string `query:"capitalize" form:"capitalize"`
@@ -83,6 +84,7 @@ type Data struct {
 	Input         string
 	Format        string
 	DataSourceIDs []int
+	Vernaculars   []string
 	AllMatches    bool
 	Verified      []vlib.Name
 	DataSources   []vlib.DataSource
@@ -249,7 +251,10 @@ func homePOST(gnv gnverifier.GNverifier) func(echo.Context) error {
 
 		split := strings.Split(inp.Names, "\n")
 		if len(split) > 5_000 {
-			split = split[0:5_000]
+			split = split[:5_000]
+		}
+		if inp.Vernaculars != "" && len(split) > 50 {
+			split = split[:50]
 		}
 
 		if len(split) < gnv.Config().NamesNumThreshold {
@@ -285,6 +290,9 @@ func redirectToHomeGET(c echo.Context, inp *formInput) error {
 	q := make(url.Values)
 	q.Set("names", inp.Names)
 	q.Set("format", inp.Format)
+	if inp.Vernaculars != "" {
+		q.Set("vernaculars", inp.Vernaculars)
+	}
 	if caps {
 		q.Set("capitalize", inp.Capitalize)
 	}
@@ -322,6 +330,14 @@ func verificationResults(
 	data.AllMatches = inp.AllMatches == "on"
 
 	data.Input = inp.Names
+	if inp.Vernaculars != "" {
+		for v := range strings.SplitSeq(inp.Vernaculars, ",") {
+			if len(v) == 3 {
+				data.Vernaculars = append(data.Vernaculars, v)
+			}
+		}
+
+	}
 
 	data.DataSourceIDs = inp.DataSources
 
@@ -346,6 +362,7 @@ func verificationResults(
 
 		opts := []config.Option{
 			config.OptDataSources(data.DataSourceIDs),
+			config.OptVernaculars(data.Vernaculars),
 			config.OptWithCapitalization(caps),
 			config.OptWithSpeciesGroup(spGr),
 			config.OptWithRelaxedFuzzyMatch(fuzzyRel),

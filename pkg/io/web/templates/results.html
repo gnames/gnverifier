@@ -1,32 +1,54 @@
 {{ define "results" }}
 <div class="source-match">
-  <div class="source-names-score">
-    <span class="source-name-string">{{ .MatchedName }}</span>
-    [ {{ matchType .MatchType .EditDistance }} ]
-  </div>
-  {{ if .CurrentName }} {{ if ne .MatchedName .CurrentName }}
-  <div class="source-names-score">
-    Current name:
-    <span class="source-current-name-string">{{ .CurrentName }}</span>
-  </div>
-  {{ end }} {{ end }}
+    <div class="source-names-score">
+        <span class="source-name-string">{{ .MatchedName }}</span>
+        [ {{ matchType .MatchType .EditDistance }} ]
+    </div>
+    {{ if .CurrentName }} {{ if ne .MatchedName .CurrentName }}
+    <div class="source-names-score">
+        Current name:
+        <span class="source-current-name-string">{{ .CurrentName }}</span>
+    </div>
+    {{ end }} {{ end }}
 
-  <div class="source-title">
-    {{ if .Outlink }}
-    <span class="source-name-string"
-      ><a href="{{ .Outlink }}"
-        >{{ .DataSourceTitleShort }} (updated on {{ .EntryDate }})</a
-      ></span
-    >
-    {{ else }} {{ .DataSourceTitleShort }} (updated on {{ .EntryDate }}) {{ end
-    }}
-    <a href="/data_sources/{{ .DataSourceID }}">ℹ️ </a>
-  </div>
+    <div class="source-title">
+        {{ if .Outlink }}
+        <span class="source-name-string"
+            ><a href="{{ .Outlink }}"
+                >{{ .DataSourceTitleShort }} (updated on {{ .EntryDate }})</a
+            ></span
+        >
+        {{ else }} {{ .DataSourceTitleShort }} (updated on {{ .EntryDate }}) {{
+        end }}
+        <a href="/data_sources/{{ .DataSourceID }}">ℹ️ </a>
+    </div>
 
-  {{ if .ClassificationPath }}
-  <div class="source-classification-path">
-    {{ classification .ClassificationPath .ClassificationRanks }}
-  </div>
-  {{ end }} {{ scoreDetails .SortScore .ScoreDetails }}
+    {{ if .ClassificationPath }}
+    <div class="source-classification-path">
+        {{ classification .ClassificationPath .ClassificationRanks }}
+    </div>
+    {{ end }} {{ scoreDetails .SortScore .ScoreDetails }} {{ if .Vernaculars }}
+    <div class="vernacular-names">
+        <h4>Vernacular Names</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Language</th>
+                    <th>Language Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range .Vernaculars }}
+                <tr>
+                    <td>{{ .Name }}</td>
+                    <td>{{ .Language }}</td>
+                    <td>{{ .LanguageCode }}</td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+    {{ end }}
 </div>
 {{ end }}
