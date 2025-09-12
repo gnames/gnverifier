@@ -43,6 +43,7 @@ search feature.
     * [species group](#species-group)
     * [relaxed fuzzy-match](#relaxed-fuzzy-match)
     * [fuzzy-match of uninomial names](#fuzzy-match-of-uninomial-names)
+    * [vernaculars](#vernaculars)
     * [format](#format)
     * [jobs](#jobs)
     * [quiet](#quiet)
@@ -313,6 +314,22 @@ uninomials create a significant amount of false positives.
 ```bash
 gnverifier -U "Pomatmus"
 gnverifier --fuzzy_uninomial "Pomatmus"
+```
+
+#### vernaculars
+
+Sets languages for augmenting search results with vernacular names from the
+requested data sources. Try it with iNaturalist (id 180).
+
+The languages has to be given in 3-letter ISO 639-3 code, separated by
+a comma (e.g., eng,deu,rus,fra). If 'all' is given instead, vernacular
+names from all languages will be returned.
+
+If this option is enabled the input will be limited to 50 scientific names.
+
+```bash
+gnverifier -r eng,fra -s 180 "Bubo bubo"
+gnverifier --vernaculars=all -s 180 "Bubo bubo"
 ```
 
 #### format

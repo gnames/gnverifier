@@ -10,7 +10,6 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -34,8 +33,8 @@ import (
 var configText string
 
 var (
-	opts []config.Option
-	msg  []string
+	opts, webOpts []config.Option
+	msg           []string
 )
 
 // cfgData purpose is to achieve automatic import of data from the
@@ -65,75 +64,28 @@ https://github.com/gnames/gnverifier
     gnverifier "g:M. sp:galloprovincialis au:Oliv."
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		webOpts := make([]config.Option, len(opts))
 		copy(webOpts, opts)
 		webOpts = append(webOpts, config.OptWithCapitalization(true))
 
-		if showVersionFlag(cmd) {
-			os.Exit(0)
+		// if there is version flag, show version and exit
+		versionFlag(cmd)
+
+		flags := []funcFlag{
+			capitalizeFlag, spGroupFlag, fuzzyRelaxedFlag,
+			fuzzyUninomialFlag, formatFlag, jobsFlag, allMatchesFlag,
+			sourcesFlag, vernacularsFlag, verifierUrlFlag, quietFlag,
 		}
 
-		quiet, _ := cmd.Flags().GetBool("quiet")
-		if quiet {
-			slog.SetLogLoggerLevel(10)
+		for _, f := range flags {
+			f(cmd)
 		}
 
+		// these will only show if quietFlag was false
 		for i := range msg {
 			slog.Info(msg[i])
 		}
 
-		caps, _ := cmd.Flags().GetBool("capitalize")
-		if caps {
-			opts = append(opts, config.OptWithCapitalization(true))
-		}
-
-		spGr, _ := cmd.Flags().GetBool("species_group")
-		if spGr {
-			opts = append(opts, config.OptWithSpeciesGroup(true))
-		}
-
-		fuzzyRelaxed, _ := cmd.Flags().GetBool("fuzzy_relaxed")
-		if fuzzyRelaxed {
-			opts = append(opts, config.OptWithRelaxedFuzzyMatch(true))
-		}
-
-		fuzzyUni, _ := cmd.Flags().GetBool("fuzzy_uninomial")
-		if fuzzyUni {
-			opts = append(opts, config.OptWithUninomialFuzzyMatch(true))
-		}
-
-		formatString, _ := cmd.Flags().GetString("format")
-		frmt, _ := gnfmt.NewFormat(formatString)
-		if frmt == gnfmt.FormatNone {
-			slog.Warn("Cannot set format with user inoput, setting format to csv",
-				"input", formatString,
-			)
-			frmt = gnfmt.CSV
-		}
-		opts = append(opts, config.OptFormat(frmt))
-
-		jobs, _ := cmd.Flags().GetInt("jobs")
-		if jobs != 4 {
-			opts = append(opts, config.OptJobs(jobs))
-		}
-
-		allMatches, _ := cmd.Flags().GetBool("all_matches")
-		if allMatches {
-			opts = append(opts, config.OptWithAllMatches(true))
-		}
-
-		sources, _ := cmd.Flags().GetString("sources")
-		if sources != "" {
-			data_sources := parseDataSources(sources)
-			opts = append(opts, config.OptDataSources(data_sources))
-		}
-
-		url, _ := cmd.Flags().GetString("verifier_url")
-		if url != "" {
-			opts = append(opts, config.OptVerifierURL(url))
-			webOpts = append(webOpts, config.OptVerifierURL(url))
-		}
-
+		// if port is given run gnverifier web UI instead
 		port, _ := cmd.Flags().GetInt("port")
 		if port > 0 {
 			cnf := config.New(webOpts...)
@@ -167,50 +119,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("version", "V", false, "Prints version information")
-	rootCmd.Flags().BoolP("capitalize", "c", false, "capitalizes first character")
-	rootCmd.Flags().StringP("format", "f", "csv", `Format of the output: "compact", "pretty", "csv", "tsv".
-  compact: compact JSON,
-  pretty: pretty JSON,
-  csv: CSV (DEFAULT)`)
-	rootCmd.Flags().IntP("name_field", "n", 1, "Set position of ScientificName field, the first field is 1.")
-	rootCmd.Flags().IntP("jobs", "j", 4, "Number of jobs running in parallel.")
-	rootCmd.Flags().IntP("port", "p", 0, "Port to run web GUI.")
-	rootCmd.Flags().BoolP("all_matches", "M", false, "return all matched results per source, not just the best one.")
-	rootCmd.Flags().BoolP("species_group", "G", false, "searching for species names also searches their species groups.")
-	rootCmd.Flags().BoolP("fuzzy_relaxed", "R", false,
-		"relaxes fuzzy matching rules, decreses max names to 50.")
-	rootCmd.Flags().BoolP("fuzzy_uninomial", "U", false,
-		"allows fuzzy matching for uninomial names.")
-	rootCmd.Flags().BoolP("quiet", "q", false, "do not show progress")
-	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
-  If sources are set and there are matches to their data,
-  such matches are returned in "preferred_result" results.
-  If the option is set to "0" all matched sources are returned.
-
-  To find IDs refer to "https://verifier.globalnames.org/data_sources".
-  1 - Catalogue of Life
-  3 - ITIS
-  4 - NCBI
-  9 - WoRMS
-  11 - GBIF
-  12 - Encyclopedia of Life
-  167 - IPNI
-  170 - Arctos
-  172 - PaleoBioDB
-  181 - IRMNG
-  194 - PLAZI
-  195 - AlgaeBase`)
-	rootCmd.Flags().StringP("verifier_url", "v", "",
-		`URL for verification service.
-  Default: https://verifier.globalnames.org/api/v1`)
+	initFlags()
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -290,45 +199,6 @@ func getOpts() {
 	if cfg.WithUninomialFuzzyMatch {
 		opts = append(opts, config.OptWithUninomialFuzzyMatch(true))
 	}
-}
-
-// showVersionFlag provides version and the build timestamp. If it returns
-// true, it means that version flag was given.
-func showVersionFlag(cmd *cobra.Command) bool {
-	hasVersionFlag, err := cmd.Flags().GetBool("version")
-	if err != nil {
-		slog.Error("Cannot get version flag", "error", err)
-	}
-
-	if hasVersionFlag {
-		fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnverifier.Version, gnverifier.Build)
-	}
-	return hasVersionFlag
-}
-
-func parseDataSources(s string) []int {
-	if s == "" {
-		return nil
-	}
-	dss := strings.Split(s, ",")
-	res := make([]int, 0, len(dss))
-	for _, v := range dss {
-		v = strings.Trim(v, " ")
-		ds, err := strconv.Atoi(v)
-		if err != nil {
-			slog.Warn("Cannot convert data-sources to list, skipping", "input", v)
-			return nil
-		}
-		if ds < 0 {
-			slog.Warn("Data source ID is less than zero, skipping", "input", ds)
-		} else {
-			res = append(res, int(ds))
-		}
-	}
-	if len(res) > 0 {
-		return res
-	}
-	return nil
 }
 
 func processStdin(

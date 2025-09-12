@@ -2,7 +2,7 @@ package gnverifier
 
 var (
 	// Version of the gnverifier
-	Version = "v1.2.8"
+	Version = "v1.2.9"
 	// Build timestamp
 	Build string
 )

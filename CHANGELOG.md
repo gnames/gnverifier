@@ -2,17 +2,21 @@
 
 ## Unreleased
 
+## [v1.2.9] - 2025-09-12 Fri
+
+- Add: command line support for vernacular names.
+
 ## [v1.2.8] - 2025-09-10 Wed
 
-- Add: support vernacular names (for synonyms too)
+- Add: support vernacular names (for synonyms too).
 
 ## [v1.2.7] - 2025-08-25 Mon
 
-- Fix: version number
+- Fix: version number.
 
 ## [v1.2.6] - 2025-08-25 Mon
 
-- Add: Brasilian Flora and Founa in UI
+- Add: Brasilian Flora and Founa in UI.
 
 ## [v1.2.5] - 2025-04-02 Wed
 
@@ -284,6 +288,7 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.2.9]: https://github.com/gnames/gnverifier/compare/v1.2.8...v1.2.9
 [v1.2.8]: https://github.com/gnames/gnverifier/compare/v1.2.7...v1.2.8
 [v1.2.7]: https://github.com/gnames/gnverifier/compare/v1.2.6...v1.2.7
 [v1.2.6]: https://github.com/gnames/gnverifier/compare/v1.2.5...v1.2.6

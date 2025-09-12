@@ -443,8 +443,7 @@ td.nobg {
     background-color: #fafafa;
 }
 
-input[type="text"],
-input[type="email"],
+input[type="text"] input[type="email"],
 input[type="file"],
 textarea {
     color: #000000;
@@ -458,6 +457,10 @@ textarea {
     line-height: normal;
     padding: 3px 5px;
     margin: 0.2em;
+}
+
+input::placeholder {
+    color: #aaa;
 }
 
 textarea {
