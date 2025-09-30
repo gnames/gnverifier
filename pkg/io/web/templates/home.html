@@ -18,10 +18,18 @@
   {{ end }}
 
   <div class='results'>
+    {{ $bestResults := .BestResults }}
+    {{ if $bestResults }}
+    <h3>Best Results:</h3>
+    {{ range $bestResults }}
+    {{ template "results" . }}
+    {{ end }}
+    {{ else }}
     {{ $best := .BestResult }}
     {{ if $best }}
     <h3>Best Result Only:</h3>
     {{ template "results" $best}}
+    {{ end }}
     {{ end }}
 
     {{ $res := .Results }}

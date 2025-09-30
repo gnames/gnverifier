@@ -60,6 +60,9 @@ func fuzzyUninomialFlag(cmd *cobra.Command) {
 
 func formatFlag(cmd *cobra.Command) {
 	formatString, _ := cmd.Flags().GetString("format")
+	if formatString == "" {
+		return
+	}
 	frmt, _ := gnfmt.NewFormat(formatString)
 	if frmt == gnfmt.FormatNone {
 		slog.Warn("Cannot set format with user inoput, setting format to csv",

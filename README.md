@@ -2,11 +2,6 @@
 
 [![DOI](https://zenodo.org/badge/297323648.svg)](https://doi.org/10.5281/zenodo.5111542)
 
-**Warning**: Version v1.2.0 introduces some backward incompatible features:
-Some flags for command line application are changed, CSV output now returns
-`TaxonomicStatus` instead of `IsSynonym`. The term `isSynonym` stays in JSON
-format for backward compatibility, but is deprecated.
-
 Try `GNverifier` [online][web-service].
 
 [GNverifier with OpenRefine]
@@ -15,9 +10,22 @@ Try `GNverifier` [online][web-service].
 
 [Feedback]
 
-Takes a scientific name or a list of scientific names and verifies them against
-a variety of biodiversity [Data Sources][data_source_ids]. Includes an advanced
-search feature.
+`GNverifier` validates scientific names by checking them against a variety of biodiversity [Data Sources][data_source_ids]. It accepts individual names or batch lists and returns verification results showing whether names are found, their taxonomic status, and matching records. An [advanced search feature](#advanced-search-query-language) enables complex queries with filters for authorship, year, and other criteria.
+
+Results are returned in JSON, CSV, TSV, or HTML (web interface only) formats.
+
+## Understanding Verification Results
+
+**BestResult**: The highest-scoring match found for a name. In most cases, this single result provides the most reliable verification outcome. However, when multiple equally reliable matches exist, see **BestResults**.
+
+**BestResults**: A list containing multiple equally high-scoring matches. This field is populated only when verification finds multiple equally reliable results (e.g., hemihomonyms—identical names under different nomenclatural codes, or ambiguous synonyms). This field remains empty when there is only one best match.
+
+**AllResults**: The complete set of all matches found across all data sources. This can be extensive and is only returned when explicitly requested via the `--all-matches` CLI flag or the corresponding web UI setting.
+
+## Vernacular (Common) Names
+
+To retrieve vernacular names alongside scientific names, use iNaturalist (data source ID `180`) and specify desired languages via the `--vernaculars` CLI option or web UI setting. Provide languages as comma-separated ISO 639-3 three-letter codes (e.g., `eng,spa,fra` for English, Spanish, and French).
+
 
 <!-- vim-markdown-toc GFM -->
 

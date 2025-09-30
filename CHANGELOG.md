@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## [v1.3.0] - 2025-10-01 Wed
+
+- Add [#145]: support for displaying multiple best results in web UI templates.
+- Add: `.envrc.example` file with environment variable examples for direnv.
+- Add: support for environment variables via direnv (`.envrc`).
+- Add: refactor web server verification results processing with better separation of concerns.
+- Add: improved code documentation for verification results processing functions.
+- Add: update dependencies (gnlib v0.51.0 → v0.56.0, gnquery v0.3.4 → v0.4.2, Go v1.25.0 → v1.25.1).
+- Fix: default format flag now empty string instead of "csv" for better flexibility.
+- Fix: web server configuration - properly initialize webOpts after flag processing.
+
 ## [v1.2.9] - 2025-09-12 Fri
 
 - Add: command line support for vernacular names.
@@ -288,6 +299,7 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.3.0]: https://github.com/gnames/gnverifier/compare/v1.2.9...v1.3.0
 [v1.2.9]: https://github.com/gnames/gnverifier/compare/v1.2.8...v1.2.9
 [v1.2.8]: https://github.com/gnames/gnverifier/compare/v1.2.7...v1.2.8
 [v1.2.7]: https://github.com/gnames/gnverifier/compare/v1.2.6...v1.2.7
@@ -351,6 +363,36 @@ This document follows [changelog guidelines]
 
 <!-- Issues -->
 
+[#150]: https://github.com/gnames/gnverifier/issues/150
+[#149]: https://github.com/gnames/gnverifier/issues/149
+[#148]: https://github.com/gnames/gnverifier/issues/148
+[#147]: https://github.com/gnames/gnverifier/issues/147
+[#146]: https://github.com/gnames/gnverifier/issues/146
+[#145]: https://github.com/gnames/gnverifier/issues/145
+[#144]: https://github.com/gnames/gnverifier/issues/144
+[#143]: https://github.com/gnames/gnverifier/issues/143
+[#142]: https://github.com/gnames/gnverifier/issues/142
+[#141]: https://github.com/gnames/gnverifier/issues/141
+[#140]: https://github.com/gnames/gnverifier/issues/140
+[#139]: https://github.com/gnames/gnverifier/issues/139
+[#138]: https://github.com/gnames/gnverifier/issues/138
+[#137]: https://github.com/gnames/gnverifier/issues/137
+[#136]: https://github.com/gnames/gnverifier/issues/136
+[#135]: https://github.com/gnames/gnverifier/issues/135
+[#134]: https://github.com/gnames/gnverifier/issues/134
+[#133]: https://github.com/gnames/gnverifier/issues/133
+[#132]: https://github.com/gnames/gnverifier/issues/132
+[#131]: https://github.com/gnames/gnverifier/issues/131
+[#130]: https://github.com/gnames/gnverifier/issues/130
+[#129]: https://github.com/gnames/gnverifier/issues/129
+[#128]: https://github.com/gnames/gnverifier/issues/128
+[#127]: https://github.com/gnames/gnverifier/issues/127
+[#126]: https://github.com/gnames/gnverifier/issues/126
+[#125]: https://github.com/gnames/gnverifier/issues/125
+[#124]: https://github.com/gnames/gnverifier/issues/124
+[#123]: https://github.com/gnames/gnverifier/issues/123
+[#122]: https://github.com/gnames/gnverifier/issues/122
+[#121]: https://github.com/gnames/gnverifier/issues/121
 [#120]: https://github.com/gnames/gnverifier/issues/120
 [#119]: https://github.com/gnames/gnverifier/issues/119
 [#118]: https://github.com/gnames/gnverifier/issues/118

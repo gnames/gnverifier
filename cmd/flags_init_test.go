@@ -190,7 +190,7 @@ func TestFormatFlags(t *testing.T) {
 		{
 			name:      "format",
 			shorthand: "f",
-			defValue:  "csv",
+			defValue:  "",
 			usage:     "Format of the output: \"compact\", \"pretty\", \"csv\", \"tsv\".\n  compact: compact JSON,\n  pretty: pretty JSON,\n  csv: CSV (DEFAULT)",
 		},
 	}
@@ -350,7 +350,7 @@ func TestFlagDefaults(t *testing.T) {
 		"vernaculars":     "",
 		"quiet":           false,
 		"capitalize":      false,
-		"format":          "csv",
+		"format":          "",
 		"jobs":            4,
 		"sources":         "",
 	}

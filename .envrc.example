@@ -1,0 +1,21 @@
+# Comma-separated list of data source IDs to use for verification.
+export GNV_DATA_SOURCES=1,11,12
+
+# Output format for verification results (csv, tsv, json, compact, pretty).
+export GNV_FORMAT=compact
+
+# Number of jobs for parallel processing.
+export GNV_JOBS=4
+
+# URL of the gnverifier service for remote verification.
+export GNV_VERIFIER_URL=https://verifier.globalnames.org/api/v1/
+
+# Include all matches in results (true/false).
+export GNV_WITH_ALL_MATCHES=false
+
+# Capitalize first letter of names (true/false).
+export GNV_WITH_CAPITALIZATION=true
+
+# Include species group information (true/false).
+export GNV_WITH_SPECIES_GROUP=false
+

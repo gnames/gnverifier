@@ -4,6 +4,7 @@ coverage.txt
 t
 t.json
 .env
+.envrc
 *.pprof
 *.trace
 *.test

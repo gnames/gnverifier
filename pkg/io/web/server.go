@@ -315,6 +315,21 @@ func redirectToHomeGET(c echo.Context, inp *formInput) error {
 	return c.Redirect(http.StatusFound, url)
 }
 
+// verificationResults processes name verification requests and returns results
+// in the requested format (HTML, JSON, CSV, or TSV).
+//
+// The function handles both search queries and batch name verification:
+//   - Search queries: Detected via search.IsQuery() for advanced search operations
+//   - Batch verification: Processes multiple scientific names for verification
+//
+// Parameters:
+//   - c: Echo context for HTTP request/response handling
+//   - gnv: GNverifier instance for performing verifications
+//   - inp: Form input containing user-submitted data and configuration
+//   - data: Data struct that will be populated with verification results
+//   - method: HTTP method used ("GET" or "POST") for logging purposes
+//
+// Returns an error if processing or response rendering fails.
 func verificationResults(
 	c echo.Context,
 	gnv gnverifier.GNverifier,
@@ -322,105 +337,159 @@ func verificationResults(
 	data Data,
 	method string,
 ) error {
-	var names []string
+	// Parse configuration options from form input
+	opts := parseFormOptions(inp, &data)
+	gnv = gnv.ChangeConfig(opts...)
+
+	// Process names if input is provided
+	if data.Input != "" {
+		names := splitAndLimitNames(data.Input)
+
+		// Handle search query vs. batch verification
+		if len(names) > 0 && search.IsQuery(names[0]) {
+			data.Verified = processSearchQuery(c.Request().Context(), gnv, names[0], method)
+		} else {
+			data.Verified = processBatchVerification(c.Request().Context(), gnv, names, method)
+		}
+	}
+
+	// Return results in requested format
+	return renderResults(c, data)
+}
+
+// parseFormOptions extracts configuration options from form input and updates data.
+func parseFormOptions(inp *formInput, data *Data) []config.Option {
+	// Parse boolean flags
 	caps := inp.Capitalize == "on"
 	spGr := inp.SpeciesGroup == "on"
 	fuzzyUni := inp.FuzzyUninomial == "on"
 	fuzzyRel := inp.FuzzyRelaxed == "on"
 	data.AllMatches = inp.AllMatches == "on"
 
+	// Set input data
 	data.Input = inp.Names
+	data.DataSourceIDs = inp.DataSources
+
+	// Parse vernaculars (3-letter language codes)
 	if inp.Vernaculars != "" {
 		for v := range strings.SplitSeq(inp.Vernaculars, ",") {
 			if len(v) == 3 {
 				data.Vernaculars = append(data.Vernaculars, v)
 			}
 		}
-
 	}
 
-	data.DataSourceIDs = inp.DataSources
-
-	format := inp.Format
-	if format == "csv" || format == "json" || format == "tsv" {
-		data.Format = format
+	// Set output format if valid
+	if inp.Format == "csv" || inp.Format == "json" || inp.Format == "tsv" {
+		data.Format = inp.Format
 	}
 
-	if data.Input != "" {
-		split := strings.Split(data.Input, "\n")
-		if len(split) > 5_000 {
-			split = split[0:5_000]
+	// Build configuration options
+	return []config.Option{
+		config.OptDataSources(data.DataSourceIDs),
+		config.OptVernaculars(data.Vernaculars),
+		config.OptWithCapitalization(caps),
+		config.OptWithSpeciesGroup(spGr),
+		config.OptWithRelaxedFuzzyMatch(fuzzyRel),
+		config.OptWithUninomialFuzzyMatch(fuzzyUni),
+		config.OptWithAllMatches(data.AllMatches),
+	}
+}
+
+// splitAndLimitNames splits input by newlines, trims whitespace, and limits to 5,000 names.
+func splitAndLimitNames(input string) []string {
+	const maxNames = 5_000
+
+	split := strings.Split(input, "\n")
+	if len(split) > maxNames {
+		split = split[:maxNames]
+	}
+
+	names := make([]string, 0, len(split))
+	for i := range split {
+		if name := strings.TrimSpace(split[i]); name != "" {
+			names = append(names, name)
 		}
+	}
+	return names
+}
 
-		names = make([]string, 0, len(split))
-		for i := range split {
-			name := strings.TrimSpace(split[i])
-			if name != "" {
-				names = append(names, name)
-			}
-		}
+// processSearchQuery handles advanced search queries using gnquery syntax.
+func processSearchQuery(
+	ctx context.Context,
+	gnv gnverifier.GNverifier,
+	query string,
+	method string,
+) []vlib.Name {
+	inp := gnquery.New().Parse(query)
 
-		opts := []config.Option{
-			config.OptDataSources(data.DataSourceIDs),
-			config.OptVernaculars(data.Vernaculars),
-			config.OptWithCapitalization(caps),
-			config.OptWithSpeciesGroup(spGr),
-			config.OptWithRelaxedFuzzyMatch(fuzzyRel),
-			config.OptWithUninomialFuzzyMatch(fuzzyUni),
-			config.OptWithAllMatches(data.AllMatches),
-		}
-		gnv = gnv.ChangeConfig(opts...)
+	// Apply configuration from gnv
+	if dss := gnv.Config().DataSources; len(dss) > 0 {
+		inp.DataSources = dss
+	}
+	if all := gnv.Config().WithAllMatches; all {
+		inp.WithAllMatches = all
+	}
 
-		if search.IsQuery(names[0]) {
-			var err error
-			inp := gnquery.New().Parse(names[0])
-			if dss := gnv.Config().DataSources; len(dss) > 0 {
-				inp.DataSources = dss
-			}
-			if all := gnv.Config().WithAllMatches; all {
-				inp.WithAllMatches = all
-			}
-			data.Verified, err = gnv.Search(context.Background(), inp)
-			if err != nil {
-				log.Warn(err)
-			}
-			slog.Info(
-				"Search",
-				"query", names[0],
-				"method", method,
-				"verified", len(data.Verified),
-			)
-			if len(data.Verified) == 0 {
-				data.Verified = []vlib.Name{
-					{
-						ID:   gnuuid.New(inp.Query).String(),
-						Name: inp.Query,
-					},
-				}
-			}
-		} else {
-			data.Verified = gnv.VerifyBatch(context.Background(), names)
+	verified, err := gnv.Search(ctx, inp)
+	if err != nil {
+		log.Warn(err)
+	}
 
-			if l := len(names); l > 0 {
-				slog.Info(
-					"Verification",
-					"namesNum", len(names),
-					"example", names[0],
-					"method", method,
-				)
-			}
+	slog.Info(
+		"Search",
+		"query", query,
+		"method", method,
+		"verified", len(verified),
+	)
+
+	// Return placeholder result if no matches found
+	if len(verified) == 0 {
+		return []vlib.Name{
+			{
+				ID:   gnuuid.New(inp.Query).String(),
+				Name: inp.Query,
+			},
 		}
 	}
 
+	return verified
+}
+
+// processBatchVerification verifies a batch of scientific names.
+func processBatchVerification(
+	ctx context.Context,
+	gnv gnverifier.GNverifier,
+	names []string,
+	method string,
+) []vlib.Name {
+	if len(names) == 0 {
+		return nil
+	}
+
+	verified := gnv.VerifyBatch(ctx, names)
+
+	slog.Info(
+		"Verification",
+		"namesNum", len(names),
+		"example", names[0],
+		"method", method,
+	)
+
+	return verified
+}
+
+// renderResults returns verification results in the requested format.
+func renderResults(c echo.Context, data Data) error {
 	switch data.Format {
 	case "json":
 		return c.JSON(http.StatusOK, data.Verified)
 	case "csv":
-		res := formatRows(data, gnfmt.CSV)
-		return c.String(http.StatusOK, strings.Join(res, "\n"))
+		rows := formatRows(data, gnfmt.CSV)
+		return c.String(http.StatusOK, strings.Join(rows, "\n"))
 	case "tsv":
-		res := formatRows(data, gnfmt.TSV)
-		return c.String(http.StatusOK, strings.Join(res, "\n"))
+		rows := formatRows(data, gnfmt.TSV)
+		return c.String(http.StatusOK, strings.Join(rows, "\n"))
 	default:
 		return c.Render(http.StatusOK, "layout", data)
 	}

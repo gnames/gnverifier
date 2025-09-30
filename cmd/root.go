@@ -64,9 +64,6 @@ https://github.com/gnames/gnverifier
     gnverifier "g:M. sp:galloprovincialis au:Oliv."
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		copy(webOpts, opts)
-		webOpts = append(webOpts, config.OptWithCapitalization(true))
-
 		// if there is version flag, show version and exit
 		versionFlag(cmd)
 
@@ -88,9 +85,12 @@ https://github.com/gnames/gnverifier
 		// if port is given run gnverifier web UI instead
 		port, _ := cmd.Flags().GetInt("port")
 		if port > 0 {
-			cnf := config.New(webOpts...)
-			vfr := verifrest.New(cnf.VerifierURL)
-			gnv := gnverifier.New(cnf, vfr)
+			// Copy opts to webOpts after flags have been processed
+			webOpts = append([]config.Option{}, opts...)
+			webOpts = append(webOpts, config.OptWithCapitalization(true))
+			cfg := config.New(webOpts...)
+			vfr := verifrest.New(cfg.VerifierURL)
+			gnv := gnverifier.New(cfg, vfr)
 			web.Run(gnv, port)
 			os.Exit(0)
 		}

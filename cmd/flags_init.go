@@ -38,7 +38,7 @@ limited to 50 scientific names, try it with iNaturalist (id 180)`,
 func formatFlags() {
 	rootCmd.Flags().BoolP("quiet", "q", false, "do not show progress")
 	rootCmd.Flags().BoolP("capitalize", "c", false, "capitalizes first character")
-	rootCmd.Flags().StringP("format", "f", "csv", `Format of the output: "compact", "pretty", "csv", "tsv".
+	rootCmd.Flags().StringP("format", "f", "", `Format of the output: "compact", "pretty", "csv", "tsv".
   compact: compact JSON,
   pretty: pretty JSON,
   csv: CSV (DEFAULT)`)
