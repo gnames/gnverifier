@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [v1.3.1] - 2026-03-16 Mon
+
+- Add: ICTV link to Web GUI
+- Add: Switch to just from make
+- Fix: Brazilian labels in Web GUI
+
 ## [v1.3.0] - 2025-10-01 Wed
 
 - Add [#145]: support for displaying multiple best results in web UI templates.
@@ -299,6 +305,7 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.3.1]: https://github.com/gnames/gnverifier/compare/v1.3.0...v1.3.1
 [v1.3.0]: https://github.com/gnames/gnverifier/compare/v1.2.9...v1.3.0
 [v1.2.9]: https://github.com/gnames/gnverifier/compare/v1.2.8...v1.2.9
 [v1.2.8]: https://github.com/gnames/gnverifier/compare/v1.2.7...v1.2.8
