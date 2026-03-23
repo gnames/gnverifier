@@ -2,7 +2,7 @@ FROM alpine:3.21
 
 LABEL maintainer="Dmitry Mozzherin"
 
-RUN adduser -D -H gnverifier
+RUN adduser -D gnverifier
 
 WORKDIR /bin
 
