@@ -1,0 +1,29 @@
+{
+  "title": "gnverifier: A command-line client for scientific name verification",
+  "description": "GNverifier is a fast command-line tool and Go library for verifying scientific names against a variety of biodiversity data sources. It supports exact and fuzzy matching, batch processing, and returns results in JSON, CSV, or TSV formats. It acts as a client to the GNames verification API.",
+  "license": "MIT",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Mozzherin, Dmitry",
+      "affiliation": "Species File Group, University of Illinois",
+      "orcid": "0000-0003-1593-1417"
+    }
+  ],
+  "keywords": [
+    "biodiversity",
+    "taxonomy",
+    "scientific names",
+    "name verification",
+    "fuzzy matching",
+    "command-line",
+    "Go"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/gnames/gnverifier",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
