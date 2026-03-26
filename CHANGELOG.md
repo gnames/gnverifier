@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.3.4] - 2026-03-26 Thu
+
+- Add: World Spider Catalog to Web GUI.
+
 ## [v1.3.3] - 2026-03-23 Mon
 
 - Fix: Dockerfile can operate within home dir.
@@ -313,6 +317,7 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.3.4]: https://github.com/gnames/gnverifier/compare/v1.3.3...v1.3.4
 [v1.3.3]: https://github.com/gnames/gnverifier/compare/v1.3.2...v1.3.3
 [v1.3.2]: https://github.com/gnames/gnverifier/compare/v1.3.1...v1.3.2
 [v1.3.1]: https://github.com/gnames/gnverifier/compare/v1.3.0...v1.3.1
