@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.3.5] - 2026-03-27 Fri
+
+- Fix: World Spider Catalog to Web GUI.
+
 ## [v1.3.4] - 2026-03-26 Thu
 
 - Add: World Spider Catalog to Web GUI.
