@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.3.6] - 2026-05-18 Mon
+
+- Add: Sort and filter to data sources Web UI.
+
 ## [v1.3.5] - 2026-03-27 Fri
 
 - Fix: World Spider Catalog to Web GUI.

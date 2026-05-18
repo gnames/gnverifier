@@ -362,6 +362,28 @@ pre.code {
 #data-sources {
     width: 85%;
     margin: 0px auto;
+    font-size: 0.85em;
+}
+
+#data-sources td,
+#data-sources th {
+    padding: 0.1em 5px;
+}
+
+#data-sources td:last-child,
+#data-sources th:last-child {
+    white-space: nowrap;
+    width: 100px;
+}
+
+#ds-filter-wrap {
+    margin-bottom: 0.5em;
+}
+
+#ds-filter {
+    width: 300px;
+    padding: 0.3em 0.5em;
+    font-size: 0.9em;
 }
 
 table {

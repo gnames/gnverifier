@@ -3,10 +3,16 @@
 
 <div id="content-body">
 
-  <table id='data-sources'>
+  <div id='ds-filter-wrap'>
+    <input id='ds-filter' type='text' placeholder='Filter by title or short title…' />
+  </div>
+
+  <table id='data-sources' style='width: 95%;'>
     <tr>
       <th class='identifier'>ID</th>
-      <th>Source</th>
+      <th>Title</th>
+      <th>Short Title</th>
+      <th>Updated At</th>
     </tr>
     {{ range $index, $ds := .DataSources }}
       {{ if isEven $index }}
@@ -16,6 +22,8 @@
       {{ end }}
       <td class='identifier'>{{$ds.ID}}</td>
       <td><a href="/data_sources/{{ $ds.ID }}">{{ $ds.Title }}</a></td>
+      <td>{{ $ds.TitleShort }}</td>
+      <td>{{ $ds.UpdatedAt }}</td>
     </tr>
     {{ end }}
   </table>
