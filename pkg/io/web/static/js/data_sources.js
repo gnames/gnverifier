@@ -46,8 +46,8 @@ $(function () {
       rows.sort(function (a, b) {
         var aText = $(a).find('td').eq(colIdx).text().trim();
         var bText = $(b).find('td').eq(colIdx).text().trim();
-        var aNum = parseFloat(aText);
-        var bNum = parseFloat(bText);
+        var aNum = Number(aText);
+        var bNum = Number(bText);
         var cmp;
         if (!isNaN(aNum) && !isNaN(bNum)) {
           cmp = aNum - bNum;

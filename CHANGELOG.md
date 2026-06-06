@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [v1.3.7] - 2026-06-06 Sat
+
+- Add: Mammal Diversity to Web GUI.
+- Fix: UpdatedAt sort on data_sources page.
+
 ## [v1.3.6] - 2026-05-18 Mon
 
 - Add: Sort and filter to data sources Web UI.
@@ -325,6 +330,9 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.3.7]: https://github.com/gnames/gnverifier/compare/v1.3.6...v1.3.7
+[v1.3.6]: https://github.com/gnames/gnverifier/compare/v1.3.5...v1.3.6
+[v1.3.5]: https://github.com/gnames/gnverifier/compare/v1.3.4...v1.3.5
 [v1.3.4]: https://github.com/gnames/gnverifier/compare/v1.3.3...v1.3.4
 [v1.3.3]: https://github.com/gnames/gnverifier/compare/v1.3.2...v1.3.3
 [v1.3.2]: https://github.com/gnames/gnverifier/compare/v1.3.1...v1.3.2
