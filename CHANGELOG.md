@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.3.8] - 2026-10-27 Tue
+
+- Add: update Go to v1.27.3 and update modules.
+
 ## [v1.3.7] - 2026-06-06 Sat
 
 - Add: Mammal Diversity to Web GUI.
@@ -330,6 +334,7 @@ This document follows [changelog guidelines]
 
 <!-- VERSIONS -->
 
+[v1.3.8]: https://github.com/gnames/gnverifier/compare/v1.3.7...v1.3.8
 [v1.3.7]: https://github.com/gnames/gnverifier/compare/v1.3.6...v1.3.7
 [v1.3.6]: https://github.com/gnames/gnverifier/compare/v1.3.5...v1.3.6
 [v1.3.5]: https://github.com/gnames/gnverifier/compare/v1.3.4...v1.3.5
