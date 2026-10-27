@@ -125,7 +125,10 @@ To use [GNverifier] with Homebrew:
 
 ```bash
 brew tap gnames/gn
+bres trust gnames/gn
 brew install gnverifier
+# to upgrade
+brew upgrade gnverifier
 ```
 
 ### MS Windows
