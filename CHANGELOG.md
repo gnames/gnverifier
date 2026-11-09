@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [v1.3.9] - 2026-11-09 Mon
+
+- Add: update modules.
+- Add: Homebrew trust and upgrade instructions to README.
+- Add: rename justfile to Justfile.
+
 ## [v1.3.8] - 2026-10-27 Tue
 
 - Add: update Go to v1.27.3 and update modules.
